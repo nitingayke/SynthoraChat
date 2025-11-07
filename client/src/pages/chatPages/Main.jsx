@@ -4,7 +4,7 @@ import UserProfile from "../../components/main/user/UserProfile";
 import AuthContext from "../../context/AuthContext";
 import GuestProfile from "../../components/main/user/GuestProfile";
 
-export default function MainPage() {
+export default function Main() {
 
     const { loginUser } = useContext(AuthContext);
 

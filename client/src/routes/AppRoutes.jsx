@@ -12,7 +12,8 @@ import Leaderboard from "../pages/Leaderboard";
 import Contact from "../pages/Contact";
 import MainLayout from "../layouts/MainLayout";
 import NotFound from "../components/common/NotFound";
-import MainPage from "../pages/chatPages/MainPage";
+import Main from "../pages/chatPages/Main";
+import Explore from "../pages/chatPages/Explore";
 
 export default function AppRoutes() {
 
@@ -30,9 +31,9 @@ export default function AppRoutes() {
                 <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
                 <Route path="/main" element={<MainLayout />} >
-                    <Route index element={<MainPage />} />
+                    <Route index element={<Main />} />
                     <Route path="ai-chat" element={<h1>ai chat</h1>} />
-                    <Route path="explore" element={<h1>explore</h1>} />
+                    <Route path="explore" element={<Explore />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
 
