@@ -159,40 +159,7 @@ export const AuthProvider = ({ children }) => {
         //             updatedAt: "2025-11-11T18:40:10.000Z",
         //         },
 
-        //         {
-        //             _id: "673ef2508b2d56c1a9f4e003",
-        //             user: "673eeff48b2d56c1a9f4dfd8",
-        //             title: "Fact check: Is AI replacing doctors?",
-        //             sessionType: "fact_check",
-        //             messages: [
-        //                 {
-        //                     role: "user",
-        //                     content: "I read that AI will replace doctors soon. Is that true?",
-        //                     timestamp: "2025-11-10T12:05:30.000Z",
-        //                 },
-        //                 {
-        //                     role: "assistant",
-        //                     content:
-        //                         "Not exactly. AI supports doctors by analyzing scans and predicting outcomes faster, but it cannot replace human judgment and empathy in healthcare decisions.",
-        //                     timestamp: "2025-11-10T12:05:40.000Z",
-        //                     metadata: {
-        //                         modelUsed: "GPT-5",
-        //                         tokens: 68,
-        //                         responseTime: 1210,
-        //                         confidenceScore: 0.93,
-        //                     },
-        //                 },
-        //             ],
-        //             createdAt: "2025-11-10T12:05:25.000Z",
-        //             updatedAt: "2025-11-10T12:05:42.000Z",
-        //         },
-        //     ],
-        //     "upvotesCount": 152,
-        //     "helpfulAnswers": 45,
-        //     "isVerified": true,
-        //     "lastActive": "2025-11-01T14:15:00.000Z"
-        // }
-    );
+       );
     
     const logout = () => {
         setLoginUser(null);

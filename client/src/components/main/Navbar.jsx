@@ -3,8 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { Sun, Moon, Settings, Brain, Bell, Search } from "lucide-react";
 import ThemeContext from "../../context/ThemeContext";
 import AuthContext from "../../context/AuthContext";
-import Avatar from "@mui/material/Avatar";
 import UIStateContext from "../../context/UIStateContext";
+import ProfileDropdown from "../navbar/ProfileDropdown";
 
 export default function Navbar() {
     const location = useLocation();
@@ -120,17 +120,7 @@ export default function Navbar() {
                     </Link>
 
                     {loginUser ? (
-                        <Link
-                            to="/profile"
-                            className="flex items-center gap-2 hover:opacity-90 transition"
-                            title="Profile"
-                        >
-                            <Avatar
-                                alt={loginUser?.username}
-                                src={loginUser?.profile?.profilePicture}
-                                className="!w-8 !h-8"
-                            />
-                        </Link>
+                        <ProfileDropdown />
                     ) : (
                         <button
                             onClick={() => setOpenLoginDialog(true)}
@@ -139,6 +129,7 @@ export default function Navbar() {
                             Join Now
                         </button>
                     )}
+
                 </div>
             </div>
         </nav>
