@@ -14,6 +14,7 @@ import MainLayout from "../layouts/MainLayout";
 import NotFound from "../components/common/NotFound";
 import Main from "../pages/chatPages/Main";
 import Explore from "../pages/chatPages/Explore";
+import AIChat from "../pages/chatPages/AIChat";
 
 export default function AppRoutes() {
 
@@ -32,7 +33,7 @@ export default function AppRoutes() {
 
                 <Route path="/main" element={<MainLayout />} >
                     <Route index element={<Main />} />
-                    <Route path="ai-chat" element={<h1>ai chat</h1>} />
+                    <Route path="ai-chat/:threadId?" element={<AIChat />} />
                     <Route path="explore" element={<Explore />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>

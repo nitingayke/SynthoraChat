@@ -102,7 +102,7 @@ export default function Navbar() {
                         {(notifications?.length > 0) && (
                             <span className="
                                 absolute top-0 right-0 bg-orange-500 dark:bg-[#07C5B9]
-                                text-white text-[5px] px-1 font-light flex items-center justify-center
+                                text-white dark:text-black text-[12px] px-1 font-light flex items-center justify-center
                                 rounded-full font-mono
                             ">
                                 {Math.min(notifications?.length, 9)}
