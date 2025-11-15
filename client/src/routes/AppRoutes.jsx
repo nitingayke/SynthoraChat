@@ -14,6 +14,9 @@ import MainLayout from "../layouts/MainLayout";
 import NotFound from "../components/common/NotFound";
 import Main from "../pages/chatPages/Main";
 import Explore from "../pages/chatPages/Explore";
+import SettingsPage from "../pages/SettingsPage";
+import CreatePostPage from "../pages/chatPages/CreatePostPage";
+import { ProfilePage } from "../pages/ProfilePage";
 
 export default function AppRoutes() {
 
@@ -29,11 +32,14 @@ export default function AppRoutes() {
                 <Route path="/community" element={<Layout><Community /></Layout>} />
                 <Route path="/leaderboard" element={<Layout><Leaderboard /></Layout>} />
                 <Route path="/contact" element={<Layout><Contact /></Layout>} />
+                <Route path="/profile" element={<Layout><ProfilePage/></Layout>} />
 
                 <Route path="/main" element={<MainLayout />} >
                     <Route index element={<Main />} />
                     <Route path="ai-chat" element={<h1>ai chat</h1>} />
                     <Route path="explore" element={<Explore />} />
+                    <Route path="settings" element={<SettingsPage/>} />
+                    <Route path="create-post" element={<CreatePostPage/>} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
 

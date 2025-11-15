@@ -102,6 +102,8 @@ export const AuthProvider = ({ children }) => {
         }
     );
 
+    // const [loginUser, setLoginUser] = useState(null);
+
     const logout = () => {
         setLoginUser(null);
     }
