@@ -42,7 +42,7 @@ export default function Hero() {
               {loginUser ? (
                 <>
                   <h1 className="text-4xl lg:text-5xl font-bold mb-4">
-                    Welcome back,{" "}
+                    Welcome back{" "}
                     <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                       {loginUser.name}!
                     </span>

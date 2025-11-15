@@ -1,11 +1,11 @@
 import { useContext } from "react";
 import { Brain, Menu, X, Sparkles, Sun, Moon, LogOut, Bell } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";
-import Avatar from "@mui/material/Avatar";
 import Drawer from "@mui/material/Drawer";
 import ThemeContext from "../../context/ThemeContext";
 import UIStateContext from "../../context/UIStateContext";
 import AuthContext from "../../context/AuthContext";
+import ProfileDropdown from "../navbar/ProfileDropdown";
 
 const navLinks = [
   { name: "Home", path: "/home" },
@@ -14,6 +14,9 @@ const navLinks = [
   { name: "Community", path: "/community" },
   { name: "Leaderboard", path: "/leaderboard" },
   { name: "Contact", path: "/contact" },
+  // { name: "Notifications", path: "/notifications"},
+  // { name: "Settings", path: "/settings"},
+  // { name: "Profile", paht: "/profile" }
 ];
 
 export default function Navbar() {
@@ -27,7 +30,7 @@ export default function Navbar() {
   const renderNavLinks = (isMobile = false) => (
     <ul
       className={`flex ${isMobile
-          ? "flex-col gap-4 mt-6 text-lg font-semibold"
+          ? "flex-col gap-4 mt-6 text-lg font-semibold overflow-auto"
           : "hidden lg:flex gap-5 lg:gap-1 font-semibold"
         } text-gray-800 dark:text-gray-200`}
     >
@@ -98,9 +101,9 @@ export default function Navbar() {
 
             {/* User or Join */}
             {loginUser ? (
-              <button className="hidden sm:flex items-center">
-                <Avatar alt={loginUser?.username} src={loginUser?.profile?.profilePicture} className="!w-8 !h-8" />
-              </button>
+              <div className="hidden sm:flex items-center">
+                <ProfileDropdown />
+              </div>
             ) : (
               <button
                 onClick={() => setOpenLoginDialog(true)}
@@ -109,6 +112,7 @@ export default function Navbar() {
                 Join Now
               </button>
             )}
+
 
             {/* Mobile Menu Button */}
             <button
