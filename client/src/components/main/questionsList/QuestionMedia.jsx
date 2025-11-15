@@ -28,6 +28,8 @@ export default function QuestionMedia({ media }) {
                                 playsInline
                                 onMouseEnter={(e) => e.target.play()}
                                 onMouseLeave={(e) => e.target.pause()}
+                                disablePictureInPicture
+                                controlsList="nofullscreen noplaybackrate nodownload"
                                 controls
                             />
                         )}

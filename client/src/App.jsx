@@ -4,6 +4,7 @@ import { ThemeProvider } from "./context/ThemeProvider";
 import { AuthProvider } from "./context/AuthProvider";
 import { UIStateProvider } from "./context/UIStateProvider";
 import { QuestionProvider } from "./context/QuestionProvider";
+import { AIChatProvider } from "./context/AIChatProvider";
 
 function App() {
 
@@ -13,7 +14,9 @@ function App() {
         <QuestionProvider>
           <UIStateProvider>
             <AuthProvider>
-              <AppRoutes />
+              <AIChatProvider>
+                <AppRoutes />
+              </AIChatProvider>
             </AuthProvider>
           </UIStateProvider>
         </QuestionProvider>
