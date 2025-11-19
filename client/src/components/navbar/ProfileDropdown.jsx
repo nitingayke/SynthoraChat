@@ -13,6 +13,7 @@ import {
   Moon,
   ChevronDown,
 } from 'lucide-react';
+import Avatar from '@mui/material/Avatar';
 import AuthContext from '../../context/AuthContext';
 import ThemeContext from '../../context/ThemeContext';
 
@@ -61,11 +62,15 @@ export default function ProfileDropdown() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-[#202020] transition-all duration-300"
       >
-        <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-          {loginUser?.profile?.firstName?.[0]?.toUpperCase() || 'U'}
-        </div>
+        {
+          loginUser?.profile?.profilePicture
+            ? <Avatar alt={loginUser?.profile?.firstName} src={loginUser?.profile?.profilePicture} className='!w-8 !h-8' />
+            : <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+              {loginUser?.profile?.firstName?.[0]?.toUpperCase() || 'U'}
+            </div>
+        }
         <ChevronDown
-          className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''
+          className={`hidden lg:block w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''
             }`}
         />
       </button>
@@ -84,9 +89,9 @@ export default function ProfileDropdown() {
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 mb-2 flex items-center gap-3">
               {/* Profile Photo */}
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
-                {loginUser?.profilePicture ? (
+                {loginUser?.profile?.profilePicture ? (
                   <img
-                    src={loginUser.profilePicture}
+                    src={loginUser?.profile?.profilePicture}
                     alt={`${loginUser?.profile?.firstName} ${loginUser?.profile?.lastName}`}
                     className="w-full h-full rounded-full object-cover"
                   />
@@ -123,6 +128,7 @@ export default function ProfileDropdown() {
                 </Link>
               );
             })}
+            
 
             {/* Theme Toggle */}
             <div className="border-t border-gray-200 dark:border-gray-800 mt-2 pt-2">
