@@ -43,7 +43,7 @@ export default function QuestionCard({ question }) {
 
             {/* Media Preview */}
             {question.media && question.media.length > 0 && (
-                <QuestionMedia media={question.media} />
+                <QuestionMedia media={question.media} questionId={question?._id} />
             )}
 
             {/* Topics */}

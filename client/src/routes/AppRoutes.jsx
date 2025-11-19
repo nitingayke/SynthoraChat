@@ -18,6 +18,7 @@ import SettingsPage from "../pages/SettingsPage";
 import CreatePostPage from "../pages/chatPages/CreatePostPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import AIChat from "../pages/chatPages/AIChat";
+import QuestionInteract from "../pages/chatPages/QuestionInteract";
 
 export default function AppRoutes() {
 
@@ -37,6 +38,7 @@ export default function AppRoutes() {
 
                 <Route path="/main" element={<MainLayout />} >
                     <Route index element={<Main />} />
+                    <Route path="/main/questions/:questionId" element={<QuestionInteract />} />
                     <Route path="ai-chat/:threadId?" element={<AIChat />} />
                     <Route path="explore" element={<Explore />} />
                     <Route path="settings" element={<SettingsPage/>} />

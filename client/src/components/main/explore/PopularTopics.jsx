@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 import { Target, ChevronRight, Brain, Globe, BarChart3, Smartphone, Rocket, Palette } from 'lucide-react';
 
 const recommendedTopics = [
-    { name: "Artificial Intelligence", icon: Brain, questions: 1247, color: "bg-gradient-to-r from-purple-500 to-pink-500", path: "/main/topics/ai" },
-    { name: "Web Development", icon: Globe, questions: 2890, color: "bg-gradient-to-r from-blue-500 to-cyan-500", path: "/main/topics/web-dev" },
-    { name: "Data Science", icon: BarChart3, questions: 1567, color: "bg-gradient-to-r from-green-500 to-emerald-500", path: "/main/topics/data-science" },
-    { name: "Mobile Development", icon: Smartphone, questions: 987, color: "bg-gradient-to-r from-orange-500 to-red-500", path: "/main/topics/mobile" },
-    { name: "DevOps", icon: Rocket, questions: 756, color: "bg-gradient-to-r from-indigo-500 to-purple-500", path: "/main/topics/devops" },
-    { name: "UI/UX Design", icon: Palette, questions: 634, color: "bg-gradient-to-r from-pink-500 to-rose-500", path: "/main/topics/design" }
+    { name: "Artificial Intelligence", icon: Brain, questions: 1247, color: "bg-gradient-to-r from-purple-500 to-pink-500", path: "/main?topic=ai" },
+    { name: "Web Development", icon: Globe, questions: 2890, color: "bg-gradient-to-r from-blue-500 to-cyan-500", path: "/main?topic=web-dev" },
+    { name: "Data Science", icon: BarChart3, questions: 1567, color: "bg-gradient-to-r from-green-500 to-emerald-500", path: "/main?topic=data-science" },
+    { name: "Mobile Development", icon: Smartphone, questions: 987, color: "bg-gradient-to-r from-orange-500 to-red-500", path: "/main?topic=mobile" },
+    { name: "DevOps", icon: Rocket, questions: 756, color: "bg-gradient-to-r from-indigo-500 to-purple-500", path: "/main?topic=devops" },
+    { name: "UI/UX Design", icon: Palette, questions: 634, color: "bg-gradient-to-r from-pink-500 to-rose-500", path: "/main?topic=design" }
 ];
 
 export default function PopularTopics() {

@@ -10,7 +10,7 @@ export default function Main() {
 
     return (
         <div className="w-full max-w-5xl mx-auto flex py-4 gap-4">
-            <div className="hidden md:block w-70 md:w-[35%]">
+            <div className="h-fit hidden md:block w-70 md:w-[35%] sticky bottom-4 self-start">
                 {loginUser ? <UserProfile /> : <GuestProfile />}
             </div>
 

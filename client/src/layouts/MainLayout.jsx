@@ -9,7 +9,7 @@ export default function MainLayout() {
 
     useEffect(() => {
 
-        if (location.pathname === "/main/explore" && location.search.includes("query")) {
+        if ((location.pathname === "/main/explore" && location.search.includes("query"))) {
             return;
         }
 
@@ -19,7 +19,7 @@ export default function MainLayout() {
     }, [location.pathname, location.search, location.hash]);
 
     return (
-        <div ref={scrollRef} className="h-screen overflow-y-auto overflow-x-hidden flex flex-col transition-colors duration-500 ease-in-out bg-gradient-to-b bg-white 
+        <div ref={scrollRef} className="h-screen overflow-y-auto overflow-x-hidden flex flex-col transition-colors duration-500 ease-in-out bg-gradient-to-b bg-gray-100 
         dark:bg-[#0f0f0f]
         text-gray-900 dark:text-gray-100 scroll-smooth">
             <Navbar />
