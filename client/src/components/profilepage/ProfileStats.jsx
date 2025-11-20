@@ -3,8 +3,12 @@ import { motion } from 'framer-motion';
 import { MessageSquare, Edit3, Users, Brain, ThumbsUp } from 'lucide-react';
 import PropTypes from 'prop-types';
 import StatCard from './shared/StatCard';
+import { useContext } from 'react';
+import AuthContext from '../../context/AuthContext';
 
-const ProfileStats = ({ user }) => {
+const ProfileStats = () => {
+  const {loginUser} = useContext(AuthContext)
+  
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -18,42 +22,42 @@ const ProfileStats = ({ user }) => {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="grid grid-cols-2 md:grid-cols-3 gap-4"
+      className="md:w-1/2 grid grid-cols-2 md:grid-cols-3 gap-4"
     >
       <StatCard
         icon={MessageSquare}
         label="Questions"
-        value={user.stats.questions}
+        value={loginUser?.questions?.length}
         color="from-blue-500 to-cyan-500"
       />
       <StatCard
         icon={Edit3}
         label="Answers"
-        value={user.stats.answers}
+        value={loginUser?.answers?.length}
         color="from-green-500 to-emerald-500"
       />
       <StatCard
         icon={Users}
         label="Followers"
-        value={user.stats.followers}
+        value={loginUser?.followers?.length}
         color="from-purple-500 to-pink-500"
       />
       <StatCard
         icon={Users}
         label="Following"
-        value={user.stats.following}
+        value={loginUser?.following?.length}
         color="from-orange-500 to-red-500"
       />
       <StatCard
         icon={Brain}
         label="AI Sessions"
-        value={user.stats.aiSessions}
+        value={loginUser?.aiInteractions?.length}
         color="from-indigo-500 to-purple-500"
       />
       <StatCard
         icon={ThumbsUp}
         label="Upvotes"
-        value={user.stats.upvotes}
+        value={loginUser?.upvotesCount}
         color="from-yellow-500 to-orange-500"
       />
     </motion.div>
