@@ -1,4 +1,4 @@
-import { ThumbsUp, Eye, Share2, ArrowBigUp, MessageCircle, Pencil, Trash2 } from "lucide-react";
+import { ThumbsUp, Eye, Share2, ArrowBigUp, MessageCircle, Pencil, Trash2, Hash } from "lucide-react";
 import PropTypes from "prop-types";
 import { useContext, useState } from "react";
 import Avatar from "@mui/material/Avatar";
@@ -152,10 +152,12 @@ export default function AnswerCard({ answer }) {
             transition={{ duration: 0.25, ease: "easeInOut" }}
             className="mt-4 overflow-hidden space-y-4 border-t pt-3 border-gray-200 dark:border-[#222]"
           >
+            <h1 className="my-2 flex items-center gap-1 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white cursor-pointer font-semibold w-fit"><Hash size={20} />COMMENTS</h1>
+
             {answer.comments.slice(0, visibleComments).map((comment, index) => (
               <div key={index * 0.12457}>
 
-                <div className="relative flex gap-3">
+                <div className="relative gap-3 flex items-center">
                   <Avatar
                     sx={{ width: 35, height: 35 }}
                     src={comment?.author?.profile?.profilePicture || ""}
@@ -175,15 +177,14 @@ export default function AnswerCard({ answer }) {
                     </div>
                   </div>
 
-
                   <div className="absolute right-0 top-0 flex gap-3">
-                    <button className="text-sm flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-green-500 px-2 py-1 rounded-md bg-[#212121]">
+                    <button className="text-sm flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-green-500 px-2 py-1 rounded-md bg-gray-200 dark:bg-[#212121]">
                       <ArrowBigUp size={16} />
                       {comment?.upvotes?.length || 0}
                     </button>
 
                     {loginUser?._id === comment?.author?._id && (
-                      <button className="text-sm text-gray-600 dark:text-gray-400 hover:text-red-500 px-2 py-1 rounded-md bg-[#212121]">
+                      <button className="text-sm text-gray-600 dark:text-gray-400 hover:text-red-500 px-2 py-1 rounded-md bg-gray-200 dark:bg-[#212121]">
                         <Trash2 size={16} />
                       </button>
                     )}

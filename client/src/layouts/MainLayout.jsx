@@ -24,7 +24,7 @@ export default function MainLayout() {
         text-gray-900 dark:text-gray-100 scroll-smooth">
             <Navbar />
 
-            <main className="flex-1 flex flex-col px-4 sm:px-6 lg:px-8 transition-all duration-500 ease-in-out">
+            <main className="flex-1 flex flex-col px-3 sm:px-6 lg:px-8 transition-all duration-500 ease-in-out">
                 <Outlet />
             </main>
         </div>
