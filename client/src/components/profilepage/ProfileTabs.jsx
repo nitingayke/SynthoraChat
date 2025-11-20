@@ -1,15 +1,16 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { User, MessageSquare, Edit3, Brain, Bookmark, TrendingUp } from 'lucide-react';
+import { User, MessageSquare, Edit3, Brain, Bookmark, TrendingUp, Users, UserPlus } from 'lucide-react';
 import PropTypes from 'prop-types';
 import ProfileTabContent from './ProfileTabContent';
 
 const ProfileTabs = ({ activeTab, onTabChange, user }) => {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: User },
+    { id: 'following', label: 'Following', icon: Users },
+    { id: 'followers', label: 'Followers', icon: UserPlus },
     { id: 'questions', label: 'Questions', icon: MessageSquare },
     { id: 'answers', label: 'Answers', icon: Edit3 },
-    { id: 'ai-chats', label: 'AI Chats', icon: Brain },
     { id: 'saved', label: 'Saved Posts', icon: Bookmark },
     { id: 'activity', label: 'Activity', icon: TrendingUp }
   ];
