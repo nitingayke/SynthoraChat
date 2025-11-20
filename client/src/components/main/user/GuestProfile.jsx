@@ -69,8 +69,8 @@ export default function GuestProfile() {
     return (
         <div className="w-full bg-white dark:bg-[#161616] rounded-lg border border-gray-200 dark:border-gray-800/50 overflow-hidden transition-all duration-300">
             {/* Header with Gradient */}
-            <div className="relative h-30 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-[#07C5B9] dark:to-[#0EA5E9]">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
+            <div className="relative h-30 bg-gray-300/80 dark:bg-gray-200/20">
+                <div className="absolute inset-0" />
                 <div className="absolute top-3 left-4">
                     <h2 className="text-white font-bold text-xl md:text-2xl">Join Our Community</h2>
                 </div>
@@ -182,7 +182,7 @@ export default function GuestProfile() {
                 <div className="mt-5 space-y-3">
                     <Link
                         to="/login"
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-[#07C5B9] dark:to-[#0EA5E9] text-white rounded-xl hover:opacity-90 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#07C5B9] text-white rounded-xl hover:opacity-90 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     >
                         <Rocket className="w-4 h-4" />
                         Get Started - It's Free

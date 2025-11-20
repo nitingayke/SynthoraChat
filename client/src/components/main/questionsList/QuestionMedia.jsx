@@ -1,22 +1,26 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { FileText } from "lucide-react";
+import { Link } from "react-router-dom"
 
-export default function QuestionMedia({ media }) {
+export default function QuestionMedia({ media, questionId }) {
     return (
         <div className="mt-3">
-            <div className="flex justify-center gap-1 sm:gap-2 overflow-x-auto w-full p-1 max-h-70">
+            <div className="relative flex justify-center gap-1 sm:gap-2 overflow-x-auto w-full p-1 max-h-70">
 
-                {media?.slice(0, 4)?.map((item, index) => (
-                    <div
+                <button className="absolute top-2 right-3 text-sm px-3 py-0.5 rounded-2xl bg-white dark:bg-[#161616] z-30">{media.length}</button>
+
+                {media?.slice(0, 1)?.map((item, index) => (
+                    <Link
                         key={index * 0.2548}
+                        to={`/main/questions/${questionId}`}
                         className="rounded-md flex justify-center border border-gray-400/20 dark:border-gray-700/20 bg-gray-100 dark:bg-gray-800/20 overflow-hidden"
                     >
-                        {item.type === "image" && (
+                        {item?.type === "image" && (
                             <img
-                                src={item.url}
+                                src={item?.url}
                                 alt="preview"
-                                className="w-auto h-full object-cover rounded-md"
+                                className="w-fit h-full object-cover rounded-md hover:scale-105 transition-transform duration-300"
                             />
                         )}
 
@@ -53,7 +57,7 @@ export default function QuestionMedia({ media }) {
                                 <span>Document</span>
                             </a>
                         )}
-                    </div>
+                    </Link>
                 ))}
             </div>
         </div>
@@ -62,4 +66,5 @@ export default function QuestionMedia({ media }) {
 
 QuestionMedia.propTypes = {
     media: PropTypes.array.isRequired,
+    questionId: PropTypes.string.isRequired
 };

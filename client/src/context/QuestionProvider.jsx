@@ -59,66 +59,172 @@ Conclusion: Performance improvement is mostly about rendering only what matters 
                     type: "video",
                     url: "https://cloudinary-marketing-res.cloudinary.com/video/upload/f_auto,q_auto/v1723678081/Captions-Subtitles.mp4",
                 },
+                {
+                    type: "image",
+                    url: "https://images.unsplash.com/photo-1624280664758-4350adc906c1?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmF0dXJlJTIwcGhvbmUlMjB3YWxscGFwZXJ8ZW58MHx8MHx8fDA%3D",
+                },
+                {
+                    type: "image",
+                    url: "https://images.unsplash.com/photo-1618477388954-7852f32655ec?q=80&w=464&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                },
             ],
             topics: ["React", "Frontend", "Optimization"],
-            likes: ["676a97bc97cd8b2b496e0002"],
-            upvotes: ["676a97bc97cd8b2b496e0002", "676a97bc97cd8b2b496e0003"],
-            saves: ["676a97bc97cd8b2b496e0001"],
+            likes: ["676a983197cd8b2b496ef789"],
+            upvotes: ["676a983197cd8b2b496ef789", "676a97bc97cd8b2b496e0003"],
+            saves: ["676a983197cd8b2b496ef789"],
             views: 120,
             shares: 5,
             status: "active",
             answers: [
                 {
-                    _id: "676a983197cd8b2b496ef101",
-                    author: "676a97bc97cd8b2b496e0003",
-                    content:
-                        "Use `React.memo()`, `useCallback`, and `useMemo` to prevent unnecessary re-renders. Also use React Dev Tools profiler.",
+                    _id: "676a983197cd8b2b496ef789",
+                    author: {
+                        _id: "676a983197cd8b2b496ef789",
+                        username: "alex_tech",
+                        profile: {
+                            firstName: "Alex",
+                            lastName: "Johnson",
+                            profilePicture: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+                        },
+                        credentials: ["Senior AI Engineer", "ML Specialist"]
+                    },
+                    content: "You can improve performance by caching the model output and using lazy loading. Also consider using a message queue for heavy AI tasks.",
                     media: [
                         {
-                            type: "document",
-                            url: "https://example.com/react-performance-guide.pdf",
+                            type: "image",
+                            url: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
                         },
                     ],
-                    upvotes: ["676a97bc97cd8b2b496e0001"],
-                    likes: ["676a97bc97cd8b2b496e0001"],
-                    views: 45,
-                    shares: 2,
-                    aiAccuracy: 0,
+                    upvotes: ["673ab4c9f19c2d00126f1192", "673ab4c9f19c2d00126f1193"],
+                    likes: ["673ab4c9f19c2d00126f1194"],
                     comments: [
                         {
-                            _id: "676a983197cd8b2b496ef111",
-                            author: "676a97bc97cd8b2b496e0002",
-                            content: "Great explanation!",
+                            author: {
+                                _id: "676a983197cd8b2b496ef789",
+                                username: "sarah_dev",
+                                profile: {
+                                    firstName: "Sarah",
+                                    lastName: "Chen",
+                                    profilePicture: "https://images.unsplash.com/photo-1693011726259-cc6b89c90d62?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Ym95JTIwc3R1ZGVudHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600",
+                                }
+                            },
+                            content: "Great explanation! Caching really helps.",
                             sentiment: "positive",
-                            upvotes: ["676a97bc97cd8b2b496e0001"],
+                            upvotes: [],
                             isAiGenerated: false,
+                            createdAt: new Date(),
                         },
                     ],
+                    aiAccuracy: 85,
+                    views: 120,
+                    shares: 10,
                     status: "published",
                 },
                 {
-                    _id: "676a983197cd8b2b496ef102",
                     author: {
-                        _id: "676a97bc97cd8b2b496e0002",
-                        username: "tech_guru",
-                        email: "guru@example.com",
+                        _id: "673ab4c9f19c2d00126f1196",
+                        username: "ai_assistant",
                         profile: {
-                            firstName: "Aman",
-                            lastName: "Tech",
-                            bio: "Backend Engineer | MongoDB expert",
-                            location: "India",
-                            profilePicture: "https://img.freepik.com/free-photo/horizontal-portrait-smiling-happy-young-pleasant-looking-female-wears-denim-shirt-stylish-glasses-with-straight-blonde-hair-expresses-positiveness-poses_176420-13176.jpg?semt=ais_hybrid&w=740&q=80",
-                        },
+                            firstName: "AI",
+                            lastName: "Assistant",
+                        }
                     },
-                    content:
-                        "Lazy loading and dynamic imports help tremendously when dealing with large bundles.",
-                    media: [],
-                    upvotes: ["676a97bc97cd8b2b496e0003"],
+                    content: "A better approach is to use vector embeddings and a similarity search tool like Pinecone or Weaviate. It improves Q&A precision.",
+                    media: [
+                        {
+                            type: "video",
+                            url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                        },
+                    ],
+                    upvotes: ["673ab4c9f19c2d00126f1197"],
                     likes: [],
+                    comments: [
+                        {
+                            author: {
+                                _id: "673ab4c9f19c2d00126f1197",
+                                username: "mike_engineer",
+                                profile: {
+                                    firstName: "Mike",
+                                    lastName: "Rodriguez",
+                                }
+                            },
+                            content: "Thanks for the suggestion! Will try embeddings.",
+                            sentiment: "positive",
+                            upvotes: ["673ab4c9f19c2d00126f1199"],
+                            isAiGenerated: false,
+                            createdAt: new Date(),
+                        },
+                    ],
+                    aiAccuracy: 92,
+                    views: 300,
+                    shares: 25,
+                    status: "published",
+                },
+                {
+                    author: {
+                        _id: "673ab4c9f19c2d00126f1198",
+                        username: "alex_tech",
+                        profile: {
+                            firstName: "Alex",
+                            lastName: "Johnson",
+                            profilePicture: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+                        }
+                    },
+                    content: "Use a multi-pass summarization approach: extractive summary first, then refine using generative AI. This gives more accurate summaries.",
+                    media: [
+                        {
+                            type: "document",
+                            url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                        },
+                    ],
+                    upvotes: [],
+                    likes: ["673ab4c9f19c2d00126f1201", "673ab4c9f19c2d00126f1202"],
                     comments: [],
-                    views: 21,
-                    shares: 0,
-                    aiAccuracy: 0,
+                    aiAccuracy: 78,
+                    views: 80,
+                    shares: 2,
+                    status: "published",
+                },
+                {
+                    author: {
+                        _id: "673ab4c9f19c2d00126f1196",
+                        username: "dr_li",
+                        profile: {
+                            firstName: "Dr.",
+                            lastName: "Li",
+                            profilePicture: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
+                        },
+                        credentials: ["PhD in Computer Science", "Vector Database Expert"]
+                    },
+                    content: "To handle moderation, integrate toxicity detection using OpenAI, Google Perspective API, or your custom fine-tuned classifier.",
+                    media: [
+                        {
+                            type: "audio",
+                            url: "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",
+                        },
+                    ],
+                    upvotes: [],
+                    likes: [],
+                    comments: [
+                        {
+                            author: {
+                                _id: "673ab4c9f19c2d00126f1198",
+                                username: "data_scientist",
+                                profile: {
+                                    firstName: "Emma",
+                                    lastName: "Wilson",
+                                }
+                            },
+                            content: "Nice, moderation is a must for a Q&A platform.",
+                            sentiment: "neutral",
+                            upvotes: [],
+                            isAiGenerated: true,
+                            createdAt: new Date(),
+                        },
+                    ],
+                    aiAccuracy: 60,
+                    views: 40,
+                    shares: 1,
                     status: "published",
                 },
             ],
@@ -242,11 +348,40 @@ If flexibility and speed matter → use NoSQL
             ],
         },
     ]);
+    const [filterOptions, setFilterOptions] = useState([
+        {
+            label: "Trending",
+            link: "filter=trending"
+        },
+        {
+            label: "Most Viewed",
+            link: "filter=views"
+        },
+        {
+            label: "Popular",
+            link: "filter=popular"
+        },
+        {
+            label: "Data Science",
+            link: "topic=data-science"
+        },
+        {
+            label: "Web Development",
+            link: "topic=web-development"
+        },
+        {
+            label: "Machine Learning",
+            link: "topic=ml"
+        }
+    ]);
+    const [loadingQuestions, setLoadingQuestions] = useState(false);
 
     const values = useMemo(() => ({
         questions,
-        filteredQuestions
-    }), [questions, filteredQuestions]);
+        filteredQuestions,
+        filterOptions,
+        loadingQuestions
+    }), [questions, filteredQuestions, filterOptions, loadingQuestions]);
 
     return (
         <QuestionContext.Provider value={values}>
