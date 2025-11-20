@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import OverviewTab from './tabs/OverviewTab ';
 import QuestionsTab from './tabs/QuestionsTab';
 import AnswersTab from './tabs/AnswersTab';
-import AIChatsTab from './tabs/AIChatsTab';
 import SavedTab from './tabs/SavedTab';
 import ActivityTab from './tabs/ActivityTab';
+import FollowingTab from './tabs/FollowingTab';
+import FollowersTab from './tabs/FollowersTab';
 
 const ProfileTabContent = ({ activeTab, user }) => {
   const tabVariants = {
@@ -18,14 +19,17 @@ const ProfileTabContent = ({ activeTab, user }) => {
       {activeTab === 'overview' && (
         <OverviewTab tabVariants={tabVariants} user={user} />
       )}
+      {activeTab === 'following' && (
+        <FollowingTab tabVariants={tabVariants} />
+      )}
+      {activeTab === 'followers' && (
+        <FollowersTab tabVariants={tabVariants} />
+      )}
       {activeTab === 'questions' && (
         <QuestionsTab tabVariants={tabVariants} />
       )}
       {activeTab === 'answers' && (
         <AnswersTab tabVariants={tabVariants} />
-      )}
-      {activeTab === 'ai-chats' && (
-        <AIChatsTab tabVariants={tabVariants} />
       )}
       {activeTab === 'saved' && (
         <SavedTab tabVariants={tabVariants} />
