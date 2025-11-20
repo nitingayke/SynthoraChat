@@ -8,7 +8,7 @@ export default function AISummaryCard({itemVariants}) {
   return (
     <motion.div
       variants={itemVariants}
-      className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white shadow-xl"
+      className="md:w-1/2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white shadow-xl"
     >
       <div className="flex items-center gap-3 mb-3">
         <Brain className="w-6 h-6" />

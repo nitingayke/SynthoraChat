@@ -7,7 +7,7 @@ const QuickActions = ({itemVariants}) => {
   return (
     <motion.div
       variants={itemVariants}
-      className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm"
+      className="md:w-1/2 bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm md:mb-5"
     >
       <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
       <div className="space-y-2">
