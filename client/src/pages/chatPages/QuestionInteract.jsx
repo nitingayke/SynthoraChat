@@ -2,10 +2,8 @@ import { useContext } from "react";
 import FilterQuestionList from "../../components/main/questionInteract/FilterQuestionList";
 import QuestionContext from "../../context/QuestionContext";
 import QuestionDetail from "../../components/main/questionInteract/QuestionDetail"
-import { Link, useParams } from "react-router-dom";
-import WriteAnswer from "../../components/main/questionInteract/WriteAnswer";
+import { useParams } from "react-router-dom";
 import AnswerList from "../../components/main/questionInteract/AnswerList";
-import { Hash } from "lucide-react";
 
 export default function QuestionInteract() {
 
@@ -50,11 +48,12 @@ export default function QuestionInteract() {
             <div className="h-fit hidden md:block w-70 md:w-[35%] sticky bottom-4 self-start">
                 <FilterQuestionList />
             </div>
-            <div className="flex-1 space-y-3 rounded-xl border p-3 sm:p-5 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition">
+            <div className="flex-1 space-y-3 rounded-xl border p-3 sm:p-4 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition">
                 <QuestionDetail question={currentQuestion} />
 
                 <AnswerList question={currentQuestion} />
-                {/* <WriteAnswer question={currentQuestion} /> */}
+
+                <br />
             </div>
         </div>
     )

@@ -6,13 +6,13 @@ import {
   Loader2,
   ThumbsUp,
   ArrowBigUp,
-  Sparkles,
 } from "lucide-react";
 
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../../../context/AuthContext";
 import { Link } from "react-router-dom";
 import MediaDialog from "./MediaDialog";
+import CommentActions from "./CommentActions";
 
 export default function QuestionDetail({ question }) {
 
@@ -28,7 +28,6 @@ export default function QuestionDetail({ question }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const [isSummarizing, setIsSummarizing] = useState(false);
 
   const {
     _id,
@@ -91,23 +90,6 @@ export default function QuestionDetail({ question }) {
     setIsLoading(prev => ({ ...prev, share: false }));
   };
 
-  const handleGenerateSummary = async () => {
-    setIsSummarizing(true);
-
-    try {
-      // Simulate processing time - wait for 3 seconds
-      await new Promise(resolve => setTimeout(resolve, 3000));
-
-      // Your summary generation logic here
-      console.log("Summary generation completed after 3 seconds");
-
-    } catch (error) {
-      console.error('Error in summary generation:', error);
-    } finally {
-      setIsSummarizing(false);
-    }
-  };
-
   if (!question) return null;
 
   return (
@@ -139,7 +121,7 @@ export default function QuestionDetail({ question }) {
       </header>
 
       {/* ACTIONS */}
-      <div className="relative flex flex-wrap justify-between sm:justify-start gap-4 mt-5 py-2 border-y border-gray-200 dark:border-[#2a2a2a]">
+      <div className="sm:relative flex flex-wrap items-center justify-between sm:justify-start gap-4 mt-5 py-2 border-y border-gray-200 dark:border-[#2a2a2a]">
 
         <ActionButton
           active={isLiked}
@@ -185,24 +167,16 @@ export default function QuestionDetail({ question }) {
           <span>{shares}</span>
         </button>
 
-        <button
-          onClick={handleGenerateSummary}
-          disabled={isSummarizing}
+        {/* action buttons */}
+        <div
           className="
-            flex items-center sm:absolute right-0 gap-2 px-3 py-1.5 rounded-lg text-sm font-medium
-            text-white dark:text-gray-200 bg-[#07C5B9] dark:bg-[#07C5B9]/10 
-            hover:bg-[#07C5B9]/80 dark:hover:bg-[#07C5B9]/20 transition-all duration-200
-          "
-          title={isSummarizing ? "Generating AI summary… please wait" : "Generate an AI summary for this question"}
+              absolute right-0 sm:w-fit
+              bottom-0 left-0 sm:bottom-auto sm:left-auto
+            "
         >
-          {isSummarizing ? (
-            <Loader2 className="animate-spin" size={18} />
-          ) : (
-            <Sparkles size={18} className="dark:text-[#07C5B9]" />
-          )}
+          <CommentActions />
+        </div>
 
-          <span className="hidden sm:flex">AI Summary</span>
-        </button>
       </div>
 
       <footer className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
@@ -258,6 +232,15 @@ function ActionButton({
     </button>
   );
 }
+
+ActionButton.propTypes = {
+  active: PropTypes.bool.isRequired,
+  loading: PropTypes.bool,
+  onClick: PropTypes.func.isRequired,
+  count: PropTypes.number,
+  ActiveIcon: PropTypes.elementType.isRequired,
+  activeClass: PropTypes.string,
+};
 
 QuestionDetail.propTypes = {
   question: PropTypes.object.isRequired,
