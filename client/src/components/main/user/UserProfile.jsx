@@ -292,7 +292,7 @@ export default function UserProfile() {
                     </button>
                     <Link
                         to="/profile"
-                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-[#07C5B9] dark:to-[#0EA5E9] text-white rounded-xl hover:opacity-90 transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-[#07C5B9] text-white rounded-xl hover:opacity-90 transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                     >
                         <Users className="w-4 h-4" />
                         Full Profile

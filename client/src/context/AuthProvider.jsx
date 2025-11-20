@@ -5,6 +5,7 @@ export const AuthProvider = ({ children }) => {
 
     const [loginUser, setLoginUser] = useState(
         {
+            "_id": "676a983197cd8b2b496ef789",
             "username": "nitin_gayke",
             "email": "nitin@example.com",
             "password": "$2b$10$ZzZzZzZzZzZzZzZzZzZzO6b8kR7g3oE8m5xW7kMZzO",
@@ -76,6 +77,7 @@ export const AuthProvider = ({ children }) => {
             "savedQuestions": [
                 {
                     "question": "671fb9c3a18c8a5c0d6e8b08",
+                    "question": "676a983197cd8b2b496ef001",
                     "savedAt": "2025-10-28T12:00:00.000Z"
                 },
                 {
@@ -193,7 +195,6 @@ export const AuthProvider = ({ children }) => {
             "joinDate": "2025-11-01T14:15:00.000Z",
             "lastActive": "2025-11-01T14:15:00.000Z"
         }
-
     );
 
     const logout = () => {
