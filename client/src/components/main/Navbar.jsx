@@ -59,9 +59,9 @@ export default function Navbar() {
                     ))}
 
 
-                    <div className="relative">
+                    <div className="relative px-3 w-full sm:w-80 md:w-60 lg:w-70">
                         <Search
-                            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-gray-400"
+                            className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-gray-400"
                         />
                         <input
                             type="text"
@@ -69,7 +69,7 @@ export default function Navbar() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="
-                        w-50 sm:w-80 md:w-60 lg:w-70 pl-9 pr-3 py-1.5
+                        w-full pl-9 pr-3 py-1.5
                         bg-gray-100 dark:bg-[#202020]
                         text-gray-700 dark:text-gray-200
                         rounded-full border border-gray-300 dark:border-gray-700
@@ -96,7 +96,7 @@ export default function Navbar() {
 
                     <button
                         onClick={null}
-                        className="related p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition relative"
+                        className="related hidden sm:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition relative"
                     >
                         <Bell className="w-5 h-5" />
                         {(notifications?.length > 0) && (

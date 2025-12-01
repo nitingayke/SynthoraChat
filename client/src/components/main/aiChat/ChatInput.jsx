@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import { Send, Paperclip, Mic, Sparkles, Edit3, Lightbulb, StopCircle } from 'lucide-react';
 import AIChatContext from '../../../context/AIChatContext';
 

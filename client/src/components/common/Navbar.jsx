@@ -30,7 +30,7 @@ export default function Navbar() {
   const renderNavLinks = (isMobile = false) => (
     <ul
       className={`flex ${isMobile
-          ? "flex-col gap-4 mt-6 text-lg font-semibold overflow-auto"
+          ? "flex-col gap-4 mt-6 text-lg font-semibold overflow-auto scrollbar-hide"
           : "hidden lg:flex gap-5 lg:gap-1 font-semibold"
         } text-gray-800 dark:text-gray-200`}
     >

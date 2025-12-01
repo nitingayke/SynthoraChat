@@ -19,7 +19,7 @@ export default function ChatWindow() {
     }, [selectedChat?.messages]);
 
     return (
-        <div className="flex flex-col flex-1 overflow-hidden pt-4 h-[calc(100vh-61px)]">
+        <div className="flex flex-col flex-1 overflow-hidden pt-4 h-[calc(100vh-65px)]">
 
             <div 
                 ref={chatScrollRef}
@@ -55,7 +55,7 @@ export default function ChatWindow() {
                 )}
 
                 {
-                    isAnswerLoading && <div className="text-[15px] flex px-2 space-x-2">
+                    isAnswerLoading && <div className="text-[15px] flex px-2 space-x-2 pb-5">
                         <div className="animate-spin rounded-full border-3 border-x-0 w-4 h-4"></div>
                         <span>Loading...</span>
                     </div>

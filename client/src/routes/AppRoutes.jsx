@@ -20,6 +20,7 @@ import { ProfilePage } from "../pages/ProfilePage";
 import AIChat from "../pages/chatPages/AIChat";
 import UserProfile from "../pages/UserProfile";
 import QuestionInteract from "../pages/chatPages/QuestionInteract";
+import Temp from "../pages/chatPages/Temp";
 
 export default function AppRoutes() {
 
@@ -45,6 +46,7 @@ export default function AppRoutes() {
                     <Route path="explore" element={<Explore />} />
                     <Route path="settings" element={<SettingsPage />} />
                     <Route path="create-post" element={<CreatePostPage />} />
+                    <Route path="temp" element={<Temp />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
 

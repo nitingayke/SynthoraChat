@@ -77,7 +77,6 @@ export const AuthProvider = ({ children }) => {
             "savedQuestions": [
                 {
                     "question": "671fb9c3a18c8a5c0d6e8b08",
-                    "question": "676a983197cd8b2b496ef001",
                     "savedAt": "2025-10-28T12:00:00.000Z"
                 },
                 {
