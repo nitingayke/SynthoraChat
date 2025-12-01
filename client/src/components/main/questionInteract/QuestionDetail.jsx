@@ -121,7 +121,7 @@ export default function QuestionDetail({ question }) {
       </header>
 
       {/* ACTIONS */}
-      <div className="sm:relative flex flex-wrap items-center justify-between sm:justify-start gap-4 mt-5 py-2 border-y border-gray-200 dark:border-[#2a2a2a]">
+      <div className="relative flex flex-wrap items-center justify-between sm:justify-start gap-2 lg:gap-4 mt-5 py-2 border-y border-gray-200 dark:border-[#2a2a2a]">
 
         <ActionButton
           active={isLiked}
@@ -167,15 +167,9 @@ export default function QuestionDetail({ question }) {
           <span>{shares}</span>
         </button>
 
-        {/* action buttons */}
-        <div
-          className="
-              absolute right-0 sm:w-fit
-              bottom-0 left-0 sm:bottom-auto sm:left-auto
-            "
-        >
-          <CommentActions />
-        </div>
+        <div className="hidden sm:flex flex-1" />
+        
+        <CommentActions />
 
       </div>
 

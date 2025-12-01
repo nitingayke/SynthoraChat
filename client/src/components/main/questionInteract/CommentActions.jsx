@@ -25,16 +25,16 @@ export default function CommentActions() {
     };
 
     return (
-        <div className="flex items-center sm:gap-3 rounded-t-md overflow-hidden">
+        <>
             <button
                 onClick={handleGenerateSummary}
                 disabled={isSummarizing}
                 className="
-                    flex items-center justify-center gap-2 px-3 py-2 sm:py-1.5 sm:rounded-lg text-sm font-medium
+                    flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium
                     text-white bg-[#07C5B9] z-50 
                     hover:bg-[#06b0a5]
                     transition-all duration-200
-                    disabled:opacity-60 disabled:cursor-not-allowed w-1/2 sm:w-fit
+                    disabled:opacity-60 disabled:cursor-not-allowed
                 "
                 title={
                     isSummarizing
@@ -48,23 +48,22 @@ export default function CommentActions() {
                     <Sparkles size={18} />
                 )}
 
-                <span className="sm:hidden md:flex">AI Summary</span>
+                <span className="hidden md:flex">AI Summary</span>
             </button>
 
-            {/* ANSWER BUTTON */}
             <button
                 onClick={handleWriteAnswer}
                 className="
-          flex items-center justify-center gap-2 px-3 py-2 sm:py-1.5 sm:rounded-lg text-sm font-medium
-          text-white dark:text-gray-200 bg-orange-500 dark:bg-orange-600 z-50 
-          hover:bg-orange-600 dark:hover:bg-orange-700 transition-all duration-200 w-1/2 sm:w-fit
+          flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium
+          text-white dark:text-gray-200 bg-orange-500 dark:bg-orange-600 
+          hover:bg-orange-600 dark:hover:bg-orange-700 transition-all duration-200 w-fit
         "
                 title="Write an answer for this question"
             >
                 <Pencil size={18} />
-                <span className="sm:hidden md:flex">Answer</span>
+                <span className="hidden md:flex">Answer</span>
             </button>
 
-        </div>
+        </>
     );
 }
