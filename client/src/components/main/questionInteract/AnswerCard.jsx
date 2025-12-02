@@ -1,4 +1,4 @@
-import { ThumbsUp, Eye, Share2, ArrowBigUp, MessageCircle, Pencil, Trash2, Hash } from "lucide-react";
+import { ThumbsUp, Eye, Share2, ArrowBigUp, MessageCircle, Pencil, Trash2, Hash, Loader2 } from "lucide-react";
 import PropTypes from "prop-types";
 import { useContext, useState } from "react";
 import Avatar from "@mui/material/Avatar";
@@ -17,7 +17,9 @@ export default function AnswerCard({ answer }) {
     upvote: false,
     delete: false,
     edit: false,
+    share: false,
   });
+
   const [visibleComments, setVisibleComments] = useState(10);
   const [showComments, setShowComments] = useState(false);
 
@@ -25,6 +27,57 @@ export default function AnswerCard({ answer }) {
   const loadMore = () => {
     setVisibleComments((prev) => prev + 10);
   };
+
+  const handleLikeAnswer = (id) => {
+    setIsLoading(prev => ({ ...prev, like: true }));
+
+    setTimeout(() => {
+      setIsLoading(prev => ({ ...prev, like: false }));
+    }, 1200);
+  };
+
+  const handleUpvoteAnswer = (id) => {
+    setIsLoading(prev => ({ ...prev, upvote: true }));
+
+    setTimeout(() => {
+      setIsLoading(prev => ({ ...prev, upvote: false }));
+    }, 1200);
+  };
+
+  const handleEditAnswer = (id) => {
+    setIsLoading(prev => ({ ...prev, edit: true }));
+
+    setTimeout(() => {
+      setIsLoading(prev => ({ ...prev, edit: false }));
+    }, 1200);
+  };
+
+  const handleDeleteAnswer = (id) => {
+    setIsLoading(prev => ({ ...prev, delete: true }));
+
+    setTimeout(() => {
+      setIsLoading(prev => ({ ...prev, delete: false }));
+    }, 1200);
+  };
+
+  const handleShareAnswer = (id) => {
+    setIsLoading(prev => ({ ...prev, share: true }));
+
+    setTimeout(() => {
+      if (navigator.share) {
+        navigator.share({
+          title: "Answer",
+          text: "Check out this answer!",
+          url: window.location.href
+        }).catch(() => { });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+      }
+
+      setIsLoading(prev => ({ ...prev, share: false }));
+    }, 1000);
+  };
+
 
   const author = answer?.author || {};
   const isOwner = loginUser?._id === author?._id;
@@ -60,9 +113,9 @@ export default function AnswerCard({ answer }) {
         {isOwner && (
           <div className="flex items-center gap-2">
             <button
-              onClick={() => { }}
+              onClick={() => handleEditAnswer(answer?._id)}
               disabled={isLoading.edit}
-              className="p-2 rounded-md bg-gray-200 dark:bg-[#212121] hover:bg-gray-300 dark:hover:bg-[#2c2c2c] text-gray-800 dark:text-white"
+              className="p-2 rounded-md bg-gray-200 dark:bg-[#212121] hover:bg-blue-800/30 text-gray-800 dark:text-white hover:text-blue-500"
             >
               {isLoading.edit ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -72,9 +125,9 @@ export default function AnswerCard({ answer }) {
             </button>
 
             <button
-              onClick={() => { }}
+              onClick={() => handleDeleteAnswer(answer?._id)}
               disabled={isLoading.delete}
-              className="p-2 rounded-md  bg-gray-200 dark:bg-[#212121] hover:bg-red-200 dark:hover:bg-red-900/30 hover:text-red-500 text-gray-800 dark:text-white"
+              className="p-2 rounded-md bg-gray-200 dark:bg-[#212121] hover:bg-red-200 dark:hover:bg-red-900/30 hover:text-red-500 text-gray-800 dark:text-white"
             >
               {isLoading.delete ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -96,29 +149,46 @@ export default function AnswerCard({ answer }) {
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap justify-between sm:justify-start items-center gap-5 text-xs text-gray-600 dark:text-gray-400">
+      <div className="mt-4 flex flex-wrap justify-between sm:justify-start items-center gap-3 text-xs text-gray-600 dark:text-gray-400">
 
-        <button className="flex items-center gap-1 hover:text-red-500">
-          <ThumbsUp size={16} />
-          {answer?.likes?.length || 0}
+        <button
+          onClick={() => handleLikeAnswer(answer?._id)}
+          disabled={isLoading.like}
+          className="flex items-center gap-1 px-2 py-1.5 rounded-md bg-gray-200 dark:bg-[#202020] hover:text-red-500 disabled:opacity-50"
+        >
+          {isLoading.like
+            ? <Loader2 size={16} className="animate-spin" />
+            : <ThumbsUp size={16} />}
+          <span className="mt-0.5">{answer?.likes?.length || 0}</span>
         </button>
 
-        {/* UPVOTE */}
-        <button className="flex items-center gap-1 hover:text-green-500">
-          <ArrowBigUp size={16} />
-          {answer?.upvotes?.length || 0}
+
+        <button
+          onClick={() => handleUpvoteAnswer(answer?._id)}
+          disabled={isLoading.upvote}
+          className="flex items-center gap-1 px-2 py-1.5 rounded-md bg-gray-200 dark:bg-[#202020] hover:text-green-500 disabled:opacity-50"
+        >
+          {isLoading.upvote
+            ? <Loader2 size={16} className="animate-spin" />
+            : <ArrowBigUp size={16} />}
+          <span className="mt-0.5">{answer?.upvotes?.length || 0}</span>
         </button>
 
-        {/* VIEWS */}
+        <button
+          onClick={() => handleShareAnswer(answer?._id)}
+          disabled={isLoading.share}
+          className="flex items-center gap-1 px-2 py-1.5 rounded-md bg-gray-200 dark:bg-[#202020] hover:text-blue-500 disabled:opacity-50"
+        >
+          {isLoading.share
+            ? <Loader2 size={16} className="animate-spin" />
+            : <Share2 size={16} />}
+          <span className="mt-0.5">{answer?.shares || 0}</span>
+        </button>
+
+         {/* VIEWS */}
         <span className="flex items-center gap-1">
           <Eye size={16} />
-          {answer?.views || 0}
-        </span>
-
-        {/* SHARES */}
-        <span className="flex items-center gap-1">
-          <Share2 size={16} />
-          {answer?.shares || 0}
+          <span>{answer?.views || 0}</span>
         </span>
 
         {/* AI ACCURACY */}

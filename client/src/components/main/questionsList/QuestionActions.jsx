@@ -65,7 +65,7 @@ export default function QuestionActions({ question }) {
             {/* Answer Button */}
             <Link
                 to={`/main/question/${question._id}`}
-                className="flex items-center gap-1 px-1.5 lg:px-3 py-1.5 bg-gray-100 dark:bg-[#202020] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-md lg:rounded-lg text-sm font-medium transition-all"
+                className="flex items-center gap-1 px-1.5 lg:px-3 py-1.5 bg-gray-200 dark:bg-[#202020] text-gray-600 dark:text-gray-400 hover:opacity-80 dark:hover:bg-[#2a2a2a] rounded-md lg:rounded-lg text-sm font-medium transition-all"
             >
                 <MessageSquare className="w-4 h-4" />
                 <span className='hidden lg:flex'>Answer</span>
@@ -86,7 +86,7 @@ export default function QuestionActions({ question }) {
             {/* Share Button */}
             <button
                 onClick={handleShare}
-                className="p-1.5 bg-gray-100 dark:bg-[#202020] text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#2a2a2a] rounded-md lg:rounded-lg transition-all"
+                className="p-1.5 bg-gray-200 dark:bg-[#202020] text-gray-600 dark:text-gray-400 hover:opacity-80 dark:hover:bg-[#2a2a2a] rounded-md lg:rounded-lg transition-all"
             >
                 <Share className="w-4 h-4" />
             </button>

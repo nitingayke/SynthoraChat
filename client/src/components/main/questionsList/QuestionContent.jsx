@@ -18,7 +18,7 @@ export default function QuestionContent({ question }) {
     return (
         <div className="mb-3">
             <Link to={`/main/questions/${question?._id}${query}`}>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-[#07C5B9] transition-colors cursor-pointer line-clamp-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white hover:text-orange-500 dark:hover:text-[#07C5B9] transition-colors cursor-pointer line-clamp-2">
                     {question.title}
                 </h3>
             </Link>

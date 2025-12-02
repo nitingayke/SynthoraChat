@@ -23,13 +23,13 @@ export default function FilterQuestionList() {
                         className={`
                             block rounded-xl p-3 transition-all cursor-pointer group border 
                             ${isActive
-                                ? "border-[#07C5B9]/40 bg-[#07C5B9]/7 dark:bg-[#07C5B9]/5"
-                                : "bg-white dark:bg-[#161616] dark:hover:bg-[#1c1c1c] border-gray-300 dark:border-[#2a2a2a]"
+                                ? "border-orange-500 dark:border-[#07C5B9]/20 bg-orange-50 dark:bg-[#07C5B9]/5"
+                                : "bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1c1c1c] border-gray-300 dark:border-[#2a2a2a]"
                             }
                         `}
                     >
                         {/* Title */}
-                        <h2 className={`font-semibold text-base group-hover:text-[#07C5B9] transition-colors line-clamp-2 ${isActive ? "text-[#07C5B9]" : "dark:text-white"}`}>
+                        <h2 className={`font-semibold text-base group-hover:text-orange-500 dark:group-hover:text-[#07C5B9] transition-colors line-clamp-2 ${isActive ? "text-orange-500 dark:text-[#07C5B9]" : "dark:text-white"}`}>
                             {q?.title || "Untitled Question"}
                         </h2>
 
@@ -43,7 +43,7 @@ export default function FilterQuestionList() {
                         {/* Status + Answer Count */}
                         <div className="flex items-center gap-2 mt-2">
                             <span
-                                className="text-[10px] px-2 py-1 rounded-full bg-[#07C5B9]/10 text-[#07C5B9]"
+                                className="text-[10px] px-2 py-1 rounded-full text-orange-500 bg-orange-100 dark:bg-[#07C5B9]/10 dark:text-[#07C5B9]"
                             >
                                 {q?.status || "active"}
                             </span>

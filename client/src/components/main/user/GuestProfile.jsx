@@ -21,7 +21,7 @@ export default function GuestProfile() {
             icon: Users,
             value: "10K+",
             label: "Active Users",
-            color: "text-blue-500 dark:text-blue-400"
+            color: "text-orange-500 dark:text-blue-400"
         },
         {
             icon: MessageSquare,
@@ -69,7 +69,7 @@ export default function GuestProfile() {
     return (
         <div className="w-full bg-white dark:bg-[#161616] rounded-lg border border-gray-200 dark:border-gray-800/50 overflow-hidden transition-all duration-300">
             {/* Header with Gradient */}
-            <div className="relative h-30 bg-gray-300/80 dark:bg-gray-200/20">
+            <div className="relative h-30 bg-gradient-to-r from-[#07C5B9] to-[#0EA5E9]">
                 <div className="absolute inset-0" />
                 <div className="absolute top-3 left-4">
                     <h2 className="text-white font-bold text-xl md:text-2xl">Join Our Community</h2>
@@ -110,7 +110,7 @@ export default function GuestProfile() {
                         return (
                             <div 
                                 key={index * 0.254}
-                                className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-500/10 dark:to-gray-600/10 p-3 rounded-xl border border-gray-200 dark:border-gray-500/20"
+                                className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-500/10 dark:to-gray-600/10 p-3 rounded-lg border border-gray-200 dark:border-gray-500/20"
                             >
                                 <div className="flex items-center justify-between">
                                     <div>
@@ -131,7 +131,7 @@ export default function GuestProfile() {
                 {/* Features List */}
                 <div className="mt-4 space-y-3">
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                        <Zap className="w-4 h-4 text-blue-500 dark:text-[#07C5B9]" />
+                        <Zap className="w-4 h-4 text-orange-500 dark:text-[#07C5B9]" />
                         Why Join Us?
                     </h3>
                     
@@ -141,9 +141,9 @@ export default function GuestProfile() {
                             return (
                                 <div 
                                     key={index * 0.2548}
-                                    className="flex items-start gap-3 p-2 bg-gray-50 dark:bg-[#202020] rounded-lg hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors"
+                                    className="flex items-start gap-3 p-2 bg-gray-200 dark:bg-[#202020] rounded-lg transition-colors"
                                 >
-                                    <IconComponent className="w-4 h-4 text-blue-500 dark:text-[#07C5B9] mt-0.5 flex-shrink-0" />
+                                    <IconComponent className="w-4 h-4 text-orange-500 dark:text-[#07C5B9] mt-0.5 flex-shrink-0" />
                                     <div>
                                         <div className="text-xs font-medium text-gray-900 dark:text-white">
                                             {feature.title}
@@ -170,7 +170,7 @@ export default function GuestProfile() {
                         ].map((topic, index) => (
                             <span
                                 key={index * 0.2587}
-                                className="px-2 py-1 bg-blue-100 dark:bg-[#07C5B9]/20 text-blue-800 dark:text-[#07C5B9] text-xs rounded-full border border-blue-200 dark:border-[#07C5B9]/30"
+                                className="px-2 py-1 bg-orange-100 dark:bg-[#07C5B9]/20 text-orange-500 dark:text-[#07C5B9] text-xs rounded-full border border-orange-200 dark:border-[#07C5B9]/30"
                             >
                                 {topic}
                             </span>
@@ -182,7 +182,7 @@ export default function GuestProfile() {
                 <div className="mt-5 space-y-3">
                     <Link
                         to="/login"
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#07C5B9] text-white rounded-xl hover:opacity-90 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#07C5B9] text-white rounded-lg hover:opacity-80 transition-all duration-200 font-medium shadow-md hover:shadow-lg"
                     >
                         <Rocket className="w-4 h-4" />
                         Get Started - It's Free
@@ -194,7 +194,7 @@ export default function GuestProfile() {
                             Already have an account?{" "}
                             <Link 
                                 to="/signup" 
-                                className="text-blue-500 dark:text-[#07C5B9] hover:underline font-medium"
+                                className="text-orange-500 dark:text-[#07C5B9] hover:underline font-medium"
                             >
                                 Sign In
                             </Link>

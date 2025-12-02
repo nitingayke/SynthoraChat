@@ -25,17 +25,11 @@ export default function CommentActions() {
     };
 
     return (
-        <>
+        <div className="sm:absolute right-0 flex gap-2">
             <button
                 onClick={handleGenerateSummary}
                 disabled={isSummarizing}
-                className="
-                    flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium
-                    text-white bg-[#07C5B9] z-50 
-                    hover:bg-[#06b0a5]
-                    transition-all duration-200
-                    disabled:opacity-60 disabled:cursor-not-allowed
-                "
+                className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-white bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 transition-all duration-200"
                 title={
                     isSummarizing
                         ? "Generating AI summary… please wait"
@@ -53,17 +47,13 @@ export default function CommentActions() {
 
             <button
                 onClick={handleWriteAnswer}
-                className="
-          flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium
-          text-white dark:text-gray-200 bg-orange-500 dark:bg-orange-600 
-          hover:bg-orange-600 dark:hover:bg-orange-700 transition-all duration-200 w-fit
-        "
+                className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-white bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 transition-all duration-200"
                 title="Write an answer for this question"
             >
                 <Pencil size={18} />
                 <span className="hidden md:flex">Answer</span>
             </button>
 
-        </>
+        </div>
     );
 }

@@ -41,7 +41,7 @@ export default function AppRoutes() {
 
                 <Route path="/main" element={<MainLayout />} >
                     <Route index element={<Main />} />
-                    <Route path="/main/questions/:questionId" element={<QuestionInteract />} />
+                    <Route path="questions/:questionId" element={<QuestionInteract />} />
                     <Route path="ai-chat/:threadId?" element={<AIChat />} />
                     <Route path="explore" element={<Explore />} />
                     <Route path="settings" element={<SettingsPage />} />

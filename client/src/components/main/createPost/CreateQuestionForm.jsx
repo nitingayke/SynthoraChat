@@ -1,30 +1,21 @@
-import { useEffect, useState } from "react";
-import { Image, Video, FileAudio, File, Plus, X, Sparkles, Send } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
+import { Image, Video, FileAudio, File, X, Sparkles, Send, Loader2, Trash2, Smile } from "lucide-react";
+import PostContext from "../../../context/PostContext";
+import EmojiPickerDialog from "../../common/EmojiPickerDialog"
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
 export default function CreateQuestionForm() {
 
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const [topics, setTopics] = useState([]);
+    const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
+    const { title, setTitle, content, setContent, topics, setTopics, media, setMedia, setAllowComments, allowComments, TITLE_LIMIT, CONTENT_LIMIT, TOPIC_LIMIT } = useContext(PostContext);
+
     const [topicInput, setTopicInput] = useState("");
-    const [media, setMedia] = useState([]);
     const [duplicateTopic, setDuplicateTopic] = useState("");
+    const [topicLoading, setTopicLoading] = useState(false);
+    const [openEmoji, setOpenEmoji] = useState(false);
 
-    const TITLE_LIMIT = 120;
-    const CONTENT_LIMIT = 7000;
-    const TOPIC_LIMIT = 6;
-    const TOPIC_TEXT_LIMIT = 20;
-    const MEDIA_LIMIT = 7;
-
-    useEffect(() => {
-        const savedTitle = localStorage.getItem("draft_title");
-        const savedContent = localStorage.getItem("draft_content");
-        const savedTopics = JSON.parse(localStorage.getItem("draft_topics") || "[]");
-
-        if (savedTitle) setTitle(savedTitle);
-        if (savedContent) setContent(savedContent);
-        if (savedTopics.length > 0) setTopics(savedTopics);
-    }, []);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -80,10 +71,13 @@ export default function CreateQuestionForm() {
     const generateTopicsFromAI = async () => {
         if (!title && !content) return;
 
-        const prompt = `Suggest 4-6 short topics for this question:\nTitle: ${title}\nDescription: ${content}`;
+        setTopicLoading(true);
 
-        const generated = ["AI", "JavaScript", "Web", "React Native"];
-        setTopics(generated);
+        setTimeout(() => {
+            const generated = ["AI", "JavaScript", "Web", "React Native"];
+            setTopics(generated);
+            setTopicLoading(false);
+        }, 5000);
     };
 
     const handleSubmit = () => {
@@ -104,6 +98,15 @@ export default function CreateQuestionForm() {
         setTopics([]);
     };
 
+    const handleDiscardPost = () => {
+        setTitle("");
+        setContent("");
+        setTopics([]);
+        setMedia([]);
+        enqueueSnackbar('This is check', { variant: 'success' });
+        navigate(-1);
+    }
+
     return (
         <>
             <div className="mb-2">
@@ -122,13 +125,18 @@ export default function CreateQuestionForm() {
             </div>
 
             <div>
-                <label htmlFor="description" className="font-semibold text-lg dark:text-white">Description</label>
+                <div className="flex justify-between items-center">
+                    <label htmlFor="description" className="font-semibold text-lg dark:text-white">Description *</label>
+                    <button onClick={() => setOpenEmoji(true)} className="p-2 bg-orange-500 dark:bg-[#07C5B9] text-white rounded-lg cursor-pointer">
+                        <Smile size={18} />
+                    </button>
+                </div>
                 <textarea
                     id="description"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Explain your question in detail. What have you tried? What help do you need?"
-                    rows="6"
+                    rows="10"
                     className="w-full mt-1 p-3 rounded-lg bg-white dark:bg-neutral-900 dark:text-white outline-none"
                 ></textarea>
                 <div className="flex justify-end pt-1">
@@ -159,11 +167,20 @@ export default function CreateQuestionForm() {
 
                     <button
                         onClick={generateTopicsFromAI}
-                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold 
-                                bg-orange-500 dark:bg-[#07C5B9] text-white dark:text-black w-full md:w-fit whitespace-nowrap"
+                        disabled={title?.length === 0 || content?.length === 0 || topicLoading}
+                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold  bg-orange-500 dark:bg-[#07C5B9] text-white dark:text-black w-full md:w-fit whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        <Sparkles size={16} /> Generate Topics
+                        {topicLoading ? (
+                            <Loader2 className="animate-spin" size={18} />
+                        ) : (
+                            <Sparkles size={16} />
+                        )}
+                        {topicLoading ? "Generating..." : "Generate Topics"}
                     </button>
+
+                </div>
+                <div className="flex justify-end pt-1">
+                    <p className={`text-[10px] ${topics?.length > TOPIC_LIMIT && "text-red-500"}`}>{topics?.length}/{TOPIC_LIMIT}</p>
                 </div>
 
                 <div className="flex gap-2 flex-wrap mt-2 w-full">
@@ -242,14 +259,53 @@ export default function CreateQuestionForm() {
                 </div>
             </div>
 
-            <button
-                className="mt-6 w-full bg-orange-500 dark:bg-[#07C5B9] text-white 
-               font-semibold py-3 rounded-lg hover:opacity-90 flex items-center justify-center gap-2"
-                onClick={handleSubmit}
-            >
-                <Send size={18} />
-                Publish Question
-            </button>
+            <div className="flex justify-between items-center p-4 bg-white dark:bg-neutral-900 rounded-lg">
+                <div className="md:flex items-center md:gap-2">
+                    <label
+                        htmlFor="allowCommentsToggle"
+                        className="font-semibold text-neutral-900 dark:text-white block"
+                    >
+                        Allow Comments
+                    </label>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {allowComments ? "Comments will be allowed on answers." : "Comments will be disabled for answers."}
+                    </p>
+                </div>
+
+                <button
+                    id="allowCommentsToggle"
+                    type="button"
+                    role="switch"
+                    aria-checked={allowComments}
+                    aria-label={allowComments ? "Allow comments enabled" : "Allow comments disabled"}
+                    onClick={() => setAllowComments(prev => !prev)}
+                    className={`relative inline-flex items-center h-6 w-12 rounded-full p-1 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-orange-300 dark:focus-visible:ring-[#07C5B9]/40 ${allowComments ? "bg-orange-500 dark:bg-[#07C5B9]" : "bg-gray-200 dark:bg-neutral-700"}`}
+                >
+                    <span
+                        className={`bg-white dark:bg-neutral-100 h-4 w-4 rounded-full shadow transform transition-transform duration-200 ${allowComments ? "translate-x-6" : "translate-x-0"}`}
+                    />
+                </button>
+            </div>
+
+            <div className="flex items-center mt-6 gap-2">
+                <button
+                    className="w-full bg-orange-500 dark:bg-[#07C5B9] text-white font-semibold py-3 rounded-lg hover:opacity-90 flex items-center justify-center gap-2"
+                    onClick={handleSubmit}
+                >
+                    <Send size={18} />
+                    Publish Question
+                </button>
+
+                <button 
+                onClick={handleDiscardPost} 
+                className="flex items-center gap-2 bg-red-500 p-3 rounded-lg hover:opacity-80"
+                >
+                    <Trash2 size={18} />
+                    <span>Discard</span>
+                </button>
+            </div>
+
+            <EmojiPickerDialog open={openEmoji} onClosePicker={() => setOpenEmoji(false)} setter={setContent} />
         </>
     );
 }

@@ -34,7 +34,7 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
 
                 {/* HEADER */}
                 <div className="px-4 py-2.5 bg-white dark:bg-[#161616] sticky top-0 right-0 flex items-center justify-between border-b border-gray-400/30">
-                    <h2 className="font-bold text-lg text-[#07C5B9] flex items-center">
+                    <h2 className="font-bold text-lg text-orange-500 dark:text-[#07C5B9] flex items-center">
                         Filters
                     </h2>
                     <button
@@ -64,7 +64,7 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
                                 flex items-center justify-between 
                                 p-2 px-3 text-sm rounded-lg cursor-pointer transition-all
                                 ${isActive
-                                        ? "bg-[#07C5B9]/20 text-[#07C5B9] font-semibold"
+                                        ? "bg-orange-100 text-orange-500 dark:bg-[#07C5B9]/20 dark:text-[#07C5B9] font-semibold"
                                         : "hover:bg-gray-100 dark:hover:bg-[#212121]"
                                     }
                             `}
@@ -77,7 +77,7 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
                                 </div>
 
                                 {isActive && (
-                                    <Check size={16} className="text-[#07C5B9]" />
+                                    <Check size={16} className="text-orange-500 dark:text-[#07C5B9]" />
                                 )}
                             </Link>
                         );

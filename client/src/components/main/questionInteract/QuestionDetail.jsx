@@ -112,7 +112,7 @@ export default function QuestionDetail({ question }) {
           {topics.map(t => (
             <span
               key={t}
-              className="text-xs px-2 py-1 rounded-full bg-[#07C5B9]/10 text-[#07C5B9] font-medium"
+              className="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-500 dark:bg-[#07C5B9]/10 dark:text-[#07C5B9] font-medium"
             >
               {t}
             </span>
@@ -121,7 +121,7 @@ export default function QuestionDetail({ question }) {
       </header>
 
       {/* ACTIONS */}
-      <div className="relative flex flex-wrap items-center justify-between sm:justify-start gap-2 lg:gap-4 mt-5 py-2 border-y border-gray-200 dark:border-[#2a2a2a]">
+      <div className="relative flex flex-nowrap items-center justify-between sm:justify-start sm:gap-2 lg:gap-4 mt-5 py-2 border-y border-gray-200 dark:border-[#2a2a2a]">
 
         <ActionButton
           active={isLiked}
@@ -164,13 +164,10 @@ export default function QuestionDetail({ question }) {
           `}
         >
           {isLoading.share ? <Loader2 className="animate-spin" size={18} /> : <Share2 size={18} />}
-          <span>{shares}</span>
+          <span className="hidden sm:flex">{shares}</span>
         </button>
-
-        <div className="hidden sm:flex flex-1" />
         
         <CommentActions />
-
       </div>
 
       <footer className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
@@ -185,7 +182,7 @@ export default function QuestionDetail({ question }) {
         {author?.profile?.firstName && (
           <Link
             to={`/main/profile/${author?.username}`}
-            className="hover:text-[#07C5B9] transition"
+            className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition underline underline-offset-2"
           >
             By {author.profile.firstName} {author.profile.lastName}
           </Link>

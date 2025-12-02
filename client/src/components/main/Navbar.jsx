@@ -13,13 +13,18 @@ export default function Navbar() {
     const { setOpenLoginDialog, searchQuery, setSearchQuery } = useContext(UIStateContext);
 
     const navLinks = [
-        { name: "Home", path: "/home" },
+        { name: "Main", path: "/main" },
         { name: "AI Chat", path: "/main/ai-chat" },
         { name: "Explore", path: "/main/explore" },
         { name: "Create Post", path: "/main/create-post" },
     ];
 
-    const isActiveLink = (path) => location.pathname.startsWith(path);
+    const isActiveLink = (path) => {
+        if(path === "/main") {
+            return location.pathname === path;
+        }
+        return location.pathname.startsWith(path);
+    }
     const notifications = loginUser?.notifications || [];
 
     return (
@@ -34,7 +39,7 @@ export default function Navbar() {
         >
             <div className="max-w-5xl mx-auto flex justify-between items-center px-4 lg:px-0 py-2 md:px-6">
                 <Link
-                    to="/main"
+                    to="/"
                     className="flex items-center gap-1 hover:scale-95 transition-transform"
                 >
                     <Brain className="text-orange-500 dark:text-[#07C5B9] w-5 h-5 sm:w-6 sm:h-6" />
@@ -68,15 +73,7 @@ export default function Navbar() {
                             placeholder="Search..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="
-                        w-full pl-9 pr-3 py-1.5
-                        bg-gray-100 dark:bg-[#202020]
-                        text-gray-700 dark:text-gray-200
-                        rounded-full border border-gray-300 dark:border-gray-700
-                        focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-[#07C5B9]
-                        placeholder-gray-500 dark:placeholder-gray-400
-                        transition-all duration-300
-                    "
+                            className="w-full pl-9 pr-3 py-1.5 bg-gray-100 dark:bg-[#202020] text-gray-700 dark:text-gray-200 rounded-full border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-[#07C5B9] placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-300"
                         />
                     </div>
                 </div>
@@ -85,12 +82,12 @@ export default function Navbar() {
                     <button
                         onClick={toggleTheme}
                         className="hidden md:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-                        title={theme ? "Switch to Dark Mode" : "Switch to Light Mode"}
+                        title={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
                     >
-                        {theme ? (
-                            <Sun className="w-5 h-5 text-yellow-400" />
+                        {theme === "dark" ? (
+                            <Sun className="w-5 h-5" />
                         ) : (
-                            <Moon className="w-5 h-5 text-gray-300" />
+                            <Moon className="w-5 h-5" />
                         )}
                     </button>
 
@@ -102,8 +99,8 @@ export default function Navbar() {
                         {(notifications?.length > 0) && (
                             <span className="
                                 absolute top-0 right-0 bg-orange-500 dark:bg-[#07C5B9]
-                                text-white dark:text-black text-[12px] px-1 font-light flex items-center justify-center
-                                rounded-full font-mono
+                                text-white text-[12px] px-1 font-semibold flex items-center justify-center
+                                rounded-full
                             ">
                                 {Math.min(notifications?.length, 9)}
                                 {notifications?.length > 9 && "+"}

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Lock,
@@ -18,370 +19,9 @@ import {
   Hash,
   MessageCircle,
   Bot,
-  Bell,
-  Smile,
-  FileText,
-  Video,
-  File
+  Bell
 } from 'lucide-react';
 
-// Emoji Picker Component
-const EmojiPicker = ({ onEmojiSelect, isOpen, onClose }) => {
-  const emojiCategories = {
-    'People': ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇'],
-    'Objects': ['💡', '🔧', '📱', '💻', '📚', '📝', '🔍', '💎', '🎯', '⚡'],
-    'Symbols': ['❤️', '⭐', '🔥', '✨', '🎉', '✅', '❌', '❓', '❗', '💭'],
-    'Nature': ['🌱', '🚀', '🌈', '⭐', '🔥', '💧', '🌍', '💫', '🌸', '🌙']
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95, y: -10 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95, y: -10 }}
-      className="absolute top-full left-0 mt-2 bg-white dark:bg-[#1a1a1a] border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl z-50 p-4 w-80"
-    >
-      <div className="flex justify-between items-center mb-3">
-        <h4 className="font-semibold text-gray-900 dark:text-white">Choose an emoji</h4>
-        <button
-          onClick={onClose}
-          className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-
-      <div className="max-h-60 overflow-y-auto">
-        {Object.entries(emojiCategories).map(([category, emojis]) => (
-          <div key={category} className="mb-4">
-            <h5 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-              {category}
-            </h5>
-            <div className="grid grid-cols-5 gap-2">
-              {emojis.map((emoji) => (
-                <button
-                  key={emoji}
-                  onClick={() => onEmojiSelect(emoji)}
-                  className="text-2xl p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors transform hover:scale-110 duration-200"
-                >
-                  {emoji}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </motion.div>
-  );
-};
-
-// Title Input Component
-const TitleInput = ({ value, onChange, onEmojiSelect }) => {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="relative"
-    >
-      <div className="flex items-center gap-3 mb-3">
-        <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-xl">
-          <FileText className="w-5 h-5 text-blue-500 dark:text-[#07C5B9]" />
-        </div>
-        <h3 className="font-semibold text-gray-900 dark:text-white">Question Title</h3>
-      </div>
-
-      <div className="relative">
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder="Ask your question in one sentence..."
-          className="w-full p-6 text-2xl font-semibold border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#07C5B9] bg-white dark:bg-[#161616] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all resize-none pr-12"
-        />
-
-        <button
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
-        >
-          <Smile className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-        </button>
-
-        <EmojiPicker
-          isOpen={showEmojiPicker}
-          onClose={() => setShowEmojiPicker(false)}
-          onEmojiSelect={(emoji) => {
-            onChange(value + emoji);
-            setShowEmojiPicker(false);
-          }}
-        />
-      </div>
-
-      <div className="flex justify-between items-center mt-2">
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          {value.length}/120 characters
-        </span>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          Be specific and clear
-        </span>
-      </div>
-    </motion.div>
-  );
-};
-
-// Description Input Component
-const DescriptionInput = ({ value, onChange, onEmojiSelect, showPreview, onTogglePreview }) => {
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const wordCount = value.split(/\s+/).filter(word => word.length > 0).length;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 }}
-    >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-purple-100 dark:bg-purple-500/20 rounded-xl">
-            <FileText className="w-5 h-5 text-purple-500 dark:text-purple-400" />
-          </div>
-          <h3 className="font-semibold text-gray-900 dark:text-white">Problem Description</h3>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
-          >
-            <Smile className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-          </button>
-
-          <button
-            onClick={onTogglePreview}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 dark:bg-[#202020] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#2a2a2a] transition-colors"
-          >
-            {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            {showPreview ? 'Edit' : 'Preview'}
-          </button>
-        </div>
-      </div>
-
-      <div className="relative">
-        {showPreview ? (
-          <div className="prose dark:prose-invert max-w-none p-6 bg-gray-50 dark:bg-[#1a1a1a] rounded-2xl min-h-[200px] border-2 border-gray-200 dark:border-gray-700">
-            {value || (
-              <p className="text-gray-500 dark:text-gray-400 italic">Nothing to preview yet...</p>
-            )}
-          </div>
-        ) : (
-          <>
-            <textarea
-              value={value}
-              onChange={(e) => onChange(e.target.value)}
-              placeholder="Describe your problem in detail. Include what you've tried, error messages, or specific requirements..."
-              rows={12}
-              className="w-full p-6 border-2 border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#07C5B9] bg-white dark:bg-[#161616] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all resize-none"
-            />
-
-            <EmojiPicker
-              isOpen={showEmojiPicker}
-              onClose={() => setShowEmojiPicker(false)}
-              onEmojiSelect={(emoji) => {
-                onChange(value + emoji);
-                setShowEmojiPicker(false);
-              }}
-            />
-          </>
-        )}
-      </div>
-
-      <div className="flex justify-between items-center mt-3">
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          {wordCount} / 2000 words
-        </div>
-        <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400">
-          <span>Markdown supported</span>
-          <span>•</span>
-          <span>Code blocks available</span>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-// Media Upload Component with Max 6 Files
-const MediaUpload = ({ media, onMediaAdd, onMediaRemove }) => {
-  const fileInputRef = useRef(null);
-  const maxFiles = 6;
-
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const remainingSlots = maxFiles - media.length;
-    const filesToAdd = files.slice(0, remainingSlots);
-
-    if (filesToAdd.length === 0) {
-      alert(`Maximum ${maxFiles} files allowed`);
-      return;
-    }
-
-    const newMedia = filesToAdd.map(file => ({
-      id: Math.random().toString(36).substr(2, 9),
-      file,
-      url: URL.createObjectURL(file),
-      type: file.type.startsWith('image') ? 'image' :
-        file.type.startsWith('video') ? 'video' : 'document',
-      name: file.name,
-      size: (file.size / (1024 * 1024)).toFixed(2) + ' MB'
-    }));
-
-    onMediaAdd(newMedia);
-  };
-
-  const getFileIcon = (type) => {
-    switch (type) {
-      case 'image': return <Image className="w-5 h-5" />;
-      case 'video': return <Video className="w-5 h-5" />;
-      default: return <File className="w-5 h-5" />;
-    }
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.2 }}
-    >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-green-100 dark:bg-green-500/20 rounded-xl">
-            <Image className="w-5 h-5 text-green-500 dark:text-green-400" />
-          </div>
-          <h3 className="font-semibold text-gray-900 dark:text-white">
-            Attachments ({media.length}/{maxFiles})
-          </h3>
-        </div>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          Images, Videos, PDFs
-        </span>
-      </div>
-
-      {/* Upload Area */}
-      <div
-        onClick={() => fileInputRef.current?.click()}
-        className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-8 text-center hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-all cursor-pointer group"
-      >
-        <div className="max-w-sm mx-auto">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-            <Image className="w-8 h-8 text-white" />
-          </div>
-          <p className="text-gray-600 dark:text-gray-400 mb-2 font-medium">
-            Drag and drop files here
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mb-3">
-            or click to browse files
-          </p>
-          <div className="text-xs text-gray-400 dark:text-gray-600 space-y-1">
-            <p>Supports JPG, PNG, GIF, MP4, PDF, DOC</p>
-            <p>Max 10MB per file • Max {maxFiles} files</p>
-          </div>
-        </div>
-      </div>
-
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileUpload}
-        multiple
-        accept="image/*,video/*,.pdf,.doc,.docx"
-        className="hidden"
-      />
-
-      {/* Media Previews */}
-      <AnimatePresence>
-        {media.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mt-6 space-y-4"
-          >
-            <h4 className="font-medium text-gray-900 dark:text-white">Selected Files</h4>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {media.map((item) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  className="relative group bg-gray-50 dark:bg-[#1a1a1a] rounded-xl p-4 border border-gray-200 dark:border-gray-700"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-white dark:bg-[#2a2a2a] rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-700">
-                      {getFileIcon(item.type)}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 dark:text-white truncate">
-                        {item.name}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {item.size} • {item.type}
-                      </p>
-                    </div>
-
-                    <button
-                      onClick={() => onMediaRemove(item.id)}
-                      className="p-2 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 dark:text-red-400 rounded-lg transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Preview for images and videos */}
-                  {(item.type === 'image' || item.type === 'video') && (
-                    <div className="mt-3 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-                      {item.type === 'image' ? (
-                        <img
-                          src={item.url}
-                          alt="Preview"
-                          className="w-full h-24 object-cover"
-                        />
-                      ) : (
-                        <video
-                          src={item.url}
-                          className="w-full h-24 object-cover"
-                        />
-                      )}
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Progress indicator */}
-            <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-              <span>
-                {media.length} of {maxFiles} files selected
-              </span>
-              <div className="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-blue-500 dark:bg-[#07C5B9] transition-all duration-300"
-                  style={{ width: `${(media.length / maxFiles) * 100}%` }}
-                />
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-};
-
-// Main Create Post Component
 const Temp = () => {
   const [postData, setPostData] = useState({
     title: '',
@@ -397,15 +37,57 @@ const Temp = () => {
 
   const [newTopic, setNewTopic] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [wordCount, setWordCount] = useState(0);
+  const fileInputRef = useRef(null);
 
-  const handleMediaAdd = (newMedia) => {
+  const suggestedTopics = ['AI', 'MachineLearning', 'GenerativeAI', 'WebDevelopment', 'React', 'JavaScript', 'Python', 'DataScience'];
+  const trendingTopics = [
+    { name: 'AI', count: '2.5k' },
+    { name: 'ChatGPT', count: '1.8k' },
+    { name: 'WebDev', count: '1.2k' },
+    { name: 'React', count: '890' },
+    { name: 'TypeScript', count: '756' }
+  ];
+
+  const handleContentChange = (e) => {
+    const content = e.target.value;
+    setPostData(prev => ({ ...prev, content }));
+    setWordCount(content.split(/\s+/).filter(word => word.length > 0).length);
+  };
+
+  const handleAddTopic = (topic) => {
+    if (topic && !postData.topics.includes(topic)) {
+      setPostData(prev => ({
+        ...prev,
+        topics: [...prev.topics, topic]
+      }));
+      setNewTopic('');
+    }
+  };
+
+  const handleRemoveTopic = (topicToRemove) => {
+    setPostData(prev => ({
+      ...prev,
+      topics: prev.topics.filter(topic => topic !== topicToRemove)
+    }));
+  };
+
+  const handleMediaUpload = (e) => {
+    const files = Array.from(e.target.files);
+    const newMedia = files.map(file => ({
+      id: Math.random().toString(36).substr(2, 9),
+      file,
+      url: URL.createObjectURL(file),
+      type: file.type.startsWith('image') ? 'image' : 'video'
+    }));
+
     setPostData(prev => ({
       ...prev,
       media: [...prev.media, ...newMedia]
     }));
   };
 
-  const handleMediaRemove = (mediaId) => {
+  const handleRemoveMedia = (mediaId) => {
     setPostData(prev => ({
       ...prev,
       media: prev.media.filter(media => media.id !== mediaId)
@@ -420,93 +102,389 @@ const Temp = () => {
   const handleSaveDraft = () => {
     setPostData(prev => ({ ...prev, isDraft: true }));
     console.log('Saving draft:', { ...postData, isDraft: true });
+    // Add your save draft logic here
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen py-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0a0a0a] py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl font-bold dark:text-white mb-4 bg-gradient-to-r from-gray-900 to-blue-600 dark:from-white dark:to-[#07C5B9] bg-clip-text text-transparent">
-            Ask Your Question
+          <h1 className="text-5xl font-bold dark:text-white mb-6 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+            Create a New Post
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Get help from the community and AI assistants. Be specific and provide details for better answers.
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            Ask a question, share an insight, or start a meaningful discussion.
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-3 space-y-6">
+          {/* Main Content - Left 3/4 */}
+          <div className="lg:col-span-3">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
               className="space-y-6"
             >
-              {/* Title Component */}
-              <div className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
-                <TitleInput
-                  value={postData.title}
-                  onChange={(title) => setPostData(prev => ({ ...prev, title }))}
-                />
-              </div>
-
-              {/* Description Component */}
-              <div className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
-                <DescriptionInput
-                  value={postData.content}
-                  onChange={(content) => setPostData(prev => ({ ...prev, content }))}
-                  showPreview={showPreview}
-                  onTogglePreview={() => setShowPreview(!showPreview)}
-                />
-              </div>
-
-              {/* Media Upload Component */}
-              <div className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
-                <MediaUpload
-                  media={postData.media}
-                  onMediaAdd={handleMediaAdd}
-                  onMediaRemove={handleMediaRemove}
-                />
-              </div>
-
-              {/* Action Buttons */}
+              {/* Author Info Card */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="flex gap-4 pt-6"
+                variants={itemVariants}
+                className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm"
               >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                      JD
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">John Doe</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {new Date().toLocaleDateString('en-US', {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+
+                  <select
+                    value={postData.visibility}
+                    onChange={(e) => setPostData(prev => ({ ...prev, visibility: e.target.value }))}
+                    className="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#07C5B9] transition-all"
+                  >
+                    <option value="public">
+                      <Globe className="w-4 h-4 inline mr-2" />
+                      Public
+                    </option>
+                    <option value="followers">
+                      <Users className="w-4 h-4 inline mr-2" />
+                      Followers
+                    </option>
+                    <option value="private">
+                      <Lock className="w-4 h-4 inline mr-2" />
+                      Private
+                    </option>
+                  </select>
+                </div>
+              </motion.div>
+
+              {/* Post Title Input */}
+              <motion.div variants={itemVariants}>
+                <input
+                  type="text"
+                  value={postData.title}
+                  onChange={(e) => setPostData(prev => ({ ...prev, title: e.target.value }))}
+                  placeholder="What's your question or post title?"
+                  className="w-full p-6 text-2xl font-semibold border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#07C5B9] bg-white dark:bg-[#161616] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all resize-none"
+                />
+              </motion.div>
+
+              {/* Post Content */}
+              <motion.div variants={itemVariants}>
+                <div className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-semibold text-gray-900 dark:text-white">Post Content</h3>
+                    <button
+                      onClick={() => setShowPreview(!showPreview)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 dark:bg-[#202020] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#2a2a2a] transition-colors"
+                    >
+                      {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPreview ? 'Edit' : 'Preview'}
+                    </button>
+                  </div>
+
+                  {showPreview ? (
+                    <div className="prose dark:prose-invert max-w-none p-4 bg-gray-50 dark:bg-[#1a1a1a] rounded-xl min-h-[200px]">
+                      {postData.content || (
+                        <p className="text-gray-500 dark:text-gray-400 italic">Nothing to preview yet...</p>
+                      )}
+                    </div>
+                  ) : (
+                    <textarea
+                      value={postData.content}
+                      onChange={handleContentChange}
+                      placeholder="Share your thoughts, add examples, or explain your question in detail..."
+                      rows={12}
+                      className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#07C5B9] bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all resize-none"
+                    />
+                  )}
+
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      {wordCount} / 1000 words
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      Markdown supported
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Topics/Tags Section */}
+              <motion.div variants={itemVariants}>
+                <div className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Topics & Tags</h3>
+
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {postData.topics.map((topic) => (
+                      <motion.span
+                        key={topic}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 dark:bg-[#07C5B9]/20 text-blue-800 dark:text-[#07C5B9] rounded-full text-sm border border-blue-200 dark:border-[#07C5B9]/30"
+                      >
+                        #{topic}
+                        <button
+                          onClick={() => handleRemoveTopic(topic)}
+                          className="hover:text-blue-600 dark:hover:text-[#07C5B9] transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </motion.span>
+                    ))}
+                  </div>
+
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      value={newTopic}
+                      onChange={(e) => setNewTopic(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddTopic(newTopic)}
+                      placeholder="Add a topic..."
+                      className="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-[#07C5B9] bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all"
+                    />
+                    <button
+                      onClick={() => handleAddTopic(newTopic)}
+                      className="px-4 py-2 bg-gray-100 dark:bg-[#202020] text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-[#2a2a2a] transition-colors"
+                    >
+                      Add
+                    </button>
+                  </div>
+
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Suggested topics:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {suggestedTopics.map(topic => (
+                        <button
+                          key={topic}
+                          onClick={() => handleAddTopic(topic)}
+                          className="px-3 py-1 bg-gray-100 dark:bg-[#202020] text-gray-700 dark:text-gray-300 rounded-full text-sm hover:bg-gray-200 dark:hover:bg-[#2a2a2a] transition-colors"
+                        >
+                          #{topic}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Media Upload Section */}
+              <motion.div variants={itemVariants}>
+                <div className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Media Upload</h3>
+
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-8 text-center hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors cursor-pointer"
+                  >
+                    <div className="max-w-sm mx-auto">
+                      <Image className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600 dark:text-gray-400 mb-2">
+                        Drag and drop images or videos here, or click to browse
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-500">
+                        Supports JPG, PNG, MP4, MOV (Max 10MB each)
+                      </p>
+                    </div>
+                  </div>
+
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleMediaUpload}
+                    multiple
+                    accept="image/*,video/*"
+                    className="hidden"
+                  />
+
+                  {/* Media Previews */}
+                  <AnimatePresence>
+                    {postData.media.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="mt-6"
+                      >
+                        <h4 className="font-medium text-gray-900 dark:text-white mb-4">Selected Media</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {postData.media.map(media => (
+                            <motion.div
+                              key={media.id}
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              exit={{ scale: 0 }}
+                              className="relative group"
+                            >
+                              {media.type === 'image' ? (
+                                <img
+                                  src={media.url}
+                                  alt="Upload preview"
+                                  className="w-full h-32 object-cover rounded-xl"
+                                />
+                              ) : (
+                                <video
+                                  src={media.url}
+                                  className="w-full h-32 object-cover rounded-xl"
+                                />
+                              )}
+                              <button
+                                onClick={() => handleRemoveMedia(media.id)}
+                                className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+
+              {/* AI Writing Assistant */}
+              <motion.div variants={itemVariants}>
+                <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 rounded-2xl p-6 text-white shadow-xl">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-white/20 p-3 rounded-2xl backdrop-blur-sm">
+                      <Sparkles className="w-8 h-8" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold mb-2">AI Writing Assistant</h3>
+                      <p className="mb-4 opacity-95">
+                        Need help phrasing your question? Let AI refine your title or summarize your content.
+                      </p>
+                      <div className="flex flex-wrap gap-3">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="bg-white text-purple-600 px-4 py-2 rounded-xl font-semibold hover:bg-gray-100 transition-all shadow-lg"
+                        >
+                          ✨ Improve Clarity
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="bg-white text-purple-600 px-4 py-2 rounded-xl font-semibold hover:bg-gray-100 transition-all shadow-lg"
+                        >
+                          📝 Generate Summary
+                        </motion.button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Post Options */}
+              <motion.div variants={itemVariants}>
+                <div className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Post Options</h3>
+
+                  <div className="space-y-4">
+                    <ToggleOption
+                      label="Allow Comments"
+                      description="Let others comment on your post"
+                      enabled={postData.allowComments}
+                      onChange={(enabled) => setPostData(prev => ({ ...prev, allowComments: enabled }))}
+                      icon={MessageCircle}
+                    />
+
+                    <ToggleOption
+                      label="Allow AI-generated Answers"
+                      description="Enable AI to provide answers to your question"
+                      enabled={postData.allowAIAnswers}
+                      onChange={(enabled) => setPostData(prev => ({ ...prev, allowAIAnswers: enabled }))}
+                      icon={Bot}
+                    />
+
+                    <ToggleOption
+                      label="Notify Followers"
+                      description="Send notifications to your followers about this post"
+                      enabled={postData.notifyFollowers}
+                      onChange={(enabled) => setPostData(prev => ({ ...prev, notifyFollowers: enabled }))}
+                      icon={Bell}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Submit Buttons */}
+              <motion.div variants={itemVariants} className="flex gap-4 pt-6">
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handlePublish}
-                  className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 px-6 rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
+                  className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
                 >
                   <Send className="w-5 h-5" />
-                  Publish Question
+                  Publish Post
                 </motion.button>
 
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handleSaveDraft}
-                  className="px-6 py-4 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-2xl font-semibold hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-all flex items-center gap-3"
+                  className="px-6 py-4 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-all flex items-center gap-3"
                 >
                   <Save className="w-5 h-5" />
                   Save Draft
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-6 py-4 text-red-500 dark:text-red-400 rounded-xl font-semibold hover:bg-red-50 dark:hover:bg-red-500/10 transition-all flex items-center gap-3"
+                >
+                  <Trash2 className="w-5 h-5" />
+                  Discard
                 </motion.button>
               </motion.div>
             </motion.div>
           </div>
 
-          {/* Sidebar */}
+          {/* Right Sidebar - Desktop */}
           <div className="lg:col-span-1 space-y-6">
-            {/* Quick Tips */}
+            {/* Post Tips Card */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -514,58 +492,141 @@ const Temp = () => {
               className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm"
             >
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-orange-100 dark:bg-orange-500/20 rounded-xl">
-                  <Zap className="w-5 h-5 text-orange-500" />
+                <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg">
+                  <Lightbulb className="w-5 h-5 text-blue-500 dark:text-[#07C5B9]" />
                 </div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">Quick Tips</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Post Tips</h3>
               </div>
-              <div className="space-y-3 text-sm">
-                {[
-                  "Include code snippets if relevant",
-                  "Describe what you've already tried",
-                  "Add specific error messages",
-                  "Use clear, descriptive titles",
-                  "Tag relevant technologies"
-                ].map((tip, index) => (
-                  <div key={index} className="flex items-start gap-2 text-gray-600 dark:text-gray-400">
-                    <div className="w-1.5 h-1.5 bg-blue-500 dark:bg-[#07C5B9] rounded-full mt-1.5 flex-shrink-0" />
-                    <span>{tip}</span>
-                  </div>
-                ))}
-              </div>
+              <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
+                <li className="flex items-start gap-2">
+                  <Zap className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                  <span>Make your post clear and focused</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Zap className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                  <span>Add examples to increase engagement</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Zap className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                  <span>Use relevant tags for better reach</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Zap className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                  <span>Keep titles under 120 characters</span>
+                </li>
+              </ul>
             </motion.div>
 
-            {/* File Status */}
+            {/* Trending Topics Card */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
               className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm"
             >
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Upload Status</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Files</span>
-                  <span className="font-medium text-gray-900 dark:text-white">
-                    {postData.media.length}/6
-                  </span>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-green-100 dark:bg-green-500/20 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-green-500" />
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${(postData.media.length / 6) * 100}%` }}
-                  />
-                </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                  {6 - postData.media.length} slots remaining
-                </div>
+                <h3 className="font-semibold text-gray-900 dark:text-white">Trending Topics</h3>
+              </div>
+              <div className="space-y-3">
+                {trendingTopics.map((topic) => (
+                  <button
+                    key={topic.name}
+                    onClick={() => handleAddTopic(topic.name)}
+                    className="flex items-center justify-between w-full p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-colors group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Hash className="w-4 h-4 text-gray-400" />
+                      <span className="font-medium text-gray-700 dark:text-gray-300 group-hover:text-blue-500 dark:group-hover:text-[#07C5B9]">
+                        {topic.name}
+                      </span>
+                    </div>
+                    <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-[#202020] px-2 py-1 rounded-full">
+                      {topic.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* AI Writing Tips */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+              className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-6 text-white shadow-xl"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <Sparkles className="w-6 h-6" />
+                <h3 className="font-semibold">AI Writing Tips</h3>
+              </div>
+              <div className="space-y-3 text-sm text-blue-100">
+                <p>• Start with a clear question or statement</p>
+                <p>• Provide context and background information</p>
+                <p>• Use specific examples when possible</p>
+                <p>• Break down complex topics into sections</p>
+                <p>• End with a call-to-action or specific question</p>
               </div>
             </motion.div>
           </div>
         </div>
       </div>
+
+      {/* Mobile Sticky Footer */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="lg:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 p-4 shadow-2xl"
+      >
+        <div className="flex gap-3">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={handlePublish}
+            className="flex-1 bg-white text-blue-600 py-3 px-4 rounded-xl font-semibold shadow-lg"
+          >
+            Publish
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={handleSaveDraft}
+            className="px-4 py-3 bg-white/20 text-white rounded-xl font-semibold backdrop-blur-sm"
+          >
+            Save
+          </motion.button>
+        </div>
+      </motion.div>
     </div>
   );
 };
+
+// Reusable Toggle Component
+// eslint-disable-next-line no-unused-vars
+const ToggleOption = ({icon: Icon, label, description, enabled, onChange }) => (
+  <div className="flex items-center justify-between p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-all">
+    <div className="flex items-center gap-4">
+      <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg">
+        <Icon className="w-4 h-4 text-blue-500 dark:text-[#07C5B9]" />
+      </div>
+      <div>
+        <div className="font-medium text-gray-900 dark:text-white">{label}</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">{description}</div>
+      </div>
+    </div>
+    <button
+      onClick={() => onChange(!enabled)}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? 'bg-blue-500 dark:bg-[#07C5B9]' : 'bg-gray-200 dark:bg-gray-700'
+        }`}
+    >
+      <span
+        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'
+          }`}
+      />
+    </button>
+  </div>
+);
+
+
 
 export default Temp;
