@@ -158,8 +158,8 @@ export default function CreateQuestionForm() {
                         />
                         <button
                             onClick={addTopic}
-                            className="px-4 py-2  rounded-lg text-white dark:text-black 
-                                   bg-orange-500 dark:bg-[#07C5B9] font-semibold"
+                            className="px-4 py-2 rounded-lg text-white dark:text-black bg-orange-500 dark:bg-[#07C5B9] font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={!topicInput}
                         >
                             Add
                         </button>
@@ -231,7 +231,7 @@ export default function CreateQuestionForm() {
                 </div>
 
                 {/* Media Preview */}
-                <div className="flex flex-wrap gap-4 mt-4">
+                <div className="flex flex-wrap gap-4 my-4">
                     {media.map((m, i) => (
                         <div key={i * 0.14587} className="relative">
                             <X
@@ -289,8 +289,9 @@ export default function CreateQuestionForm() {
 
             <div className="flex items-center mt-6 gap-2">
                 <button
-                    className="w-full bg-orange-500 dark:bg-[#07C5B9] text-white font-semibold py-3 rounded-lg hover:opacity-90 flex items-center justify-center gap-2"
+                    className="w-full bg-orange-500 dark:bg-[#07C5B9] text-white font-semibold py-3 rounded-lg hover:opacity-90 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
                     onClick={handleSubmit}
+                    disabled={!title || !content}
                 >
                     <Send size={18} />
                     Publish Question
@@ -298,7 +299,7 @@ export default function CreateQuestionForm() {
 
                 <button 
                 onClick={handleDiscardPost} 
-                className="flex items-center gap-2 bg-red-500 p-3 rounded-lg hover:opacity-80"
+                className="flex items-center gap-2 bg-red-500 text-white p-3 rounded-lg hover:opacity-80"
                 >
                     <Trash2 size={18} />
                     <span>Discard</span>
