@@ -48,7 +48,7 @@ export default function ProfileDropdown() {
   };
 
   const menuItems = [
-    { icon: User, label: 'My Profile', path: '/profile' },
+    { icon: User, label: 'My Profile', path: `/profile/${loginUser.username}` },
     { icon: Brain, label: 'AI Chat', path: '/main/ai-chat' },
     { icon: FileEdit, label: 'My Posts', path: '/main' },
     { icon: Bookmark, label: 'Saved Posts', path: '/main/saved' },

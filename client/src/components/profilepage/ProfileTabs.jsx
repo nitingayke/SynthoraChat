@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
-import { User, MessageSquare, Edit3, Brain, Bookmark, TrendingUp, Users, UserPlus } from 'lucide-react';
+import { User, MessageSquare, Edit3, Bookmark, TrendingUp, Users, UserPlus } from 'lucide-react';
 import PropTypes from 'prop-types';
 import ProfileTabContent from './ProfileTabContent';
 

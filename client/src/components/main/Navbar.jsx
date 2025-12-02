@@ -59,7 +59,7 @@ export default function Navbar() {
                                     : "hover:text-orange-500 dark:hover:text-[#07C5B9]"
                                 }`}
                         >
-                            {link.name}
+                            {link.name} 
                         </Link>
                     ))}
 
