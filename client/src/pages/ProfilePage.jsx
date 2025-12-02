@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import ProfileHeader from '../components/profilepage/ProfileHeader';
-import ProfileSidebar from '../components/profilepage/ProfileSidebar';
 import ProfileStats from '../components/profilepage/ProfileStats';
 import ProfileTabs from '../components/profilepage/ProfileTabs';
 import EditProfileModal from '../components/profilepage/EditProfileModal';
