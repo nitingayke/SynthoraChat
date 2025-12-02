@@ -18,7 +18,6 @@ import SettingsPage from "../pages/SettingsPage";
 import CreatePostPage from "../pages/chatPages/CreatePostPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import AIChat from "../pages/chatPages/AIChat";
-import UserProfile from "../pages/UserProfile";
 import QuestionInteract from "../pages/chatPages/QuestionInteract";
 
 export default function AppRoutes() {
@@ -35,8 +34,7 @@ export default function AppRoutes() {
                 <Route path="/community" element={<Layout><Community /></Layout>} />
                 <Route path="/leaderboard" element={<Layout><Leaderboard /></Layout>} />
                 <Route path="/contact" element={<Layout><Contact /></Layout>} />
-                <Route path="/profile" element={<Layout><ProfilePage /></Layout>} />
-                <Route path="/users/:userId" element={<Layout><UserProfile /></Layout>} />
+                <Route path="/profile/:username" element={<Layout><ProfilePage /></Layout>} />
 
                 <Route path="/main" element={<MainLayout />} >
                     <Route index element={<Main />} />

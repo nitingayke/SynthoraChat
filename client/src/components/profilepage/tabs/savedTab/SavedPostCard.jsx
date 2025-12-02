@@ -61,11 +61,11 @@ export default function SavedPostCard ({ post, onClick, onUnsave }) {
             src={post.author?.profile?.profilePicture}
             alt={`${post.author?.profile?.firstName} ${post.author?.profile?.lastName}`}
             className="!h-8 !w-8"
-            onClick={() => navigate(`/users/${post?.author?._id}`)}
+            onClick={() => navigate(`/profile/${post?.author?.username}`)}
           />
 
           <Link
-            to={`/users/${post?.author?._id}`}
+            to={`/profile/${post?.author?.username}`}
             aria-label={`Open post by ${post?.author?.profile?.firstName} ${post?.author?.profile?.lastName}`}
             className="text-left p-0 m-0 bg-transparent border-0 focus:outline-none"
           >
