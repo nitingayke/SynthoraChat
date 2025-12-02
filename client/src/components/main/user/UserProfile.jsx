@@ -40,30 +40,26 @@ export default function UserProfile() {
     return (
         <div className="w-full bg-white dark:bg-[#161616] rounded-lg border border-gray-200 dark:border-gray-800/50 overflow-hidden transition-all duration-300">
 
-            {/* Enhanced Cover with Gradient Overlay */}
             <div className="relative h-28">
                 <div
-                    className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 dark:from-[#07C5B9] dark:to-[#0EA5E9]"
+                    className="absolute inset-0 bg-gray-200 dark:bg-[#202020]"
                     style={{
                         backgroundImage: profile?.coverPicture ? `url(${profile.coverPicture})` : 'none',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
                     }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
 
                 {/* Verification Badge on Cover */}
                 {userData?.isVerified && (
                     <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/90 dark:bg-[#161616]/90 backdrop-blur-sm px-2 py-1 rounded-full">
-                        <CheckCircle className="w-3 h-3 text-blue-500 dark:text-[#07C5B9]" />
+                        <CheckCircle className="w-3 h-3 text-orange-500 dark:text-[#07C5B9]" />
                         <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Verified</span>
                     </div>
                 )}
             </div>
 
-            {/* Profile Content */}
-            <div className="px-3 lg:px-5 pb-5">
-                {/* Avatar & Basic Info - Centered but with better spacing */}
+            <div className="px-3 lg:px-5 pb-5 space-y-2">
                 <div className="flex flex-col items-center -mt-14">
                     <div className="relative group">
                         <Avatar
@@ -92,9 +88,8 @@ export default function UserProfile() {
                     )}
                 </div>
 
-                {/* Main Stats Grid - More Visual */}
                 <div className="mt-5 grid grid-cols-2 gap-3">
-                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-500/10 dark:to-blue-600/10 p-3 rounded-xl border border-blue-200 dark:border-blue-500/20">
+                    <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-500/10 dark:to-blue-600/10 p-3 rounded-lg border border-blue-200 dark:border-blue-500/20">
                         <div className="flex items-center justify-between">
                             <div>
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{stats.questions}</div>
@@ -103,11 +98,11 @@ export default function UserProfile() {
                                     Questions
                                 </div>
                             </div>
-                            <MessageSquare className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+                            <MessageSquare className="w-4 h-4 text-orange-500 dark:text-blue-400" />
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-500/10 dark:to-green-600/10 p-3 rounded-xl border border-green-200 dark:border-green-500/20">
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-500/10 dark:to-green-600/10 p-3 rounded-lg border border-green-200 dark:border-green-500/20">
                         <div className="flex items-center justify-between">
                             <div>
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{stats.answers}</div>
@@ -120,7 +115,7 @@ export default function UserProfile() {
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-500/10 dark:to-purple-600/10 p-3 rounded-xl border border-purple-200 dark:border-purple-500/20">
+                    <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-500/10 dark:to-purple-600/10 p-3 rounded-lg border border-purple-200 dark:border-purple-500/20">
                         <div className="flex items-center justify-between">
                             <div>
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{stats.upvotes}</div>
@@ -133,7 +128,7 @@ export default function UserProfile() {
                         </div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-500/10 dark:to-orange-600/10 p-3 rounded-xl border border-orange-200 dark:border-orange-500/20">
+                    <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-500/10 dark:to-orange-600/10 p-3 rounded-lg border border-orange-200 dark:border-orange-500/20">
                         <div className="flex items-center justify-between">
                             <div>
                                 <div className="text-lg font-bold text-gray-900 dark:text-white">{stats.aiSessions}</div>
@@ -147,29 +142,31 @@ export default function UserProfile() {
                     </div>
                 </div>
 
-                {/* Social & Additional Stats */}
                 <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                    <div className="p-2 bg-gray-50 dark:bg-[#202020] rounded-lg hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors">
+                    <div className="p-2 bg-gray-200 dark:bg-[#202020] rounded-lg hover:opacity-80 dark:hover:bg-[#2a2a2a] transition-colors">
                         <div className="font-semibold text-gray-900 dark:text-white">{stats.followers}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">Followers</div>
                     </div>
-                    <div className="p-2 bg-gray-50 dark:bg-[#202020] rounded-lg hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors">
+                    <div className="p-2 bg-gray-200 dark:bg-[#202020] rounded-lg hover:opacity-80 dark:hover:bg-[#2a2a2a] transition-colors">
                         <div className="font-semibold text-gray-900 dark:text-white">{stats.following}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">Following</div>
                     </div>
-                    <div className="p-2 bg-gray-50 dark:bg-[#202020] rounded-lg hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors">
+                    <div className="p-2 bg-gray-200 dark:bg-[#202020] rounded-lg hover:opacity-80 dark:hover:bg-[#2a2a2a] transition-colors">
                         <div className="font-semibold text-gray-900 dark:text-white">{stats.helpful}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">Helpful</div>
                     </div>
                 </div>
 
-                {/* Location & Website in single row */}
-                <div className="mt-4 flex items-center justify-between text-sm">
+                <div className="flex items-center justify-between text-sm gap-2">
                     {profile?.location && (
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-[#202020] px-3 py-2 rounded-lg flex-1 mr-2">
+                        <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${profile?.location}`}
+                            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-[#202020] px-3 py-2 rounded-lg hover:opacity-80 dark:hover:bg-[#2a2a2a] transition-colors flex-1"
+                            target="_blank"
+                        >
                             <MapPin className="w-4 h-4" />
                             <span className="truncate">{profile.location}</span>
-                        </div>
+                        </a>
                     )}
 
                     {profile?.website && (
@@ -177,7 +174,7 @@ export default function UserProfile() {
                             href={profile.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-[#202020] px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors flex-1 ml-2"
+                            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-[#202020] px-3 py-2 rounded-lg hover:opacity-80 dark:hover:bg-[#2a2a2a] transition-colors flex-1"
                         >
                             <Globe className="w-4 h-4" />
                             <span className="truncate">Website</span>
@@ -185,20 +182,19 @@ export default function UserProfile() {
                     )}
                 </div>
 
-                {/* Expertise & Interests in compact view */}
                 <div className="mt-4 space-y-3">
                     {/* Expertise */}
                     {userData?.knowsAbout?.length > 0 && (
                         <div>
                             <div className="flex items-center gap-2 mb-2">
-                                <Zap className="w-4 h-4 text-blue-500 dark:text-[#07C5B9]" />
+                                <Zap className="w-4 h-4 text-orange-500 dark:text-[#07C5B9]" />
                                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Expertise</h3>
                             </div>
                             <div className="flex flex-wrap gap-1">
                                 {userData.knowsAbout.slice(0, 10).map((topic, index) => (
                                     <span
-                                        key={index}
-                                        className="px-2 py-1 bg-blue-100 dark:bg-[#07C5B9]/20 text-blue-800 dark:text-[#07C5B9] text-xs rounded-full border border-blue-200 dark:border-[#07C5B9]/30 hover:scale-105 transition-transform"
+                                        key={index * 0.24587}
+                                        className="px-2 py-1 bg-orange-100 dark:bg-[#07C5B9]/20 text-orange-500 dark:text-[#07C5B9] text-xs rounded-full border border-orange-300 dark:border-[#07C5B9]/30 hover:scale-105 transition-transform"
                                     >
                                         {topic}
                                     </span>
@@ -248,7 +244,7 @@ export default function UserProfile() {
                                 {userData.credentials.slice(0, 7).map((credential, index) => (
                                     <div
                                         key={index * 0.2568}
-                                        className="text-xs text-gray-700 dark:text-gray-300 p-2 bg-gray-50 dark:bg-[#202020] rounded-lg border-l-2 border-green-500 dark:border-green-400"
+                                        className="text-xs text-gray-700 dark:text-gray-300 p-2 bg-gray-200 dark:bg-[#202020] rounded-lg border-l-2 border-green-500 dark:border-green-400"
                                     >
                                         {credential}
                                     </div>
@@ -263,7 +259,6 @@ export default function UserProfile() {
                     )}
                 </div>
 
-                {/* Activity & Additional Info */}
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <div className="grid grid-cols-2 gap-3 text-xs text-gray-500 dark:text-gray-400">
                         <div className="flex items-center gap-2">
@@ -276,7 +271,6 @@ export default function UserProfile() {
                         </div>
                     </div>
 
-                    {/* Additional mini stats */}
                     <div className="mt-2 flex justify-between text-xs text-gray-500 dark:text-gray-400">
                         <span>📚 {stats.saved} saved</span>
                         <span>🛡️ {stats.credentials} creds</span>
@@ -284,15 +278,14 @@ export default function UserProfile() {
                     </div>
                 </div>
 
-                {/* Action Buttons - Enhanced */}
                 <div className="mt-5 flex gap-2">
-                    <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-gray-100 dark:bg-[#202020] text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-200 dark:hover:bg-[#2a2a2a] transition-all duration-200 text-sm font-medium border border-gray-300 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600">
+                    <Link to={`/profile/${loginUser?.username}/edit`} className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-gray-200 dark:bg-[#202020] text-gray-700 dark:text-gray-200 rounded-lg hover:opacity-80 transition-all duration-200 text-sm font-medium border border-gray-300 dark:border-gray-700">
                         <Edit3 className="w-4 h-4" />
                         Edit
-                    </button>
+                    </Link>
                     <Link
-                        to="/profile"
-                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-[#07C5B9] text-white rounded-xl hover:opacity-90 transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                        to={`/profile/${loginUser?.username}`}
+                        className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 dark:bg-[#07C5B9] bg-orange-500 text-white rounded-lg hover:opacity-80 transition-all duration-200 text-sm font-medium shadow-md hover:shadow-lg transform"
                     >
                         <Users className="w-4 h-4" />
                         Full Profile

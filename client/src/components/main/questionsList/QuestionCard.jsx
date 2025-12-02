@@ -52,7 +52,7 @@ export default function QuestionCard({ question }) {
                     {question.topics.slice(0, 5).map((topic, index) => (
                         <span
                             key={index * 0.2547}
-                            className="px-2 py-1 bg-blue-100 dark:bg-[#07C5B9]/20 text-blue-800 dark:text-[#07C5B9] text-xs rounded-full"
+                            className="px-2 py-1 bg-orange-100 dark:bg-[#07C5B9]/20 text-orange-500 dark:text-[#07C5B9] text-xs rounded-full"
                         >
                             {topic}
                         </span>
