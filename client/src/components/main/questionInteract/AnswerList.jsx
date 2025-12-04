@@ -34,7 +34,7 @@ export default function AnswerList({ question }) {
 
 
       {answers.slice(0, currLength).map((a) =>
-        <AnswerCard key={a?._id} answer={a} />
+        <AnswerCard key={a?._id} answer={a} allowComments={question?.allowComments} />
       )}
 
       {

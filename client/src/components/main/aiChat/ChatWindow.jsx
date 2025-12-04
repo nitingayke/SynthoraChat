@@ -23,7 +23,7 @@ export default function ChatWindow() {
 
             <div 
                 ref={chatScrollRef}
-                className="flex-1 overflow-y-auto md:pe-1 custom-scrollbar space-y-3 mb-3 scroll-smooth">
+                className="flex-1 overflow-y-auto md:pe-1 custom-scrollbar space-y-3 mb-3 scroll-smooth pb-1">
                 {selectedChat?.messages?.length > 0 ? (
                     selectedChat.messages.map((msg, index) => (
                         <div
@@ -32,12 +32,9 @@ export default function ChatWindow() {
                                 }`}
                         >
                             <div
-                                className={`max-w-[75%] px-4 py-2 rounded-2xl shadow-sm ${msg?.role === "user"
-                                        ? "bg-gray-100 dark:bg-[#1e1e1e] text-gray-900 dark:text-gray-100 rounded-br-none"
-                                        : "bg-gray-100/80 dark:bg-[#1e1e1e]/50 text-gray-900 dark:text-gray-100 rounded-bl-none"
-                                    }`}
+                                className={`max-w-[90%] px-4 py-2 rounded-2xl shadow-sm bg-white dark:bg-[#191919] text-gray-900 dark:text-gray-100 ${msg?.role === "user" ? "rounded-br-none" : "rounded-bl-none"}`}
                             >
-                                <p className="text-[15px] leading-relaxed">{msg.content}</p>
+                                <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
 
                                 <div className="text-xs opacity-70 mt-1 text-right">
                                     {new Date(msg.timestamp).toLocaleTimeString([], {

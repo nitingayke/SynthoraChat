@@ -13,31 +13,31 @@ const recommendedTopics = [
 
 export default function PopularTopics() {
     return (
-        <div className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
+        <div className="bg-white dark:bg-[#161616] rounded-lg border border-gray-200 dark:border-gray-800 p-4 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-lg">
-                    <Target className="w-5 h-5 text-blue-500 dark:text-[#07C5B9]" />
+                <div className="p-2 bg-orange-100 dark:bg-[#07C5B9]/20 rounded-lg">
+                    <Target className="w-5 h-5 text-orange-500 dark:text-[#07C5B9]" />
                 </div>
                 <div>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white">Popular Topics</h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Explore trending categories</p>
                 </div>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-2">
                 {recommendedTopics.map((topic, index) => {
                     const IconComponent = topic.icon;
                     return (
                         <Link
-                            key={index}
+                            key={index * 0.2145}
                             to={topic.path}
-                            className="flex items-center justify-between p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-[#1a1a1a] transition-all group border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+                            className="flex items-center justify-between p-3 rounded-lg bg-gray-100 dark:bg-[#202020] transition-all group hover:shadow-md"
                         >
                             <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 rounded-xl ${topic.color} flex items-center justify-center shadow-md`}>
+                                <div className={`w-12 h-12 rounded-lg ${topic.color} flex items-center justify-center shadow-md`}>
                                     <IconComponent className="w-6 h-6 text-white" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-500 dark:group-hover:text-[#07C5B9] transition-colors">
+                                    <div className="font-semibold text-gray-900 dark:text-white group-hover:text-orange-500 dark:group-hover:text-[#07C5B9] transition-colors">
                                         {topic.name}
                                     </div>
                                     <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -45,7 +45,7 @@ export default function PopularTopics() {
                                     </div>
                                 </div>
                             </div>
-                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 dark:group-hover:text-[#07C5B9] transition-colors group-hover:translate-x-1" />
+                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-orange-500 dark:group-hover:text-[#07C5B9] transition-colors group-hover:translate-x-1" />
                         </Link>
                     );
                 })}

@@ -1,129 +1,166 @@
-// eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
-import { Camera, Check, Edit3, Share2, Mail, CheckCircle } from 'lucide-react';
-import PropTypes from 'prop-types';
-import { useContext } from 'react';
-import AuthContext from '../../context/AuthContext';
+import { motion } from "framer-motion";
+import { Camera, Edit3, Share2, Mail, CheckCircle } from "lucide-react";
+import PropTypes from "prop-types";
+import { useContext } from "react";
+import AuthContext from "../../context/AuthContext";
+import Avatar from "@mui/material/Avatar";
 
 const ProfileHeader = ({ onEdit }) => {
-
-  const {loginUser} = useContext(AuthContext)
+  const { loginUser } = useContext(AuthContext);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="relative bg-white dark:bg-[#161616] rounded-2xl overflow-hidden shadow-xl border border-gray-200 dark:border-gray-800"
+    <div
+      className="
+        bg-white dark:bg-[#191919]
+        rounded-xl shadow-lg overflow-hidden
+        border border-gray-200 dark:border-[#2e2e2e]
+      "
     >
-      {/* Cover Photo */}
-      <div className="h-48 bg-gradient-to-r from-blue-500 to-purple-600 relative overflow-hidden">
+      {/* TOP BANNER */}
+      <div className="relative h-48 w-full">
         {loginUser?.profile?.coverPicture ? (
           <img
-            src={loginUser?.profile?.coverPicture}
+            src={loginUser.profile.coverPicture}
             alt="Cover"
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500" />
+          <div className="w-full h-full bg-gradient-to-r from-[#07C5B9] to-[#0EA5E9]" />
         )}
 
         {/* Verified Badge */}
         {loginUser?.isVerified && (
-          <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/90 dark:bg-[#161616]/90 backdrop-blur-sm px-2 py-1 rounded-full">
-            <CheckCircle className="w-3 h-3 text-blue-500 dark:text-[#07C5B9]" />
-            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Verified</span>
+          <div
+            className="
+              absolute top-4 right-4 px-3 py-1.5 rounded-full
+              bg-white/90 dark:bg-[#1b1b1b]/80 backdrop-blur-sm
+              flex items-center gap-2
+            "
+          >
+            <CheckCircle className="w-4 h-4 text-blue-500 dark:text-[#07C5B9]" />
+            <span className="text-sm text-gray-700 dark:text-gray-200">
+              Verified
+            </span>
           </div>
         )}
-
       </div>
 
-      {/* Profile Info */}
-      <div className="px-6 pb-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end gap-6 -mt-16">
-          {/* Profile Picture */}
-          <div className="relative">
-            <div className="w-32 h-32 rounded-full border-4 border-white dark:border-[#161616] bg-white dark:bg-[#161616] overflow-hidden shadow-2xl">
-              {loginUser?.profile?.profilePicture ? (
-                <img
-                  src={loginUser?.profile?.profilePicture}
-                  alt={loginUser?.profile?.firstName}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-r from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-2xl">
-                  {loginUser?.profile?.firstName?.split(' ').map(n => n[0]).join('')}
-                </div>
-              )}
-            </div>
-
-            <button className="absolute bottom-2 right-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-all shadow-lg border border-gray-200 dark:border-gray-700">
-              <Camera className="w-3 h-3" />
-            </button>
+      {/* MAIN ROW SECTION */}
+      <div className="flex flex-col sm:flex-row gap-6 px-6 py-6 relative">
+        
+        {/* LEFT: PROFILE PICTURE */}
+        <div className="relative -mt-20 sm:-mt-16 h-fit">
+          <div
+            className="
+              w-32 h-32 rounded-full
+              border-4 border-white dark:border-[#191919]
+              overflow-hidden shadow-lg bg-white dark:bg-[#202020]
+            "
+          >
+            {loginUser?.profile?.profilePicture ? (
+              <img
+                src={loginUser.profile.profilePicture}
+                className="w-full h-full object-cover"
+                alt="profile"
+              />
+            ) : (
+              <Avatar className="!w-full !h-full dark:!bg-[#272727]">
+                {loginUser?.profile?.firstName?.[0] || "U"}
+              </Avatar>
+            )}
           </div>
 
-          {/* User Info and Actions */}
-          <div className="flex-1 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mt-4 sm:mt-0">
-            <div className="flex-1">
-              <div className="mb-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                    {loginUser?.profile?.firstName}
-                  </h1>
-                  {loginUser?.isVerified && (
-                    <div className="sm:hidden bg-green-500 text-white p-1 rounded-full">
-                      <Check className="w-3 h-3" />
-                    </div>
-                  )}
-                </div>
-                <p className="text-gray-600 dark:text-gray-400 text-lg mb-1">@{loginUser?.username}</p>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
-                  {loginUser?.email}
-                </p>
-              </div>
+          {/* Camera Icon */}
+          <button
+            className="
+              absolute bottom-1 right-1 p-2 rounded-full
+              bg-white dark:bg-[#2a2a2a]
+              border border-gray-200 dark:border-gray-700
+              shadow-md hover:bg-gray-50 dark:hover:bg-[#3a3a3a]
+              text-gray-700 dark:text-gray-300 transition
+            "
+          >
+            <Camera className="w-4 h-4" />
+          </button>
+        </div>
 
-              <p className="text-gray-700 dark:text-gray-300 max-w-2xl leading-relaxed">
-                {loginUser?.profile?.bio}
-              </p>
-            </div>
+        {/* RIGHT: USER DETAILS + BUTTONS */}
+        <div className="flex-1 mt-4 sm:mt-0">
 
-            {/* Action Buttons */}
-            <div className="flex flex-wrap gap-3">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onEdit}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
-              >
-                <Edit3 className="w-4 h-4" />
-                Edit Profile
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-white dark:bg-[#202020] text-gray-700 dark:text-gray-300 px-4 py-2 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition-all flex items-center gap-2 border border-gray-200 dark:border-gray-700"
-              >
-                <Share2 className="w-4 h-4" />
-                Share
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-white dark:bg-[#202020] text-gray-700 dark:text-gray-300 px-4 py-2 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-[#2a2a2a] transition-all flex items-center gap-2 border border-gray-200 dark:border-gray-700"
-              >
-                <Mail className="w-4 h-4" />
-                Message
-              </motion.button>
-            </div>
+          {/* NAME + USERNAME + EMAIL */}
+          <div className="mb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+              {loginUser?.profile?.firstName} {loginUser?.profile?.lastName}
+            </h1>
+
+            <p className="text-gray-600 dark:text-gray-400 text-lg">
+              @{loginUser?.username}
+            </p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm">
+              {loginUser?.email}
+            </p>
+          </div>
+
+          {/* BIO */}
+          {loginUser?.profile?.bio && (
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-5 max-w-xl">
+              {loginUser.profile.bio}
+            </p>
+          )}
+
+          {/* ACTION BUTTONS */}
+          <div className="flex flex-wrap gap-3">
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={onEdit}
+              className="
+                px-5 py-2.5 rounded-lg font-semibold shadow-md
+                bg-orange-500 hover:bg-orange-600 text-white
+                dark:bg-[#07C5B9] dark:hover:bg-[#05b0a7]
+                flex items-center gap-2 transition
+              "
+            >
+              <Edit3 className="w-4 h-4" />
+              Edit Profile
+            </motion.button>
+
+            <button
+              className="
+                px-4 py-2.5 rounded-lg font-medium
+                bg-gray-100 hover:bg-gray-200
+                dark:bg-[#202020] dark:hover:bg-[#2a2a2a]
+                border border-gray-200 dark:border-gray-700
+                text-gray-700 dark:text-gray-300
+                flex items-center gap-2 transition
+              "
+            >
+              <Share2 className="w-4 h-4" />
+              Share
+            </button>
+
+            <button
+              className="
+                px-4 py-2.5 rounded-lg font-medium
+                bg-gray-100 hover:bg-gray-200
+                dark:bg-[#202020] dark:hover:bg-[#2a2a2a]
+                border border-gray-200 dark:border-gray-700
+                text-gray-700 dark:text-gray-300
+                flex items-center gap-2 transition
+              "
+            >
+              <Mail className="w-4 h-4" />
+              Message
+            </button>
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
 ProfileHeader.propTypes = {
-  onEdit: PropTypes.func.isRequired
+  onEdit: PropTypes.func.isRequired,
 };
 
 export default ProfileHeader;

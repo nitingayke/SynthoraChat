@@ -96,7 +96,7 @@ const exploreSections = [
 
 export default function ExploreCategories() {
     return (
-        <div className="mb-6 sm:mb-12">
+        <div className="mb-6 max-w-6xl w-full mx-auto">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Explore Categories</h2>
             </div>
@@ -118,7 +118,7 @@ export default function ExploreCategories() {
                                     {section.count}
                                 </span>
                             </div>
-                            <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2 group-hover:text-blue-500 dark:group-hover:text-[#07C5B9] transition-colors">
+                            <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-2 group-hover:text-orange-500 dark:group-hover:text-[#07C5B9] transition-colors">
                                 {section.title}
                             </h3>
                             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">

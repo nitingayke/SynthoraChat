@@ -17,7 +17,7 @@ export default function FilterTabs() {
     const activeFilter = searchParams.get("query");
 
     return (
-        <div className="p-4 sm:p-6">
+        <div className="p-4 sm:p-4">
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Browse Questions</h3>
             </div>
@@ -29,7 +29,7 @@ export default function FilterTabs() {
                             key={filter.id}
                             to={filter.path}
                             className={`flex items-center whitespace-nowrap gap-3 px-3 py-1.5 rounded-md transition-all font-medium ${activeFilter === filter.id
-                                    ? 'bg-[#07C5B9] text-white shadow-lg'
+                                    ? 'bg-orange-500 dark:bg-[#07C5B9] text-white shadow-lg'
                                     : 'bg-gray-100 dark:bg-[#202020] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#2a2a2a]'
                                 }`}
                         >

@@ -75,6 +75,7 @@ Conclusion: Performance improvement is mostly about rendering only what matters 
             views: 120,
             shares: 5,
             status: "active",
+            allowComments: true,
             answers: [
                 {
                     _id: "676a983197cd8b2b496ef789",
@@ -99,6 +100,7 @@ Conclusion: Performance improvement is mostly about rendering only what matters 
                     likes: ["673ab4c9f19c2d00126f1194"],
                     comments: [
                         {
+                            _id: "123",
                             author: {
                                 _id: "676a983197cd8b2b496ef789",
                                 username: "sarah_dev",
@@ -275,6 +277,7 @@ If flexibility and speed matter → use NoSQL
             views: 200,
             shares: 12,
             status: "active",
+            allowComments: false,
             answers: [
                 {
                     _id: "676a983197cd8b2b496ef201",
@@ -326,6 +329,7 @@ If flexibility and speed matter → use NoSQL
             views: 90,
             shares: 3,
             status: "active",
+            allowComments: false,
             answers: [
                 {
                     _id: "676a983197cd8b2b496ef301",

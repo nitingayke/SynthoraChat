@@ -7,10 +7,12 @@ import MediaDialog from "./MediaDialog"
 import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
+import { useSnackbar } from "notistack";
 
-export default function AnswerCard({ answer }) {
+export default function AnswerCard({ answer, allowComments }) {
 
   const { loginUser } = useContext(AuthContext);
+  const { enqueueSnackbar } = useSnackbar();
 
   const [isLoading, setIsLoading] = useState({
     like: false,
@@ -18,10 +20,15 @@ export default function AnswerCard({ answer }) {
     delete: false,
     edit: false,
     share: false,
+    comment: false,
   });
 
   const [visibleComments, setVisibleComments] = useState(10);
   const [showComments, setShowComments] = useState(false);
+  const [commentInput, setCommentInput] = useState("");
+
+  const [deletingCommentId, setDeletingCommentId] = useState(null);
+  const [upvotingCommentId, setUpvotingCommentId] = useState(null);
 
 
   const loadMore = () => {
@@ -76,6 +83,79 @@ export default function AnswerCard({ answer }) {
 
       setIsLoading(prev => ({ ...prev, share: false }));
     }, 1000);
+  };
+
+  const handleSubmitComment = () => {
+    if (commentInput.trim().length === 0) return;
+
+    if (commentInput.length > 1000) {
+      enqueueSnackbar("Comment should be less than 1000 characters.", { variant: 'error' });
+      return;
+    }
+
+    setIsLoading(prev => ({ ...prev, comment: true }));
+
+    setTimeout(() => {
+      enqueueSnackbar("Comment posted successfully!", { variant: "success" });
+      setCommentInput("");
+      setIsLoading(prev => ({ ...prev, comment: false }));
+    }, 3000);
+  }
+
+  const handleDeleteComment = async (commentId) => {
+    if (!commentId) return;
+
+    if (deletingCommentId) return;
+
+    setDeletingCommentId(commentId);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
+      answer.comments = answer.comments.filter(c => c._id !== commentId);
+
+      enqueueSnackbar("Comment deleted", { variant: "success" });
+    } catch (err) {
+      console.log(err);
+      enqueueSnackbar("Failed to delete comment. Please try again.", { variant: "error" });
+    } finally {
+      setDeletingCommentId(null);
+    }
+  };
+
+  const handleUpvoteComment = async (commentId) => {
+
+    if (!commentId) return;
+
+    if (upvotingCommentId) return;
+
+    setUpvotingCommentId(commentId);
+
+    const idx = answer.comments.findIndex(c => c._id === commentId);
+    if (idx === -1) {
+      setUpvotingCommentId(null);
+      return;
+    }
+
+    const comment = answer.comments[idx];
+    const prevUpvotes = comment.upvotes ? [...comment.upvotes] : [];
+
+    const hasUpvoted = comment.upvotes?.includes(loginUser?._id);
+    if (hasUpvoted) {
+      comment.upvotes = comment.upvotes.filter(id => id !== loginUser._id);
+    } else {
+      comment.upvotes = [...(comment.upvotes || []), loginUser._id];
+    }
+
+    try {
+      await new Promise((r) => setTimeout(r, 1000));
+    } catch (err) {
+      comment.upvotes = prevUpvotes;
+      console.log(err)
+      enqueueSnackbar("Failed to upvote comment. Try again.", { variant: "error" });
+    } finally {
+      setUpvotingCommentId(null);
+    }
   };
 
 
@@ -162,7 +242,6 @@ export default function AnswerCard({ answer }) {
           <span className="mt-0.5">{answer?.likes?.length || 0}</span>
         </button>
 
-
         <button
           onClick={() => handleUpvoteAnswer(answer?._id)}
           disabled={isLoading.upvote}
@@ -185,7 +264,7 @@ export default function AnswerCard({ answer }) {
           <span className="mt-0.5">{answer?.shares || 0}</span>
         </button>
 
-         {/* VIEWS */}
+        {/* VIEWS */}
         <span className="flex items-center gap-1">
           <Eye size={16} />
           <span>{answer?.views || 0}</span>
@@ -203,18 +282,18 @@ export default function AnswerCard({ answer }) {
           <span className="hidden sm:flex">AI Accuracy:</span> {answer?.aiAccuracy}%
         </span>
 
-        <button
+        {allowComments && <button
           className="flex items-center gap-1 hover:text-[#07C5B9]"
           onClick={() => setShowComments((prev) => !prev)}
         >
           <MessageCircle size={16} />
           {answer?.comments?.length || 0}
           <span className="hidden sm:flex">Comments</span>
-        </button>
+        </button>}
       </div>
 
       <AnimatePresence>
-        {showComments && answer?.comments?.length > 0 && (
+        {showComments && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
@@ -222,52 +301,110 @@ export default function AnswerCard({ answer }) {
             transition={{ duration: 0.25, ease: "easeInOut" }}
             className="mt-4 overflow-hidden space-y-4 border-t pt-3 border-gray-200 dark:border-[#222]"
           >
-            <h1 className="my-2 flex items-center gap-1 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white cursor-pointer font-semibold w-fit"><Hash size={20} />COMMENTS</h1>
+            <h1 className="my-2 flex items-center gap-1 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white cursor-pointer font-semibold w-fit"><Hash size={20} />COMMENTS <span>({answer?.comments?.length || 0})</span></h1>
 
-            {answer.comments.slice(0, visibleComments).map((comment, index) => (
-              <div key={index * 0.12457}>
+            <div className="flex-1">
+              <textarea
+                value={commentInput}
+                onChange={(e) => setCommentInput(e.target.value)}
+                placeholder="Write a comment..."
+                maxLength={1000}
+                className="w-full min-h-[70px] p-2 rounded-md border border-gray-300 dark:border-[#222] bg-white dark:bg-[#191919] text-gray-900 dark:text-gray-100 focus:outline-none"
+              />
 
-                <div className="relative gap-3 flex items-center">
-                  <Avatar
-                    sx={{ width: 35, height: 35 }}
-                    src={comment?.author?.profile?.profilePicture || ""}
-                  />
+              <div className="flex justify-between">
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {commentInput.length}/1000
+                </span>
 
-                  <div>
-                    <Link
-                      to={`/main/profile/${author?.username}`}
-                      className="font-semibold text-sm text-gray-900 dark:text-gray-100 hover:text-[#07C5B9]"
-                    >
-                      {comment?.author?.profile?.firstName
-                        ? `${comment.author.profile.firstName} ${comment.author.profile.lastName}`
-                        : comment?.author?.username || "User"}
-                    </Link>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      {new Date(comment.createdAt).toLocaleString()}
+                <button
+                  onClick={handleSubmitComment}
+                  disabled={commentInput.trim().length === 0 || isLoading.comment}
+                  className="px-3 py-1 text-sm rounded-md bg-orange-500 dark:bg-[#07C5B9]  hover:opacity-80 text-white disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-2"
+                >
+                  {isLoading.comment ? (
+                    <Loader2 size={16} className="animate-spin m-0.5" />
+                  ) : (
+                    "Post"
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <hr className="opacity-10" />
+
+            {answer.comments.length === 0 && (
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400 py-4">
+                No comments yet — start the conversation!
+              </p>
+            )}
+
+            {answer.comments.slice(0, visibleComments).map((comment, index) => {
+              const hasUpvoted = comment?.upvotes?.includes(loginUser?._id);
+
+              return (
+                <div key={index * 0.12457}>
+
+                  <div className="relative gap-3 flex items-center">
+                    <Avatar
+                      sx={{ width: 35, height: 35 }}
+                      src={comment?.author?.profile?.profilePicture || ""}
+                    />
+
+                    <div>
+                      <Link
+                        to={`/main/profile/${author?.username}`}
+                        className="font-semibold text-sm text-gray-900 dark:text-gray-100 hover:text-[#07C5B9]"
+                      >
+                        {comment?.author?.profile?.firstName
+                          ? `${comment.author.profile.firstName} ${comment.author.profile.lastName}`
+                          : comment?.author?.username || "User"}
+                      </Link>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(comment.createdAt).toLocaleString()}
+                      </div>
+                    </div>
+
+                    <div className="absolute right-0 top-0 flex gap-1">
+                      <button
+                        onClick={() => handleUpvoteComment(comment?._id)}
+                        disabled={!!upvotingCommentId}
+                        className="text-sm flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-green-500 px-2 py-1 rounded-md bg-gray-200 dark:bg-[#212121] disabled:cursor-not-allowed"
+                      >
+                        {upvotingCommentId === comment?._id ? (
+                          <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                          <ArrowBigUp size={16} fill={hasUpvoted ? "currentColor" : "none"} className={hasUpvoted && "text-green-500"} />
+                        )}
+                        <span>{comment?.upvotes?.length || 0}</span>
+                      </button>
+
+                      {loginUser?._id === comment?.author?._id && (
+                        <button
+                          onClick={() => handleDeleteComment(comment._id)}
+                          disabled={deletingCommentId}
+                          className="text-sm text-gray-600 dark:text-gray-400 hover:text-red-500 px-2 py-1 rounded-md bg-gray-200 dark:bg-[#212121]"
+                        >
+                          {
+                            deletingCommentId === comment._id ? (
+                              <Loader2 size={16} className="animate-spin" />
+                            ) : (
+                              <Trash2 size={16} />
+                            )
+                          }
+                        </button>
+                      )}
                     </div>
                   </div>
 
-                  <div className="absolute right-0 top-0 flex gap-3">
-                    <button className="text-sm flex items-center gap-1 text-gray-600 dark:text-gray-400 hover:text-green-500 px-2 py-1 rounded-md bg-gray-200 dark:bg-[#212121]">
-                      <ArrowBigUp size={16} />
-                      {comment?.upvotes?.length || 0}
-                    </button>
-
-                    {loginUser?._id === comment?.author?._id && (
-                      <button className="text-sm text-gray-600 dark:text-gray-400 hover:text-red-500 px-2 py-1 rounded-md bg-gray-200 dark:bg-[#212121]">
-                        <Trash2 size={16} />
-                      </button>
-                    )}
+                  <div className="sm:ps-10">
+                    <div className="text-sm mt-1 text-gray-700 dark:text-gray-300 whitespace-pre-wrap bg-gray-200/50 dark:bg-[#1e1e1e] p-2 rounded-sm">
+                      {comment?.content}
+                    </div>
                   </div>
                 </div>
-
-                <div className="sm:ps-10">
-                  <div className="text-sm mt-1 text-gray-700 dark:text-gray-300 whitespace-pre-wrap bg-gray-200/50 dark:bg-[#1e1e1e] p-2 rounded-sm">
-                    {comment?.content}
-                  </div>
-                </div>
-              </div>
-            ))}
+              )
+            })}
 
             {(visibleComments < answer.comments.length) && (
               <div className="flex justify-center">

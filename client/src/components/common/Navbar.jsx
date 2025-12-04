@@ -30,7 +30,7 @@ export default function Navbar() {
   const renderNavLinks = (isMobile = false) => (
     <ul
       className={`flex ${isMobile
-          ? "flex-col gap-4 mt-6 text-lg font-semibold overflow-auto scrollbar-hide"
+          ? "flex-col gap-4 text-lg font-semibold overflow-auto scrollbar-hide"
           : "hidden lg:flex gap-5 lg:gap-1 font-semibold"
         } text-gray-800 dark:text-gray-200`}
     >
@@ -59,10 +59,10 @@ export default function Navbar() {
       <nav
         className="
           w-full sticky top-0 z-40
-          bg-gray-100 dark:bg-[#0D1117]
+          bg-white dark:bg-[#0D1117]
           shadow-lg backdrop-blur-md
           transition-all duration-300
-          hover:shadow-blue-400/40 dark:hover:shadow-[#07C5B9]/40
+          hover:shadow-orange-500/20 dark:hover:shadow-[#07C5B9]/40
         "
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center py-4 sm:py-2 px-4 md:px-6">
@@ -72,7 +72,7 @@ export default function Navbar() {
             className="flex items-center gap-2 hover:scale-95 transition-transform"
           >
             <Brain className="text-orange-500 dark:text-[#07C5B9] w-7 h-7 sm:w-8 sm:h-8" />
-            <span className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-wide">
+            <span className="text-2xl font-extrabold dark:text-white tracking-wide">
               SynthoraChat
             </span>
             <Sparkles className="w-5 h-5 text-orange-500 animate-pulse" />
@@ -84,11 +84,11 @@ export default function Navbar() {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="hidden sm:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              className="hidden sm:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white transition"
               title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
               {theme === "dark" ? (
-                <Sun className="w-5 h-5 text-yellow-400" />
+                <Sun className="w-5 h-5 " />
               ) : (
                 <Moon className="w-5 h-5 text-gray-700" />
               )}
@@ -107,7 +107,7 @@ export default function Navbar() {
             ) : (
               <button
                 onClick={() => setOpenLoginDialog(true)}
-                className="hidden sm:block bg-orange-500 dark:bg-[#07C5B9] text-white py-1.5 px-4 rounded-full font-bold whitespace-nowrap shadow hover:opacity-90 transition-all"
+                className="hidden sm:block bg-orange-500 dark:bg-[#07C5B9] text-white py-1.5 px-4 rounded-lg font-bold whitespace-nowrap shadow hover:opacity-90 transition-all"
               >
                 Join Now
               </button>
@@ -129,19 +129,18 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* ---- SIDEBAR (Drawer) ---- */}
       <Drawer
         anchor="right"
         open={openSidebar}
         onClose={() => setOpenSidebar(false)}
         className="lg:hidden"
       >
-        <div className="w-64 h-full bg-gray-100 dark:bg-[#0D1117] text-gray-900 dark:text-gray-100 flex flex-col justify-between p-6">
+        <div className="w-64 h-full bg-gray-100 dark:bg-[#191919] dark:text-gray-100 flex flex-col justify-between p-6">
           {/* Header */}
-          <div className="sticky top-0 z-50 bg-gray-100 dark:bg-[#0D1117] flex items-center justify-between mb-6">
+          <div className="sticky top-0 z-50 flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <Brain className="text-orange-500 dark:text-[#07C5B9] w-6 h-6" />
-              <span className="text-xl font-bold text-gray-900 dark:text-white">SynthoraChat</span>
+              <span className="text-xl font-bold dark:text-white">SynthoraChat</span>
             </div>
             <button onClick={() => setOpenSidebar(false)}>
               <X className="w-6 h-6 text-gray-700 dark:text-gray-300" />
@@ -152,15 +151,15 @@ export default function Navbar() {
           {renderNavLinks(true)}
 
           {/* Footer Actions */}
-          <div className="flex flex-col gap-3 mt-auto pt-6 border-t border-gray-300 dark:border-gray-700">
+          <div className="flex flex-col gap-3 mt-auto pt-4 border-t border-gray-300/50 dark:border-[#202020]">
             {/* Theme Switch */}
             <button
               onClick={toggleTheme}
-              className="flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-800 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+              className="flex items-center justify-center gap-2 bg-gray-200 dark:bg-[#202020] py-2 rounded-lg hover:opacity-80 transition"
             >
               {theme === "dark" ? (
                 <>
-                  <Sun className="w-5 h-5 text-yellow-400" />
+                  <Sun className="w-5 h-5" />
                   Light Mode
                 </>
               ) : (
@@ -175,7 +174,7 @@ export default function Navbar() {
             {loginUser ? (
               <button
                 onClick={logout}
-                className="flex items-center justify-center gap-2 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition"
+                className="flex items-center justify-center gap-2 bg-red-500/10 text-red-500 hover:opacity-80 py-2 rounded-lg transition"
               >
                 <LogOut className="w-4 h-4" />
                 Logout
