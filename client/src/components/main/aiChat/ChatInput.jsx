@@ -23,7 +23,7 @@ export default function ChatInput() {
             };
             return {
                 ...prev,
-                messages: [...prev.messages, newMessage],
+                messages: [...(prev?.messages || []), newMessage],
                 updatedAt: new Date().toISOString(),
             }
         });
@@ -55,6 +55,7 @@ export default function ChatInput() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         if (userPrompt.trim() && !isAnswerLoading) {
 
             const question = userPrompt.trim()
@@ -110,15 +111,15 @@ export default function ChatInput() {
     ];
 
     return (
-        <div className="bg-gray-100 dark:bg-[#161616] px-3 pt-3 pb-2 rounded-t-lg">
+        <div className="bg-white dark:bg-[#191919] px-3 pt-3 pb-2 rounded-t-lg">
 
-            {(!isAnswerLoading && userPrompt?.length === 0) && (
+            {(!isAnswerLoading) && (
                 <div className="flex gap-2 mb-2 overflow-x-auto scrollbar-hide">
                     {quickActions.map((action, index) => (
                         <button
                             key={index * 0.12488}
                             onClick={() => handleUserQuestion(action.prompt)}
-                            className="flex text-sm items-center gap-2 px-2.5 py-1.5 bg-gray-200/50 dark:bg-[#212121] hover:bg-gray-200 dark:hover:bg-[#323232] rounded-lg text-gray-700 dark:text-gray-300 transition-colors whitespace-nowrap"
+                            className="flex text-sm items-center gap-2 px-2.5 py-1.5 bg-gray-200/70 dark:bg-[#212121] hover:opacity-80 rounded-lg text-gray-700 dark:text-gray-300 transition-colors whitespace-nowrap"
                         >
                             <action.icon className="w-4 h-4" />
                             {action.label}
@@ -165,7 +166,7 @@ export default function ChatInput() {
                             : <button
                                 type="submit"
                                 disabled={!userPrompt.trim() || isAnswerLoading}
-                                className="p-1.5 disabled:text-gray-600 text-white bg-[#07C5B9] hover:bg-[#06b4a4] disabled:bg-gray-200/50 dark:disabled:dark:bg-[#212121] disabled:cursor-not-allowed rounded-lg transition-colors"
+                                className="p-1.5 disabled:text-gray-600 text-white bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 disabled:bg-gray-200/50 dark:disabled:dark:bg-[#212121] disabled:cursor-not-allowed rounded-lg transition-colors"
                                 title="Send message"
                             >
                                 <Send className="w-4 h-4" />

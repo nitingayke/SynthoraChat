@@ -37,6 +37,11 @@ const answerSchema = new mongoose.Schema(
     ],
     comments: [
       {
+        _id: {
+          type: mongoose.Schema.Types.ObjectId,
+          auto: true,
+          default: () => new mongoose.Types.ObjectId(),
+        },
         author: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",

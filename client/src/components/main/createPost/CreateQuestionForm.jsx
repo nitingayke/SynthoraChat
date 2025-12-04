@@ -159,7 +159,7 @@ export default function CreateQuestionForm() {
                         <button
                             onClick={addTopic}
                             className="px-4 py-2 rounded-lg text-white dark:text-black bg-orange-500 dark:bg-[#07C5B9] font-semibold disabled:cursor-not-allowed disabled:opacity-50"
-                            disabled={!topicInput}
+                            disabled={topicInput.trim().length === 0}
                         >
                             Add
                         </button>
@@ -167,8 +167,8 @@ export default function CreateQuestionForm() {
 
                     <button
                         onClick={generateTopicsFromAI}
-                        disabled={title?.length === 0 || content?.length === 0 || topicLoading}
-                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold  bg-orange-500 dark:bg-[#07C5B9] text-white dark:text-black w-full md:w-fit whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={title?.trim()?.length === 0 || content?.trim()?.length === 0 || topicLoading}
+                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold bg-orange-500 dark:bg-[#07C5B9] text-white dark:text-black w-full md:w-fit whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {topicLoading ? (
                             <Loader2 className="animate-spin" size={18} />
@@ -212,10 +212,7 @@ export default function CreateQuestionForm() {
                     ].map((item) => (
                         <label
                             key={item.label}
-                            className="cursor-pointer p-4 rounded-xl bg-white dark:bg-neutral-900 
-                                       flex flex-col items-center justify-center gap-2 
-                                       text-sm dark:text-white hover:bg-gray-200
-                                       dark:hover:bg-neutral-800 transition"
+                            className="cursor-pointer p-4 rounded-xl bg-white dark:bg-neutral-900 flex flex-col items-center justify-center gap-2 text-sm dark:text-white hover:bg-gray-200 dark:hover:bg-neutral-800 transition"
                         >
                             {item.icon}
                             {item.label}
@@ -236,8 +233,7 @@ export default function CreateQuestionForm() {
                         <div key={i * 0.14587} className="relative">
                             <X
                                 size={20}
-                                className="absolute -top-2 -right-2 bg-red-500 text-white 
-                                           rounded-full p-1 cursor-pointer"
+                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 cursor-pointer"
                                 onClick={() => setMedia(media.filter((_, index) => index !== i))}
                             />
                             {m.type === "image" && (
@@ -291,15 +287,15 @@ export default function CreateQuestionForm() {
                 <button
                     className="w-full bg-orange-500 dark:bg-[#07C5B9] text-white font-semibold py-3 rounded-lg hover:opacity-90 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
                     onClick={handleSubmit}
-                    disabled={!title || !content}
+                    disabled={title?.trim()?.length === 0 || content?.trim()?.length === 0 || topicLoading}
                 >
                     <Send size={18} />
                     Publish Question
                 </button>
 
-                <button 
-                onClick={handleDiscardPost} 
-                className="flex items-center gap-2 bg-red-500 text-white p-3 rounded-lg hover:opacity-80"
+                <button
+                    onClick={handleDiscardPost}
+                    className="flex items-center gap-2 bg-red-500 text-white p-3 rounded-lg hover:opacity-80"
                 >
                     <Trash2 size={18} />
                     <span>Discard</span>

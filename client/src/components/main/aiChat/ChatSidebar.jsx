@@ -34,9 +34,9 @@ export default function ChatSidebar() {
     ];
 
     return (
-        <aside className="hidden md:flex h-[calc(100vh-65px)] flex-col w-72 bg-gray-100 dark:bg-[#161616] p-4">
+        <aside className="hidden md:flex h-[calc(100vh-65px)] flex-col w-72 bg-white dark:bg-[#161616] p-4">
 
-            <button onClick={handleNewChat} className="flex items-center gap-3 bg-[#07C5B9] text-white py-2 px-3 rounded-md mb-4">
+            <button onClick={handleNewChat} className="flex items-center gap-3 bg-orange-500 dark:bg-[#07C5B9] text-white py-2 px-3 rounded-md mb-4">
                 <PlusCircle className="w-5 h-5" /> New Chat
             </button>
 
@@ -46,8 +46,8 @@ export default function ChatSidebar() {
                         key={item.id}
                         to={`/main/ai-chat/${item.id}`}
                     >
-                        <div className={`p-2 rounded-lg cursor-pointer ${threadId === String(item.id) ? "hover:bg-[#07C5B9]/10" : "hover:bg-gray-200 dark:hover:bg-[#1f1f1f]"}`}>
-                            <p className={`font-medium text-sm flex items-center gap-2 ${threadId === String(item.id) ? "text-[#07C5B9]" : "text-gray-900 dark:text-gray-100"}`}>
+                        <div className={`p-2 rounded-lg cursor-pointer ${threadId === String(item.id) ? "hover:bg-orange-100 dark:hover:bg-[#07C5B9]/10" : "hover:bg-gray-200 dark:hover:bg-[#1f1f1f]"}`}>
+                            <p className={`font-medium text-sm flex items-center gap-2 ${threadId === String(item.id) ? "text-orange-500 dark:text-[#07C5B9]" : "text-gray-900 dark:text-gray-100"}`}>
                                 {item.title}
                             </p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{item.timestamp}</p>

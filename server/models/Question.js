@@ -33,6 +33,10 @@ const questionSchema = new mongoose.Schema(
         ref: "Topic",
       },
     ],
+    allowComments: {
+      type: Boolean,
+      default: true,
+    },
     answers: [
       {
         type: mongoose.Schema.Types.ObjectId,

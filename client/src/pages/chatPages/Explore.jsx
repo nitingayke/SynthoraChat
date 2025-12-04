@@ -1,7 +1,7 @@
 import React from 'react';
 import ExploreHeader from '../../components/main/explore/ExploreHeader';
 import ExploreCategories from '../../components/main/explore/ExploreCategories';
-import TrendingQuestions from '../../components/main/explore/TrendingQuestions';
+import ExploreQuestions from '../../components/main/explore/ExploreQuestions';
 import AILearningAssistant from '../../components/main/explore/AILearningAssistant';
 import PopularTopics from '../../components/main/explore/PopularTopics';
 import AIFeatures from '../../components/main/explore/AIFeatures';
@@ -16,13 +16,13 @@ export default function ExplorePage() {
 
             <ExploreCategories />
 
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            <div className="w-full max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-3 gap-4">
                 <div className="xl:col-span-2 space-y-8">
-                    <TrendingQuestions />
+                    <ExploreQuestions />
                     <AILearningAssistant />
                 </div>
 
-                <div className="space-y-8">
+                <div className="space-y-4">
                     <PopularTopics />
                     <AIFeatures />
                     <QuickActions />

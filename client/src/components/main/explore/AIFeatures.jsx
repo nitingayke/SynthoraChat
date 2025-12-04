@@ -39,7 +39,7 @@ const aiFeatures = [
 
 export default function AIFeatures() {
     return (
-        <div className="bg-white dark:bg-[#161616] rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
+        <div className="bg-white dark:bg-[#161616] rounded-lg border border-gray-200 dark:border-gray-800 p-4 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
                 <div className="p-2 bg-purple-100 dark:bg-purple-500/20 rounded-lg">
                     <Sparkles className="w-5 h-5 text-purple-500" />
@@ -54,12 +54,12 @@ export default function AIFeatures() {
                     const IconComponent = feature.icon;
                     return (
                         <Link
-                            key={index}
+                            key={index * 0.2547}
                             to={feature.path}
-                            className="p-4 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-500 transition-all group cursor-pointer bg-gradient-to-r from-white to-gray-50 dark:from-[#1a1a1a] dark:to-[#161616] hover:shadow-md block"
+                            className="p-4 rounded-lg transition-all group cursor-pointer bg-gray-100 dark:bg-[#202020] hover:shadow-md block"
                         >
                             <div className="flex items-center gap-4">
-                                <div className={`w-14 h-14 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg`}>
+                                <div className={`w-14 h-14 rounded-lg bg-gradient-to-r ${feature.color} flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg`}>
                                     <IconComponent className="w-6 h-6 text-white" />
                                 </div>
                                 <div className="flex-1">
@@ -69,7 +69,7 @@ export default function AIFeatures() {
                                     <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
                                         {feature.description}
                                     </div>
-                                    <div className="text-xs font-medium text-blue-500 dark:text-[#07C5B9] hover:underline">
+                                    <div className="text-xs font-medium text-orange-500 dark:text-[#07C5B9] hover:underline">
                                         {feature.action} →
                                     </div>
                                 </div>

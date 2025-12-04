@@ -48,11 +48,10 @@ export default function ProfileDropdown() {
   };
 
   const menuItems = [
-    { icon: User, label: 'My Profile', path: '/profile' },
-    { icon: Brain, label: 'AI Chat', path: '/main/ai-chat' },
-    { icon: FileEdit, label: 'My Posts', path: '/main' },
-    { icon: Bookmark, label: 'Saved Posts', path: '/main/saved' },
-    { icon: Settings, label: 'Settings', path: '/main/settings' },
+    { icon: User, label: 'My Profile', path: `/main/profile/${loginUser.username}` },
+    { icon: FileEdit, label: 'My Posts', path: '/main/profile/my-posts' },
+    { icon: Bookmark, label: 'Saved Posts', path: '/main/profile/saved-posts' },
+    { icon: Settings, label: 'Settings', path: '/main/profile/settings' },
   ];
 
   return (

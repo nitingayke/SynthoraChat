@@ -7,18 +7,16 @@ export default function Login() {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-[url(src/assets/authbg.png)] h-screen w-full overflow-hidden bg-cover bg-center bg-no-repeat">
-      <div className="relative flex justify-center items-center h-full py-10 px-4 backdrop-blur overflow-auto">
+    <div className="min-h-screen w-full flex justify-center items-center bg-white dark:bg-[#191919] transition-colors px-4">
 
-        <button
-          onClick={() => navigate(-1)}
-          className="absolute top-5 sm:top-10 left-5 sm:left-10 lg:left-20 p-2 bg-white dark:bg-gray-800 rounded shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-        >
-          <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-white" />
-        </button>
+      <button
+        onClick={() => navigate(-1)}
+        className="absolute top-5 left-5 p-2 rounded-full border border-gray-300 dark:border-[#333] hover:bg-gray-100 dark:hover:bg-[#222] transition"
+      >
+        <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-white" />
+      </button>
 
-        <LoginComponent />
-      </div>
+      <LoginComponent />
     </div>
   );
 }
