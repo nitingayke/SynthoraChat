@@ -20,13 +20,13 @@ export default function CreatePostPage() {
   ];
 
   return (
-    <section className="max-w-5xl w-full mx-auto h-full">
+    <section className="max-w-5xl w-full mx-auto h-full px-1 sm:px-0">
 
       <motion.div initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-4xl font-bold dark:text-white w-full flex justify-center pt-10 pb-5"
+        className="text-3xl sm:text-4xl font-bold dark:text-white w-full flex justify-center pt-10 pb-5"
       >
-        <h1>Ask Your Question</h1>
+        <h1>Create Your Question</h1>
       </motion.div>
 
       <div className="flex flex-wrap md:flex-nowrap gap-3 mb-5">

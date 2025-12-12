@@ -74,6 +74,13 @@ const questionSchema = new mongoose.Schema(
       enum: ["active", "closed", "deleted"],
       default: "active",
     },
+    aiSummary: {
+      summary: String,
+      generatedAt: Date,
+      modelUsed: String,
+      confidence: Number,
+      tokenCount: Number,
+    },
   },
   { timestamps: true }
 );

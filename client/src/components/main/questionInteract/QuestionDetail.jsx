@@ -28,6 +28,7 @@ export default function QuestionDetail({ question }) {
   const [isLiked, setIsLiked] = useState(false);
   const [isUpvoted, setIsUpvoted] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [answerSummary, setAnswerSummary] = useState(null);
 
   const {
     _id,
@@ -44,6 +45,9 @@ export default function QuestionDetail({ question }) {
     media = [],
   } = question ?? {};
 
+  useEffect(() => {
+    setAnswerSummary(null);
+  }, [_id]);
 
   useEffect(() => {
     if (!loginUser || !question) return;
@@ -166,27 +170,40 @@ export default function QuestionDetail({ question }) {
           {isLoading.share ? <Loader2 className="animate-spin" size={18} /> : <Share2 size={18} />}
           <span className="hidden sm:flex">{shares}</span>
         </button>
-        
-        <CommentActions />
+
+        <CommentActions question={question} setAnswerSummary={setAnswerSummary} />
       </div>
 
-      <footer className="mt-4 flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-        <div className="flex items-center gap-4">
-          <span className="flex items-center gap-1">
-            <Eye size={14} />
-            {views}
-          </span>
-          <span>{answers.length} Answers</span>
+      <footer className="mt-4 ">
+        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1">
+              <Eye size={14} />
+              {views}
+            </span>
+            <span>{answers.length} Answers</span>
+          </div>
+
+          {author?.profile?.firstName && (
+            <Link
+              to={`/main/profile/${author?.username}`}
+              className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition underline underline-offset-2"
+            >
+              By {author.profile.firstName} {author.profile.lastName}
+            </Link>
+          )}
         </div>
 
-        {author?.profile?.firstName && (
-          <Link
-            to={`/main/profile/${author?.username}`}
-            className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition underline underline-offset-2"
-          >
-            By {author.profile.firstName} {author.profile.lastName}
-          </Link>
-        )}
+        {
+          answerSummary && <div className="mt-4 rounded-xl border border-orange-300/40 dark:border-[#07C5B9]/30 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-black/20 dark:to-[#07C5B9]/10 p-3 sm:p-5 shadow-sm">
+            <h2 className="font-semibold text-orange-500 dark:text-[#07C5B9] flex items-center gap-2">
+              AI Summary
+            </h2>
+            <p className="text-sm pt-1 whitespace-pre-wrap">
+              {answerSummary}
+            </p>
+          </div>
+        }
       </footer>
     </article>
   );

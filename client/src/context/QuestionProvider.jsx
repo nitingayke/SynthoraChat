@@ -230,6 +230,21 @@ Conclusion: Performance improvement is mostly about rendering only what matters 
                     status: "published",
                 },
             ],
+            aiSummary: {
+                summary: `The question discusses React performance optimization techniques. 
+Key recommendations include: 
+    1) Using React.memo(), useCallback(), and useMemo() to prevent unnecessary re-renders. 
+    2) Breaking down large components for granular updates. 
+    3) Implementing lazy loading and code splitting. 
+    4) Avoiding inline function definitions in JSX. 
+    5) Using React DevTools for profiling. 
+    
+    Consensus among answers suggests these techniques can improve rendering speed by 40-60%. The top-voted answer highlights component memoization as the most impactful approach.`,
+                generatedAt: "2024-12-24T10:30:00.000Z",
+                modelUsed: "GPT-4",
+                confidence: 0.92,
+                tokenCount: 189
+            },
         },
         {
             _id: "676a983197cd8b2b496ef002",

@@ -12,7 +12,7 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <Brain className="w-8 h-8 text-blue-600 dark:text-orange-400" />
+            <Brain className="w-8 h-8text-orange-500 dark:text-[#07C5B9]" />
             <span className="text-2xl font-extrabold text-gray-900 dark:text-white tracking-wide">
               SynthoraChat
             </span>
@@ -21,17 +21,17 @@ export default function Footer() {
             Discover answers. Elevate conversations. AI meets community!
           </p>
           <div className="flex items-center gap-3 mt-6">
-            <Sparkles className="w-6 h-6 text-blue-600 dark:text-orange-400" />
+            <Sparkles className="w-6 h-6text-orange-500 dark:text-[#07C5B9]" />
             <span className="text-xs">Powered by GenAI & LangChain</span>
           </div>
           <div className="flex gap-4 mt-5">
-            <a href="https://twitter.com" className="hover:text-blue-600 dark:hover:text-orange-400 transition">
+            <a href="https://twitter.com" className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition">
               <Twitter className="w-5 h-5" />
             </a>
-            <a href="https://github.com" className="hover:text-blue-600 dark:hover:text-orange-400 transition">
+            <a href="https://github.com" className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition">
               <Github className="w-5 h-5" />
             </a>
-            <a href="https://linkedin.com" className="hover:text-blue-600 dark:hover:text-orange-400 transition">
+            <a href="https://linkedin.com" className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition">
               <Linkedin className="w-5 h-5" />
             </a>
           </div>
@@ -45,7 +45,7 @@ export default function Footer() {
               <li key={item}>
                 <a
                   href={`/${item.toLowerCase()}`}
-                  className="hover:text-blue-600 dark:hover:text-orange-400 transition underline underline-offset-2"
+                  className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition underline underline-offset-2"
                 >
                   {item}
                 </a>
@@ -58,12 +58,12 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">Contact</h3>
           <p className="flex items-center gap-2 text-sm mb-2">
-            <Mail className="w-5 h-5 text-blue-600 dark:text-orange-400" />
+            <Mail className="w-5 h-5text-orange-500 dark:text-[#07C5B9]" />
             support@synthorachat.com
           </p>
           <a
             href="https://discord.gg"
-            className="inline-block mt-4 bg-blue-600 dark:bg-orange-500 text-white py-2 px-4 rounded hover:opacity-90 transition"
+            className="inline-block mt-4 bg-orange-500 dark:bg-[#07C5B9] text-white py-2 px-4 rounded hover:opacity-90 transition"
           >
             Join Discord
           </a>
@@ -78,7 +78,7 @@ export default function Footer() {
               </>
             ) : (
               <>
-                <Moon className="w-4 h-4 text-blue-600" /> Dark Mode
+                <Moon className="w-4 h-4text-orange-500" /> Dark Mode
               </>
             )}
           </button>

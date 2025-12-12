@@ -12,7 +12,7 @@ export default function FilterQuestionList() {
 
 
     return (
-        <div className="w-full space-y-3 p-3 sm:p-0">
+        <div className="w-full space-y-4 p-3 sm:p-0">
             {filteredQuestions?.slice(0, visibleCount).map((q) => {
                 const isActive = q?._id === questionId;
 
@@ -21,7 +21,7 @@ export default function FilterQuestionList() {
                         key={q?._id}
                         to={`/main/questions/${q?._id}`}
                         className={`
-                            block rounded-xl p-3 transition-all cursor-pointer group border 
+                            block rounded-lg p-3 transition-all cursor-pointer group border 
                             ${isActive
                                 ? "border-orange-500 dark:border-[#07C5B9]/20 bg-orange-50 dark:bg-[#07C5B9]/5"
                                 : "bg-white dark:bg-[#161616] hover:bg-gray-50 dark:hover:bg-[#1c1c1c] border-gray-300 dark:border-[#2a2a2a]"
