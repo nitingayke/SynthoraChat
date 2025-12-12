@@ -33,12 +33,7 @@ export default function Navbar() {
 
     const renderMainNavLinks = (isMobile) => {
 
-        const commonClass = (path) =>
-            `relative transition-all duration-200 
-     ${isActiveLink(path)
-                ? "text-orange-500 dark:text-[#07C5B9] font-semibold"
-                : "hover:text-orange-500 dark:hover:text-[#07C5B9]"} 
-     ${isMobile ? "px-4 py-2 rounded-lg" : ""}`;
+        const commonClass = (path) => `relative transition-all duration-200 ${isActiveLink(path) ? "text-orange-500 dark:text-[#07C5B9] font-semibold" : "hover:text-orange-500 dark:hover:text-[#07C5B9]"} ${isMobile ? "px-4 py-2 rounded-lg" : ""}`;
 
         return (
             <div className={isMobile ? "flex-1 flex flex-col gap-1 overflow-auto scrollbar-hide" : "hidden md:flex items-center gap-6"}>
@@ -46,6 +41,7 @@ export default function Navbar() {
                     <Link
                         key={link.name}
                         to={link.path}
+                        onClick={() => isMobile && setOpenSidebar(false)}
                         className={commonClass(link.path)}
                     >
                         {link.name}
@@ -54,19 +50,19 @@ export default function Navbar() {
 
                 {(isMobile && loginUser?.username) && (
                     <>
-                        <Link to="/main/profile" className={commonClass("/main/profile")}>
+                        <Link to="/main/profile" onClick={() => setOpenSidebar(false)} className={commonClass("/main/profile")}>
                             My Profile
                         </Link>
 
-                        <Link to="/main/notifications" className={commonClass("/main/notifications")}>
+                        <Link to="/main/notifications" onClick={() => setOpenSidebar(false)} className={commonClass("/main/notifications")}>
                             Notifications
                         </Link>
 
-                        <Link to="/main/settings" className={commonClass("/main/settings")}>
+                        <Link to="/main/settings" onClick={() => setOpenSidebar(false)} className={commonClass("/main/settings")}>
                             Settings
                         </Link>
 
-                        <Link to="/main/saved" className={commonClass("/main/saved")}>
+                        <Link to="/main/saved" onClick={() => setOpenSidebar(false)} className={commonClass("/main/saved")}>
                             Saved Posts
                         </Link>
                     </>
@@ -187,7 +183,7 @@ export default function Navbar() {
             >
                 <div className="w-60 h-full bg-gray-100 dark:bg-[#191919] text-gray-900 dark:text-gray-100 flex flex-col justify-between p-4">
                     <div className="sticky top-0 z-50 flex items-center justify-between mb-3">
-                        <Link to={"/"} className="flex items-center gap-2">
+                        <Link to={"/"} onClick={() => setOpenSidebar(false)} className="flex items-center gap-2">
                             <Brain className="text-orange-500 dark:text-[#07C5B9] w-6 h-6" />
                             <span className="text-xl font-bold text-gray-900 dark:text-white">SynthoraChat</span>
                         </Link>

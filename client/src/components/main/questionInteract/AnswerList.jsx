@@ -26,7 +26,8 @@ export default function AnswerList({ question }) {
   return (
     <div className="space-y-2">
 
-      <div id="answers" className="pb-5 mb-0" />
+      <div id="answers" className="pb-3 mb-0" />
+      
       <a href={"#answers"} className="flex items-center gap-1 text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
         <Hash size={20} /> Answers ({answers?.length || 0})
       </a>

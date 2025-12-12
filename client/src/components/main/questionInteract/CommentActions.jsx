@@ -1,18 +1,22 @@
 import { Loader2, Sparkles, Pencil } from "lucide-react";
 import { useState } from "react";
+import PropTypes from "prop-types";
 
-export default function CommentActions() {
+export default function CommentActions({ question, setAnswerSummary }) {
 
     const [isSummarizing, setIsSummarizing] = useState(false);
 
     const handleGenerateSummary = async () => {
+        setAnswerSummary(null);
         setIsSummarizing(true);
 
         try {
-            // Simulate delay
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            console.log("Summary generated!");
-
+            if (question?.aiSummary?.summary) {
+                setAnswerSummary(question.aiSummary.summary)
+            } else {
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                setAnswerSummary("Working on server. try this feature latter!");
+            }
         } catch (error) {
             console.error("Error generating summary:", error);
         } finally {
@@ -53,7 +57,11 @@ export default function CommentActions() {
                 <Pencil size={18} />
                 <span className="hidden md:flex">Answer</span>
             </button>
-
         </div>
     );
 }
+
+CommentActions.propTypes = {
+  question: PropTypes.object.isRequired,
+  setAnswerSummary: PropTypes.func.isRequired
+};
