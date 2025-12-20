@@ -1,8 +1,11 @@
 import { Lock, ArrowRight } from "lucide-react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import UIStateContext from "../../context/UIStateContext";
 
 export default function LoginRequired() {
     const navigate = useNavigate();
+    const { setOpenLoginDialog } = useContext(UIStateContext);
 
     return (
         <div className="w-full h-full flex justify-center items-center">
@@ -27,7 +30,7 @@ export default function LoginRequired() {
                 <div className="flex gap-4 mt-6">
                     {/* Login Button */}
                     <button
-                        onClick={() => navigate("/login")}
+                        onClick={() => setOpenLoginDialog(true)}
                         className="px-4 py-2 rounded-lg font-semibold text-white bg-orange-500 hover:bg-orange-600 dark:bg-[#07C5B9] dark:hover:bg-[#05a9a4] flex items-center gap-2 shadow-md transition"
                     >
                         Login

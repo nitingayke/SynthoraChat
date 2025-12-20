@@ -1,9 +1,11 @@
 import { Loader2, Sparkles, Pencil } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import PropTypes from "prop-types";
+import AuthContext from "../../../context/AuthContext";
 
 export default function CommentActions({ question, setAnswerSummary }) {
 
+    const { loginUser } = useContext(AuthContext);
     const [isSummarizing, setIsSummarizing] = useState(false);
 
     const handleGenerateSummary = async () => {
@@ -28,6 +30,8 @@ export default function CommentActions({ question, setAnswerSummary }) {
         console.log("Open answer editor...");
     };
 
+    const isOwner = (loginUser && loginUser?._id === question?.author?._id && loginUser?.username === question?.author?.username);
+
     return (
         <div className="sm:absolute right-0 flex gap-2">
             <button
@@ -49,19 +53,21 @@ export default function CommentActions({ question, setAnswerSummary }) {
                 <span className="hidden md:flex">AI Summary</span>
             </button>
 
-            <button
-                onClick={handleWriteAnswer}
-                className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-white bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 transition-all duration-200"
-                title="Write an answer for this question"
-            >
-                <Pencil size={18} />
-                <span className="hidden md:flex">Answer</span>
-            </button>
+            {
+                isOwner && <button
+                    onClick={handleWriteAnswer}
+                    className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-sm font-medium text-white bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 transition-all duration-200"
+                    title="Write an answer for this question"
+                >
+                    <Pencil size={18} />
+                    <span className="hidden md:flex">Answer</span>
+                </button>
+            }
         </div>
     );
 }
 
 CommentActions.propTypes = {
-  question: PropTypes.object.isRequired,
-  setAnswerSummary: PropTypes.func.isRequired
+    question: PropTypes.object.isRequired,
+    setAnswerSummary: PropTypes.func.isRequired
 };

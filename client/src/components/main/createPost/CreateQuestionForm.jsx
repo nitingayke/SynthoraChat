@@ -117,7 +117,7 @@ export default function CreateQuestionForm() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Write a clear and descriptive question title..."
-                    className={`text-xl w-full mt-1 p-3 rounded-lg bg-white dark:bg-neutral-900 dark:text-white outline-none`}
+                    className={`text-xl w-full mt-1 p-3 rounded-lg bg-white dark:bg-neutral-900 dark:text-white border-2 border-gray-200 dark:border-[#222] focus:border-orange-500 dark:focus:border-[#07C5B9] outline-none`}
                 />
                 <div className="flex justify-end pt-1">
                     <p className={`text-[10px] ${title?.length > TITLE_LIMIT && "text-red-500"}`}>{title?.length}/{TITLE_LIMIT}</p>
@@ -137,7 +137,7 @@ export default function CreateQuestionForm() {
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Explain your question in detail. What have you tried? What help do you need?"
                     rows="10"
-                    className="w-full mt-1 p-3 rounded-lg bg-white dark:bg-neutral-900 dark:text-white outline-none"
+                    className="w-full mt-1 p-3 rounded-lg bg-white dark:bg-neutral-900 dark:text-white outline-none border-2 border-gray-200 dark:border-[#222] focus:border-orange-500 dark:focus:border-[#07C5B9]"
                 ></textarea>
                 <div className="flex justify-end pt-1">
                     <p className={`text-[10px] ${content?.length > CONTENT_LIMIT && "text-red-500"}`}>{content?.length}/{CONTENT_LIMIT}</p>
@@ -154,7 +154,7 @@ export default function CreateQuestionForm() {
                             value={topicInput}
                             onChange={(e) => setTopicInput(e.target.value)}
                             placeholder="Add a topic (example: React, AI)..."
-                            className="w-auto flex-1 px-3 py-2.5 rounded-lg bg-white dark:bg-neutral-900 dark:text-white outline-none"
+                            className="w-auto flex-1 px-3 py-2.5 rounded-lg bg-white dark:bg-neutral-900 dark:text-white outline-none border-2 border-gray-200 dark:border-[#222] focus:border-orange-500 dark:focus:border-[#07C5B9]"
                         />
                         <button
                             onClick={addTopic}

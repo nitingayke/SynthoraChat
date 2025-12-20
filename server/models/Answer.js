@@ -1,5 +1,12 @@
+import mongoose from "mongoose";
+
 const answerSchema = new mongoose.Schema(
   {
+    questionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Question",
+      required: true,
+    },
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -96,4 +103,4 @@ const answerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Answer", answerSchema);
+export default mongoose.model("Answer", answerSchema);

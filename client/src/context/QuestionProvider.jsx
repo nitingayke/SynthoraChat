@@ -3,13 +3,12 @@ import QuestionContext from "./QuestionContext"
 
 export const QuestionProvider = ({ children }) => {
 
-    const [questions, setQuestions] = useState([]);
-    const [filteredQuestions, setFilteredQuestions] = useState([
+    const [questions, setQuestions] = useState([
         {
             _id: "676a983197cd8b2b496ef001",
             author: {
-                _id: "676a97bc97cd8b2b496e0001",
-                username: "nitin_codes",
+                _id: "676a983197cd8b2b496ef789",
+                username: "nitin_gayke",
                 email: "nitin@example.com",
                 profile: {
                     firstName: "Nitin",
@@ -245,6 +244,7 @@ Key recommendations include:
                 confidence: 0.92,
                 tokenCount: 189
             },
+            createdAt: "2024-12-22T14:30:00.000Z"
         },
         {
             _id: "676a983197cd8b2b496ef002",
@@ -397,10 +397,9 @@ If flexibility and speed matter → use NoSQL
 
     const values = useMemo(() => ({
         questions,
-        filteredQuestions,
         filterOptions,
         loadingQuestions
-    }), [questions, filteredQuestions, filterOptions, loadingQuestions]);
+    }), [questions, filterOptions, loadingQuestions]);
 
     return (
         <QuestionContext.Provider value={values}>

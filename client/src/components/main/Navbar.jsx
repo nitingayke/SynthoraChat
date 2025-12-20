@@ -18,8 +18,8 @@ export default function Navbar() {
     const navLinks = [
         { name: "Main", path: "/main" },
         { name: "AI Chat", path: "/main/ai-chat" },
-        { name: "Explore", path: "/main/explore" },
         { name: "Create Post", path: "/main/create-post" },
+        { name: "Explore", path: "/main/explore" },
     ];
 
     const isActiveLink = (path) => {
@@ -36,7 +36,7 @@ export default function Navbar() {
         const commonClass = (path) => `relative transition-all duration-200 ${isActiveLink(path) ? "text-orange-500 dark:text-[#07C5B9] font-semibold" : "hover:text-orange-500 dark:hover:text-[#07C5B9]"} ${isMobile ? "px-4 py-2 rounded-lg" : ""}`;
 
         return (
-            <div className={isMobile ? "flex-1 flex flex-col gap-1 overflow-auto scrollbar-hide" : "hidden md:flex items-center gap-6"}>
+            <div className={`${isMobile ? "flex-1 flex flex-col gap-1 overflow-auto scrollbar-hide" : "hidden md:flex items-center gap-3 md:gap-6"}`}>
                 {navLinks.map((link) => (
                     <Link
                         key={link.name}
@@ -50,20 +50,20 @@ export default function Navbar() {
 
                 {(isMobile && loginUser?.username) && (
                     <>
-                        <Link to="/main/profile" onClick={() => setOpenSidebar(false)} className={commonClass("/main/profile")}>
+                        <Link to={`/main/u/profile/${loginUser?.username}`} onClick={() => setOpenSidebar(false)} className={commonClass("/main/profile")}>
                             My Profile
                         </Link>
 
-                        <Link to="/main/notifications" onClick={() => setOpenSidebar(false)} className={commonClass("/main/notifications")}>
+                        <Link to={`/main/u/profile/${loginUser?.username}?tab=notifications`} onClick={() => setOpenSidebar(false)} className={commonClass("/main/notifications")}>
                             Notifications
                         </Link>
 
-                        <Link to="/main/settings" onClick={() => setOpenSidebar(false)} className={commonClass("/main/settings")}>
+                        <Link to={`/main/u/profile/${loginUser?.username}?tab=settings`} onClick={() => setOpenSidebar(false)} className={commonClass("/main/settings")}>
                             Settings
                         </Link>
 
-                        <Link to="/main/saved" onClick={() => setOpenSidebar(false)} className={commonClass("/main/saved")}>
-                            Saved Posts
+                        <Link to={`/main/u/profile/${loginUser?.username}?tab=saved-questions`} onClick={() => setOpenSidebar(false)} className={commonClass("/main/saved")}>
+                            Saved Questions
                         </Link>
                     </>
                 )}
@@ -74,12 +74,7 @@ export default function Navbar() {
     return (
         <>
             <nav
-                className="
-                sticky top-0 left-0 w-full z-50
-                bg-white/70 hover:bg-white dark:bg-[#161616]/80 dark:hover:bg-[#161616]
-                backdrop-blur-md shadow-md dark:shadow-gray-800
-                transition-all duration-300 ease-in-out
-                hover:shadow-md hover:shadow-orange-400/50 dark:hover:shadow-[#07C5B9]/40
+                className="sticky top-0 left-0 w-full z-50 bg-white/70 hover:bg-white dark:bg-[#161616]/80 dark:hover:bg-[#161616] backdrop-blur-md shadow-md dark:shadow-gray-800 transition-all duration-300 ease-in-out hover:shadow-md hover:shadow-orange-400/50 dark:hover:shadow-[#07C5B9]/40
             "
             >
                 <div className="max-w-5xl mx-auto flex justify-between items-center px-4 lg:px-0 py-2 md:px-6">
@@ -93,7 +88,7 @@ export default function Navbar() {
                         </span>
                     </Link>
 
-                    <div className="flex-1 flex justify-center items-center space-x-6 lg:space-x-6 text-gray-700 dark:text-gray-200">
+                    <div className="flex ps-3 w-fit justify-center items-center space-x-3 lg:space-x-6 text-gray-700 dark:text-gray-200">
                         {renderMainNavLinks(false)}
 
                         <div className="relative px-3 w-full sm:w-80 md:w-60 lg:w-70">
@@ -124,7 +119,7 @@ export default function Navbar() {
                         </button>
 
                         {loginUser && <Link
-                            to={`/main/${loginUser?.username}/notification`}
+                            to={`/main/u/profile/${loginUser?.username}?tab=notifications`}
                             className="related hidden sm:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#252525] transition relative"
                         >
                             <Bell className="w-5 h-5" />
@@ -142,7 +137,7 @@ export default function Navbar() {
 
                         {
                             loginUser && <Link
-                                to="/main/settings"
+                                to={`/main/u/profile/${loginUser?.username}?tab=settings`}
                                 className="hidden lg:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#252525] transition"
                                 title="Settings"
                             >

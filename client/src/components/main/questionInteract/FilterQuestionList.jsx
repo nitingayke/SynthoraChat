@@ -6,14 +6,14 @@ import { ArrowUp, Bookmark, Eye, Share2, ThumbsUp } from "lucide-react";
 export default function FilterQuestionList() {
 
     const { questionId } = useParams();
-    const { filteredQuestions } = useContext(QuestionContext);
+    const { questions } = useContext(QuestionContext);
 
     const [visibleCount, setVisibleCount] = useState(15);
 
 
     return (
         <div className="w-full space-y-4 p-3 sm:p-0">
-            {filteredQuestions?.slice(0, visibleCount).map((q) => {
+            {questions?.slice(0, visibleCount).map((q) => {
                 const isActive = q?._id === questionId;
 
                 return (
@@ -86,7 +86,7 @@ export default function FilterQuestionList() {
                 );
             })}
 
-            {(visibleCount < filteredQuestions.length) && (
+            {(visibleCount < questions.length) && (
                 <div className="flex justify-center mt-4">
                     <button
                         onClick={() => setVisibleCount(prev => prev + 15)}

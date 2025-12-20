@@ -25,13 +25,15 @@ export default function Navbar() {
   const { loginUser, logout } = useContext(AuthContext);
   const { setOpenLoginDialog, openSidebar, setOpenSidebar } = useContext(UIStateContext);
 
+  const notifications = loginUser?.notifications || [];
+
   const isActiveLink = (linkPath) => location.pathname.startsWith(linkPath);
 
   const renderNavLinks = (isMobile = false) => (
     <ul
       className={`flex ${isMobile
-          ? "flex-col gap-4 text-lg font-semibold overflow-auto scrollbar-hide"
-          : "hidden lg:flex gap-5 lg:gap-1 font-semibold"
+        ? "flex-col gap-4 text-lg font-semibold overflow-auto scrollbar-hide"
+        : "hidden lg:flex gap-5 lg:gap-1 font-semibold"
         } text-gray-800 dark:text-gray-200`}
     >
       {navLinks.map((link) => (
@@ -84,7 +86,7 @@ export default function Navbar() {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="hidden sm:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white transition"
+              className="hidden sm:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#252525] dark:text-white transition"
               title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
               {theme === "dark" ? (
@@ -94,10 +96,18 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* Notification */}
-            <button className="hidden sm:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
-              <Bell className="w-5 h-5 text-gray-700 dark:text-gray-200" />
-            </button>
+            {loginUser && <Link
+              to={`/main/u/profile/${loginUser?.username}?tab=notifications`}
+              className="related hidden sm:flex p-2 rounded-full dark:text-white hover:bg-gray-200 dark:hover:bg-[#252525] transition relative"
+            >
+              <Bell className="w-5 h-5" />
+              {(notifications?.length > 0) && (
+                <span className="absolute top-0 right-0 bg-orange-500 dark:bg-[#07C5B9] text-white text-[12px] px-1 font-semibold flex items-center justify-center rounded-full">
+                  {Math.min(notifications?.length, 9)}
+                  {notifications?.length > 9 && "+"}
+                </span>
+              )}
+            </Link>}
 
             {/* User or Join */}
             {loginUser ? (
