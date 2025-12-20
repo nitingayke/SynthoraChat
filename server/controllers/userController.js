@@ -1,42 +1,40 @@
 import mongoose from "mongoose";
 import httpStatus from "http-status";
 import User from "../models/User.js";
+import { findUserWithProfile } from "../services/user.service.js";
 import Question from "../models/Question.js";
 import Answer from "../models/Answer.js";
 import AIChat from "../models/AIChat.js";
 
+export const getCurrentUser = async (req, res) => {
+  const userId = req.user.id;
+
+  const user = await findUserWithProfile({ _id: userId });
+
+  if (!user) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    message: "Current user fetched successfully",
+    data: {
+      user,
+    },
+  });
+};
+
 export const getUserProfile = async (req, res) => {
   const { identifier } = req.params;
 
-  let query = {};
+  const query = mongoose.Types.ObjectId.isValid(identifier)
+    ? { _id: identifier }
+    : { username: identifier };
 
-  if (mongoose.Types.ObjectId.isValid(identifier)) {
-    query._id = identifier;
-  } else {
-    query.username = identifier;
-  }
-
-  const user = await User.findOne(query)
-    .select("-password")
-    .populate({
-      path: "followers.user",
-      select:
-        "username profile credentials topicsOfInterest followers following lastActive createdAt isVerified",
-      model: "User",
-    })
-    .populate({
-      path: "following.user",
-      select:
-        "username profile credentials topicsOfInterest followers following lastActive createdAt isVerified",
-      model: "User",
-    })
-    .populate({
-      path: "answers",
-      select:
-        "questionId content upvotes likes comments aiAccuracy views shares status createdAt",
-      model: "Answer",
-      options: { limit: 7 },
-    });
+  const user = await findUserWithProfile(query);
 
   if (!user) {
     return res.status(httpStatus.NOT_FOUND).json({
@@ -53,6 +51,10 @@ export const getUserProfile = async (req, res) => {
     },
   });
 };
+
+
+
+
 
 // .populate({
 //       path: "questions",

@@ -1,5 +1,6 @@
+import { fetchCurrentUser } from "../services/app/user.service";
 import AuthContext from "./AuthContext";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const AuthProvider = ({ children }) => {
 
@@ -313,16 +314,41 @@ export const AuthProvider = ({ children }) => {
             "lastActive": "2025-11-01T14:15:00.000Z"
         }
     );
+    const [authLoading, setAuthLoading] = useState(true);
 
     const logout = () => {
+        localStorage.removeItem("token");
         setLoginUser(null);
     }
+
+    useEffect(() => {
+        const initAuth = async() => {
+            const token = localStorage.getItem("token");
+
+            if(!token) {
+                setAuthLoading(false);
+                return;
+            }
+
+            try {
+                const res = await fetchCurrentUser();
+                setLoginUser(res?.data?.user);
+            } catch {
+                logout();
+            } finally {
+                setAuthLoading(false);
+            }
+        }
+
+        initAuth();
+    }, []);
 
     const values = useMemo(() => ({
         loginUser,
         setLoginUser,
-        logout
-    }), [loginUser]);
+        logout,
+        authLoading
+    }), [loginUser, authLoading]);
 
     return (
         <AuthContext.Provider value={values}>

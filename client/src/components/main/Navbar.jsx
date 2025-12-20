@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Sun, Moon, Settings, Brain, Bell, Search, Menu, X, LogOut } from "lucide-react";
 import ThemeContext from "../../context/ThemeContext";
@@ -8,12 +8,18 @@ import ProfileDropdown from "../navbar/ProfileDropdown";
 import Drawer from "@mui/material/Drawer";
 
 export default function Navbar() {
+
     const location = useLocation();
+
     const { theme, toggleTheme } = useContext(ThemeContext);
     const { loginUser, logout } = useContext(AuthContext);
     const { setOpenLoginDialog, searchQuery, setSearchQuery } = useContext(UIStateContext);
 
     const [openSidebar, setOpenSidebar] = useState(false);
+
+    useEffect(() => {
+        setSearchQuery("");
+    }, [setSearchQuery, location.pathname, location.search]);
 
     const navLinks = [
         { name: "Main", path: "/main" },

@@ -19,8 +19,17 @@ import ProfilePage from "../pages/chatPages/ProfilePage";
 import AIChat from "../pages/chatPages/AIChat";
 import QuestionInteract from "../pages/chatPages/QuestionInteract";
 import Temp from "../pages/chatPages/Temp";
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
+import ScreenLoader from "../components/loader/ScreenLoader";
 
 export default function AppRoutes() {
+
+    const { authLoading } = useContext(AuthContext);
+
+    if(authLoading) {
+        return <ScreenLoader />
+    }
 
     return (
         <>
