@@ -8,21 +8,13 @@ import AnswerList from "../../components/main/questionInteract/AnswerList";
 export default function QuestionInteract() {
 
     const { questionId } = useParams();
-<<<<<<< HEAD
-    const { filteredQuestions, loadingQuestions } = useContext(QuestionContext);
-=======
     const { questions, loadingQuestions } = useContext(QuestionContext);
->>>>>>> upstream/main
 
     if (loadingQuestions) {
         return (
             <div className="w-full max-w-5xl mx-auto flex py-10 justify-center items-center h-full">
                 <div className="flex items-center gap-3">
-<<<<<<< HEAD
-                    <div className="animate-spin rounded-full border-4 w-8 h-8 border-y-[#07C5B9] border-x-0"></div>
-=======
                     <div className="animate-spin rounded-full border-4 w-8 h-8 border-y-orange-500 dark:border-y-[#07C5B9] border-x-0"></div>
->>>>>>> upstream/main
                     <p className="text-gray-700 dark:text-gray-300 font-medium">
                         Loading...
                     </p>
@@ -31,11 +23,7 @@ export default function QuestionInteract() {
         )
     }
 
-<<<<<<< HEAD
-    if (!filteredQuestions || filteredQuestions.length === 0) {
-=======
     if (!questions || questions.length === 0) {
->>>>>>> upstream/main
         return (
             <div className="text-center py-20 text-gray-500 dark:text-gray-400 text-sm">
                 No questions found
@@ -43,11 +31,7 @@ export default function QuestionInteract() {
         );
     }
 
-<<<<<<< HEAD
-    const currentQuestion = questionId ? filteredQuestions.find((q) => q?._id === questionId) : filteredQuestions[0];
-=======
     const currentQuestion = questionId ? questions.find((q) => q?._id === questionId) : questions[0];
->>>>>>> upstream/main
 
     if (questionId && !currentQuestion) {
         return (
