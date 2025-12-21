@@ -157,16 +157,19 @@ export default function UserProfile() {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between text-sm gap-2">
+                <div className="flex items-center justify-between text-sm gap-2 overflow-hidden">
                     {profile?.location && (
                         <a
                             href={`https://www.google.com/maps/search/?api=1&query=${profile?.location}`}
-                            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-[#202020] px-3 py-2 rounded-lg hover:opacity-80 dark:hover:bg-[#2a2a2a] transition-colors flex-1"
+                            className="flex items-center gap-2 text-gray-600 dark:text-gray-400 bg-gray-200 dark:bg-[#202020] px-3 py-2 rounded-lg hover:opacity-80 dark:hover:bg-[#2a2a2a] transition-colors flex-1 line-clamp-1"
                             target="_blank"
                         >
-                            <MapPin className="w-4 h-4" />
-                            <span className="truncate">{profile.location}</span>
+                            <MapPin className="w-4 h-4 shrink-0" />
+                            <span className="min-w-0 truncate">
+                                {profile.location}
+                            </span>
                         </a>
+
                     )}
 
                     {profile?.website && (
