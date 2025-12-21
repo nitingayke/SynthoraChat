@@ -48,10 +48,10 @@ export default function ProfileDropdown() {
   };
 
   const menuItems = [
-    { icon: User, label: 'My Profile', path: `/main/profile/${loginUser.username}` },
-    { icon: FileEdit, label: 'My Posts', path: '/main/profile/my-posts' },
-    { icon: Bookmark, label: 'Saved Posts', path: '/main/profile/saved-posts' },
-    { icon: Settings, label: 'Settings', path: '/main/profile/settings' },
+    { icon: User, label: 'My Profile', path: `/main/u/profile/${loginUser.username}` },
+    { icon: FileEdit, label: 'My Questions', path: `/main/u/profile/${loginUser.username}?tab=questions` },
+    { icon: Bookmark, label: 'Saved Questions', path: `/main/u/profile/${loginUser.username}?tab=saved-questions` },
+    { icon: Settings, label: 'Settings', path: `/main/u/profile/${loginUser.username}?tab=settings` },
   ];
 
   return (

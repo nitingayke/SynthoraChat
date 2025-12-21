@@ -195,7 +195,7 @@ export default function QuestionDetail({ question }) {
         </div>
 
         {
-          answerSummary && <div className="mt-4 rounded-xl border border-orange-300/40 dark:border-[#07C5B9]/30 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-black/20 dark:to-[#07C5B9]/10 p-3 sm:p-5 shadow-sm">
+          answerSummary && <div className="mt-4 rounded-xl border border-orange-300/40 dark:border-[#07C5B9]/30 bg-orange-500/10 dark:bg-[#07C5B9]/5 p-3 sm:p-5 shadow-sm">
             <h2 className="font-semibold text-orange-500 dark:text-[#07C5B9] flex items-center gap-2">
               AI Summary
             </h2>
@@ -214,7 +214,6 @@ function ActionButton({
   loading,
   onClick,
   count,
-  ActiveIcon,
   activeClass,
 }) {
   return (

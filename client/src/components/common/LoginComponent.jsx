@@ -1,40 +1,48 @@
 import { useContext, useState } from "react";
-import { Eye, EyeOff, Github, Twitter } from "lucide-react";
+import { Eye, EyeOff, Github, Loader2, Twitter } from "lucide-react";
 import GoogleIcon from '@mui/icons-material/Google';
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
 import UIStateContext from "../../context/UIStateContext";
+import { useSnackbar } from "notistack";
+import { loginService } from "../../services/app/auth.service"
 
 export default function LoginComponent() {
 
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   const { setLoginUser } = useContext(AuthContext);
   const { openLoginDialog, setOpenLoginDialog } = useContext(UIStateContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
-      setError("All fields are required");
+      enqueueSnackbar("All fields are required", { variant: "error" });
       return;
     }
 
-    setError("");
+    try {
+      setLoading(true);
 
-    // Demo Login
-    setLoginUser({
-      id: 1,
-      username: "johndoe",
-      email,
-    });
+      const res = await loginService({ identifier: email, password });
 
-    if (openLoginDialog) setOpenLoginDialog(false);
-    else navigate("/home");
+      if (res?.success) {
+        setLoginUser(res?.data?.user);
+
+        if (openLoginDialog) setOpenLoginDialog(false);
+        else navigate("/home");
+      }
+    } catch (error) {
+      enqueueSnackbar(error?.response?.data?.message || error?.message || "Someting went wrong! please try again.", { variant: "error" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,10 +59,6 @@ export default function LoginComponent() {
         Welcome Back
       </h1>
 
-      {error && (
-        <p className="text-red-500 text-center mb-4">{error}</p>
-      )}
-
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
@@ -66,7 +70,7 @@ export default function LoginComponent() {
           className="w-full mt-1 p-3 rounded-lg bg-gray-100 dark:bg-[#191919] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-[#07C5B9] transition"
         />
 
-        <div className="relative">
+        <div className="relative flex items-center">
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
@@ -76,7 +80,7 @@ export default function LoginComponent() {
           />
           <button
             type="button"
-            className="absolute right-3 top-3 text-gray-500 dark:text-gray-400"
+            className="absolute right-3 top-4.5 text-gray-500 dark:text-gray-400"
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? <EyeOff /> : <Eye />}
@@ -84,15 +88,12 @@ export default function LoginComponent() {
         </div>
 
         <button
+          disabled={loading}
           type="submit"
-          className="
-            py-3 rounded-lg font-semibold text-white
-            bg-orange-500 hover:bg-orange-600 
-            dark:bg-[#07C5B9] dark:hover:bg-[#05a9a4]
-            transition
-          "
+          className="flex items-center justify-center gap-2 py-2 rounded-lg font-semibold text-white bg-orange-500 hover:bg-orange-600  dark:bg-[#07C5B9] dark:hover:bg-[#05a9a4] transition disabled:cursor-not-allowed"
         >
-          Login
+          {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
 
@@ -107,21 +108,24 @@ export default function LoginComponent() {
 
         {/* Google */}
         <button
-          className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200"
+          disabled={loading}
+          className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
         >
           <GoogleIcon className="w-5 h-5" />
         </button>
 
         {/* GitHub */}
         <button
-          className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200"
+          disabled={loading}
+          className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
         >
           <Github className="w-5 h-5" />
         </button>
 
         {/* Twitter */}
         <button
-          className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200"
+          disabled={loading}
+          className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
         >
           <Twitter className="w-5 h-5" />
         </button>

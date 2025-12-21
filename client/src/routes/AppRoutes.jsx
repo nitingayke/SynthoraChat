@@ -14,14 +14,22 @@ import MainLayout from "../layouts/MainLayout";
 import NotFound from "../components/common/NotFound";
 import Main from "../pages/chatPages/Main";
 import Explore from "../pages/chatPages/Explore";
-import SettingsPage from "../pages/SettingsPage";
 import CreatePostPage from "../pages/chatPages/CreatePostPage";
-import { ProfilePage } from "../pages/ProfilePage";
+import ProfilePage from "../pages/chatPages/ProfilePage";
 import AIChat from "../pages/chatPages/AIChat";
 import QuestionInteract from "../pages/chatPages/QuestionInteract";
 import Temp from "../pages/chatPages/Temp";
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
+import ScreenLoader from "../components/loader/ScreenLoader";
 
 export default function AppRoutes() {
+
+    const { authLoading } = useContext(AuthContext);
+
+    if(authLoading) {
+        return <ScreenLoader />
+    }
 
     return (
         <>
@@ -41,10 +49,9 @@ export default function AppRoutes() {
                     <Route path="questions/:questionId" element={<QuestionInteract />} />
                     <Route path="ai-chat/:threadId?" element={<AIChat />} />
                     <Route path="explore" element={<Explore />} />
-                    <Route path="settings" element={<SettingsPage />} />
                     <Route path="create-post" element={<CreatePostPage />} />
 
-                    <Route path="profile/:username?" element={<ProfilePage />} />
+                    <Route path="u/profile/:username" element={<ProfilePage />} />
                     
                     <Route path="temp" element={<Temp />} />
                     <Route path="*" element={<NotFound />} />

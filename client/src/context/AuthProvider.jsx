@@ -1,5 +1,6 @@
+import { fetchCurrentUser } from "../services/app/user.service";
 import AuthContext from "./AuthContext";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export const AuthProvider = ({ children }) => {
 
@@ -50,15 +51,133 @@ export const AuthProvider = ({ children }) => {
             ],
             "followers": [
                 {
-                    "user": "671fb9c3a18c8a5c0d6e8b01",
-                    "followedAt": "2025-10-20T14:22:00.000Z"
-                }
+                    user: {
+                        _id: "671fb9c3a18c8a5c0d6e8b02",
+                        username: "ai_expert",
+                        profile: {
+                            firstName: "Alex",
+                            lastName: "Johnson",
+                            bio: "UX designer, Skilled in java CPP and have experience in MERN",
+                            location: "San Francisco, CA",
+                            website: "https://onepagelove.com/inspiration/portfolio",
+                            profilePicture: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+                        },
+                        "credentials": ["Software Engineer", "MERN Stack Developer"],
+                        "topicsOfInterest": ["JavaScript", "Web Development", "AI", "DSA"],
+                        "followers": [
+                            {
+                                "user": "671fb9c3a18c8a5c0d6e8b02",
+                                "followedAt": "2025-10-22T09:15:00.000Z"
+                            },
+                            {
+                                "user": "671fb9c3a18c8a5c0d6e8b02",
+                                "followedAt": "2025-10-22T09:15:00.000Z"
+                            }
+                        ],
+                        "following": [
+                            {
+                                "user": "671fb9c3a18c8a5c0d6e8b02",
+                                "followedAt": "2025-10-22T09:15:00.000Z"
+                            },
+                            {
+                                "user": "671fb9c3a18c8a5c0d6e8b02",
+                                "followedAt": "2025-10-22T09:15:00.000Z"
+                            }
+                        ],
+                        lastActive: Date.now(),
+                        createdAt: Date.now()
+                    },
+                    followedAt: "2025-10-22T09:15:00.000Z"
+                },
             ],
             "following": [
                 {
-                    "user": "671fb9c3a18c8a5c0d6e8b02",
-                    "followedAt": "2025-10-22T09:15:00.000Z"
-                }
+                    user: {
+                        _id: "671fb9c3a18c8a5c0d6e8b01",
+                        username: "tech_guru",
+                        profile: {
+                            firstName: "John",
+                            lastName: "Doe",
+                            bio: "Senior Full Stack Developer with 8+ years experience in React, Node.js, and cloud technologies",
+                            location: "San Francisco, CA",
+                            website: "https://johndoe.dev",
+                            profilePicture: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                        },
+                        credentials: ["Senior Full Stack Developer", "AWS Certified Solutions Architect"],
+                        topicsOfInterest: ["Web Development", "Cloud Computing", "DevOps", "AI"],
+                        followers: [
+                            { user: "671fb9c3a18c8a5c0d6e8b02", followedAt: "2024-10-20T14:22:00.000Z" },
+                            { user: "671fb9c3a18c8a5c0d6e8b03", followedAt: "2024-10-25T09:15:00.000Z" },
+                            { user: "671fb9c3a18c8a5c0d6e8b04", followedAt: "2024-11-01T16:30:00.000Z" }
+                        ],
+                        following: [
+                            { user: "671fb9c3a18c8a5c0d6e8b02", followedAt: "2024-10-22T09:15:00.000Z" },
+                            { user: "671fb9c3a18c8a5c0d6e8b05", followedAt: "2024-10-28T13:40:00.000Z" }
+                        ],
+                        lastActive: new Date("2024-12-24T14:30:00.000Z"),
+                        createdAt: new Date("2023-01-15T10:00:00.000Z"),
+                        isVerified: true
+                    },
+                    followedAt: "2024-10-22T09:15:00.000Z"
+                },
+                {
+                    user: {
+                        _id: "671fb9c3a18c8a5c0d6e8b02",
+                        username: "ai_expert",
+                        profile: {
+                            firstName: "Alex",
+                            lastName: "Johnson",
+                            bio: "AI/ML Engineer specializing in NLP and Computer Vision. Building cutting-edge AI solutions",
+                            location: "New York, NY",
+                            website: "https://alexjohnson.ai",
+                            profilePicture: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                        },
+                        credentials: ["Senior AI Engineer", "PhD in Machine Learning, Stanford"],
+                        topicsOfInterest: ["Artificial Intelligence", "Machine Learning", "NLP", "Computer Vision"],
+                        followers: [
+                            { user: "671fb9c3a18c8a5c0d6e8b01", followedAt: "2024-10-20T14:22:00.000Z" },
+                            { user: "671fb9c3a18c8a5c0d6e8b03", followedAt: "2024-10-26T11:20:00.000Z" },
+                            { user: "671fb9c3a18c8a5c0d6e8b04", followedAt: "2024-11-02T15:45:00.000Z" }
+                        ],
+                        following: [
+                            { user: "671fb9c3a18c8a5c0d6e8b01", followedAt: "2024-10-25T09:15:00.000Z" },
+                            { user: "671fb9c3a18c8a5c0d6e8b05", followedAt: "2024-10-29T10:30:00.000Z" }
+                        ],
+                        lastActive: new Date("2024-12-24T12:15:00.000Z"),
+                        createdAt: new Date("2022-08-10T09:30:00.000Z"),
+                        isVerified: true
+                    },
+                    followedAt: "2024-10-25T09:15:00.000Z"
+                },
+                {
+                    user: {
+                        _id: "671fb9c3a18c8a5c0d6e8b03",
+                        username: "ui_ux_pro",
+                        profile: {
+                            firstName: "Sarah",
+                            lastName: "Chen",
+                            bio: "Frontend Developer & UI/UX Designer passionate about creating beautiful, accessible web experiences",
+                            location: "Seattle, WA",
+                            website: "https://sarahchen.design",
+                            profilePicture: "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+                        },
+                        credentials: ["Senior Frontend Engineer at Figma", "UI/UX Design Specialist"],
+                        topicsOfInterest: ["UI/UX Design", "Frontend Development", "Web Accessibility", "Design Systems"],
+                        followers: [
+                            { user: "671fb9c3a18c8a5c0d6e8b01", followedAt: "2024-10-25T09:15:00.000Z" },
+                            { user: "671fb9c3a18c8a5c0d6e8b02", followedAt: "2024-10-26T11:20:00.000Z" },
+                            { user: "671fb9c3a18c8a5c0d6e8b04", followedAt: "2024-10-30T14:35:00.000Z" }
+                        ],
+                        following: [
+                            { user: "671fb9c3a18c8a5c0d6e8b01", followedAt: "2024-10-28T13:40:00.000Z" },
+                            { user: "671fb9c3a18c8a5c0d6e8b06", followedAt: "2024-11-01T10:25:00.000Z" }
+                        ],
+                        lastActive: new Date("2024-12-24T10:45:00.000Z"),
+                        createdAt: new Date("2023-03-20T08:45:00.000Z"),
+                        isVerified: true
+                    },
+                    followedAt: "2024-10-28T13:40:00.000Z"
+                },
             ],
             "blockedUsers": [
                 {
@@ -195,16 +314,41 @@ export const AuthProvider = ({ children }) => {
             "lastActive": "2025-11-01T14:15:00.000Z"
         }
     );
+    const [authLoading, setAuthLoading] = useState(true);
 
     const logout = () => {
+        localStorage.removeItem("token");
         setLoginUser(null);
     }
+
+    useEffect(() => {
+        const initAuth = async() => {
+            const token = localStorage.getItem("token");
+
+            if(!token) {
+                setAuthLoading(false);
+                return;
+            }
+
+            try {
+                const res = await fetchCurrentUser();
+                setLoginUser(res?.data?.user);
+            } catch {
+                logout();
+            } finally {
+                setAuthLoading(false);
+            }
+        }
+
+        initAuth();
+    }, []);
 
     const values = useMemo(() => ({
         loginUser,
         setLoginUser,
-        logout
-    }), [loginUser]);
+        logout,
+        authLoading
+    }), [loginUser, authLoading]);
 
     return (
         <AuthContext.Provider value={values}>

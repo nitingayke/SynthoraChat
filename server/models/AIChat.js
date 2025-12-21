@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const aiChatSessionSchema = new mongoose.Schema(
   {
@@ -55,4 +55,4 @@ const aiChatSessionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("AIChat", aiChatSessionSchema);
+export default mongoose.model("AIChat", aiChatSessionSchema);

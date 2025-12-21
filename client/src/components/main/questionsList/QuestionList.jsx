@@ -12,11 +12,11 @@ export default function QuestionList() {
     const filter = searchParams.get("filter");
     const topic = searchParams.get("topic");
 
-    const { filteredQuestions } = useContext(QuestionContext);
+    const { questions } = useContext(QuestionContext);
 
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-    if (!filteredQuestions || filteredQuestions.length === 0) {
+    if (!questions || questions.length === 0) {
         return (
             <div className="flex-1 text-center py-12">
                 <div className="text-gray-400 dark:text-gray-600 text-lg">
@@ -41,7 +41,7 @@ export default function QuestionList() {
             </>
 
             <div className='space-y-4'>
-                {filteredQuestions.map((question) => (
+                {questions.map((question) => (
                     <QuestionCard key={question?._id} question={question} />
                 ))}
             </div>

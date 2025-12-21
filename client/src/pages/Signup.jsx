@@ -1,12 +1,20 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
+<<<<<<< HEAD
 import { ArrowLeft, Github, Loader2, Twitter } from "lucide-react";
 import GoogleIcon from '@mui/icons-material/Google';
+=======
+import { ArrowLeft, Eye, EyeOff, Github, Loader2, Twitter } from "lucide-react";
+import GoogleIcon from '@mui/icons-material/Google';
+import { useSnackbar } from "notistack";
+import { signupService } from "../services/app/auth.service";
+>>>>>>> upstream/main
 
 export default function Signup() {
 
     const navigate = useNavigate();
+    const { enqueueSnackbar } = useSnackbar();
     const { setLoginUser } = useContext(AuthContext);
 
     const [formData, setFormData] = useState({
@@ -14,14 +22,20 @@ export default function Signup() {
         email: "",
         password: "",
     });
+<<<<<<< HEAD
 
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+=======
+    const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+>>>>>>> upstream/main
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+<<<<<<< HEAD
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -43,6 +57,71 @@ export default function Signup() {
             setLoading(false);
             navigate("/home");
         }, 1500);
+=======
+    const validate = () => {
+        const { username, email, password } = formData;
+
+        formData.username = username.trim();
+        formData.email = email.trim();
+        formData.password = password.trim();
+
+        if (!username || !email || !password) {
+            enqueueSnackbar("All fields are required", { variant: "error" });
+            return false;
+        }
+
+        if (!/^[a-zA-Z0-9_]{1,}$/.test(username)) {
+            enqueueSnackbar(
+                "Username must be at least 1 characters (letters, numbers, underscore)",
+                { variant: "error" }
+            );
+            return false;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            enqueueSnackbar("Please enter a valid email address", {
+                variant: "error",
+            });
+            return false;
+        }
+
+        if (password.length < 6) {
+            enqueueSnackbar("Password must be at least 6 characters", {
+                variant: "error",
+            });
+            return false;
+        }
+
+        return true;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!validate()) return;
+
+        try {
+            setLoading(true);
+
+            const res = await signupService(formData);
+
+            if (res?.success) {
+                setLoginUser(res.data.user);
+                enqueueSnackbar("Account created successfully 🎉", {
+                    variant: "success",
+                });
+                navigate("/home");
+            }
+        } catch (error) {
+            enqueueSnackbar(
+                error?.response?.data?.message ||
+                "Signup failed. Please try again.",
+                { variant: "error" }
+            );
+        } finally {
+            setLoading(false);
+        }
+>>>>>>> upstream/main
     };
 
     return (
@@ -63,10 +142,13 @@ export default function Signup() {
                     Create Your Account
                 </h1>
 
+<<<<<<< HEAD
                 {error && (
                     <p className="text-red-500 text-center mb-3">{error}</p>
                 )}
 
+=======
+>>>>>>> upstream/main
                 <form onSubmit={handleSubmit} className="flex flex-col gap-2">
 
                     {/* Username */}
@@ -93,6 +175,7 @@ export default function Signup() {
                             className="w-full mt-1 p-3 rounded-lg bg-gray-100 dark:bg-[#191919] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-[#07C5B9] transition"
                             placeholder="Enter your email"
                         />
+<<<<<<< HEAD
                     </div>
 
                     {/* Password */}
@@ -118,6 +201,36 @@ export default function Signup() {
               dark:bg-[#07C5B9] dark:hover:bg-[#05a9a4]
               transition flex justify-center items-center gap-2
             "
+=======
+                    </div>
+
+                    <div>
+                        <label className="text-sm text-gray-700 dark:text-gray-300">Password</label>
+                        <div className="relative flex items-center">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                className="w-full mt-1 p-3 rounded-lg bg-gray-100 dark:bg-[#191919] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-[#07C5B9] transition"
+                                placeholder="Enter your password"
+                            />
+
+                            <button
+                                type="button"
+                                className="absolute right-3 top-4.5 text-gray-500 dark:text-gray-400"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <EyeOff /> : <Eye />}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Submit */}
+                    <button
+                        type="submit"
+                        className="w-full py-2 mt-2 rounded-lg font-semibold text-white shadow-mdbg-orange-500 bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 transition flex justify-center items-center gap-2 disabled:cursor-not-allowed"
+>>>>>>> upstream/main
                         disabled={loading}
                     >
                         {loading ? (
@@ -138,21 +251,36 @@ export default function Signup() {
 
                     {/* Google */}
                     <button
+<<<<<<< HEAD
                         className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200"
+=======
+                        disabled={loading}
+                        className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
+>>>>>>> upstream/main
                     >
                         <GoogleIcon className="w-5 h-5" />
                     </button>
 
                     {/* GitHub */}
                     <button
+<<<<<<< HEAD
                         className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200"
+=======
+                        disabled={loading}
+                        className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
+>>>>>>> upstream/main
                     >
                         <Github className="w-5 h-5" />
                     </button>
 
                     {/* Twitter */}
                     <button
+<<<<<<< HEAD
                         className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200"
+=======
+                        disabled={loading}
+                        className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
+>>>>>>> upstream/main
                     >
                         <Twitter className="w-5 h-5" />
                     </button>
