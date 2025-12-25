@@ -1,15 +1,10 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
-<<<<<<< HEAD
-import { ArrowLeft, Github, Loader2, Twitter } from "lucide-react";
-import GoogleIcon from '@mui/icons-material/Google';
-=======
 import { ArrowLeft, Eye, EyeOff, Github, Loader2, Twitter } from "lucide-react";
 import GoogleIcon from '@mui/icons-material/Google';
 import { useSnackbar } from "notistack";
 import { signupService } from "../services/app/auth.service";
->>>>>>> upstream/main
 
 export default function Signup() {
 
@@ -22,42 +17,13 @@ export default function Signup() {
         email: "",
         password: "",
     });
-<<<<<<< HEAD
-
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
-=======
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
->>>>>>> upstream/main
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-<<<<<<< HEAD
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        if (!formData.username || !formData.email || !formData.password) {
-            setError("All fields are required.");
-            return;
-        }
-
-        setError("");
-        setLoading(true);
-
-        setTimeout(() => {
-            setLoginUser({
-                id: 1,
-                username: formData.username,
-                email: formData.email,
-            });
-
-            setLoading(false);
-            navigate("/home");
-        }, 1500);
-=======
     const validate = () => {
         const { username, email, password } = formData;
 
@@ -121,7 +87,6 @@ export default function Signup() {
         } finally {
             setLoading(false);
         }
->>>>>>> upstream/main
     };
 
     return (
@@ -142,13 +107,6 @@ export default function Signup() {
                     Create Your Account
                 </h1>
 
-<<<<<<< HEAD
-                {error && (
-                    <p className="text-red-500 text-center mb-3">{error}</p>
-                )}
-
-=======
->>>>>>> upstream/main
                 <form onSubmit={handleSubmit} className="flex flex-col gap-2">
 
                     {/* Username */}
@@ -175,33 +133,6 @@ export default function Signup() {
                             className="w-full mt-1 p-3 rounded-lg bg-gray-100 dark:bg-[#191919] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-[#07C5B9] transition"
                             placeholder="Enter your email"
                         />
-<<<<<<< HEAD
-                    </div>
-
-                    {/* Password */}
-                    <div>
-                        <label className="text-sm text-gray-700 dark:text-gray-300">Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            className="w-full mt-1 p-3 rounded-lg bg-gray-100 dark:bg-[#191919] text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-[#07C5B9] transition"
-                            placeholder="Enter your password"
-                        />
-                    </div>
-
-                    {/* Submit */}
-                    <button
-                        type="submit"
-                        className="
-              w-full py-3 mt-2 rounded-lg font-semibold 
-              text-white shadow-md
-              bg-orange-500 hover:bg-orange-600 
-              dark:bg-[#07C5B9] dark:hover:bg-[#05a9a4]
-              transition flex justify-center items-center gap-2
-            "
-=======
                     </div>
 
                     <div>
@@ -230,7 +161,6 @@ export default function Signup() {
                     <button
                         type="submit"
                         className="w-full py-2 mt-2 rounded-lg font-semibold text-white shadow-mdbg-orange-500 bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 transition flex justify-center items-center gap-2 disabled:cursor-not-allowed"
->>>>>>> upstream/main
                         disabled={loading}
                     >
                         {loading ? (
@@ -251,36 +181,24 @@ export default function Signup() {
 
                     {/* Google */}
                     <button
-<<<<<<< HEAD
-                        className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200"
-=======
                         disabled={loading}
                         className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
->>>>>>> upstream/main
                     >
                         <GoogleIcon className="w-5 h-5" />
                     </button>
 
                     {/* GitHub */}
                     <button
-<<<<<<< HEAD
-                        className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200"
-=======
                         disabled={loading}
                         className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
->>>>>>> upstream/main
                     >
                         <Github className="w-5 h-5" />
                     </button>
 
                     {/* Twitter */}
                     <button
-<<<<<<< HEAD
-                        className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200"
-=======
                         disabled={loading}
                         className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
->>>>>>> upstream/main
                     >
                         <Twitter className="w-5 h-5" />
                     </button>

@@ -8,7 +8,7 @@ import { connectDatabase } from "./config/database.js";
 import authRoute from "./routes/authRoute.js";
 import questionRoute from "./routes/questionRoute.js"
 import userRoute from "./routes/userRoute.js";
-
+import profileEditRoute from "./routes/profileEditRoute.js"
 dotenv.config();
 
 const app = express();
@@ -35,6 +35,8 @@ app.use("/auth", authRoute);
 app.use("/u", userRoute);
 
 app.use("/q", questionRoute);
+
+app.use("/user-profile", profileEditRoute);
 
 
 app.use((err, req, res, next) => {

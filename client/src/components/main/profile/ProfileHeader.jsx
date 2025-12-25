@@ -95,7 +95,7 @@ export default function ProfileHeader({ user, isOwnProfile = false }) {
                     </div>
 
                     {/* Camera icon */}
-                    {isOwnProfile && <Link to={`/main/u/profile/${username}?tab=settings#profile_settings`} className="absolute bottom-1 right-1 p-2 rounded-full bg-white dark:bg-[#262626] border border-gray-200 dark:border-[#333] shadow hover:scale-105 transition">
+                    {isOwnProfile && <Link to={`/main/u/profile/${username}?tab=settings`} className="absolute bottom-1 right-1 p-2 rounded-full bg-white dark:bg-[#262626] border border-gray-200 dark:border-[#333] shadow hover:scale-105 transition">
                         <Camera size={16} />
                     </Link>}
                 </div>
@@ -103,7 +103,7 @@ export default function ProfileHeader({ user, isOwnProfile = false }) {
                 {/* Right action buttons */}
                 <div className="flex justify-end gap-3 pt-4">
                     <Link
-                        to={`/main/u/profile/nitin_gayke?tab=settings#profile_settings`}
+                        to={`/main/u/profile/gaykenitin92?tab=settings`}
                         className="flex items-center gap-2 px-3 p-2 w-10 h-10 sm:w-auto sm:h-auto rounded-full sm:rounded-lg bg-orange-500 dark:bg-[#07C5B9] text-white font-semibold hover:opacity-90 transition"
                     >
                         <Edit3 size={16} />

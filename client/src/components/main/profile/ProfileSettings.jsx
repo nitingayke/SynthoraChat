@@ -1,120 +1,58 @@
-import React, { useContext, useState } from "react";
-import {
-  User,
-  Camera,
-  MapPin,
-  Shield,
-  Bell,
-  Trash2,
-  Lock,
-  X,
-} from "lucide-react";
-import AuthContext from "../../../context/AuthContext";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { useSnackbar } from "notistack";
+import {
+  updateUserProfile,
+  validateEmail,
+  isSameEmail,
+  emailUpdateService,
+  passwordUpdateService,
+  useOtpTimer,
+} from "../../../services/userProfile.service";
 
+// Import extracted components
+import EmailUpdateModal from "./profileSettings/modals/EmailUpdateModal";
+import PasswordUpdateModal from "./profileSettings/modals/PasswordUpdateModal";
+import ProfileMediaSection from "./profileSettings/sections/ProfileMediaSection";
+import BasicInfoSection from "./profileSettings/sections/BasicInfoSection";
+import ProfessionalDetailsSection from "./profileSettings/sections/ProfessionalDetailsSection";
+import NotificationsSection from "./profileSettings/sections/NotificationsSection";
+import PrivacySecuritySection from "./profileSettings/sections/PrivacySecuritySection";
+import DangerZoneSection from "./profileSettings/sections/DangerZoneSection";
 
-function Section({ icon: Icon, title, children }) {
-  return (
-    <div className="bg-white dark:bg-[#191919] border border-gray-200 dark:border-[#2a2a2a] rounded-lg p-4 space-y-4">
-      <div className="flex items-center gap-2">
-        <Icon className="w-5 h-5 text-orange-500 dark:text-[#07C5B9]" />
-        <h2 className="font-semibold text-gray-900 dark:text-white">
-          {title}
-        </h2>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-function Input({ label, ...props }) {
-  return (
-    <div className="space-y-1">
-      <label className="text-xs text-gray-500">{label}</label>
-      <input
-        {...props}
-        className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-[#07C5B9]"
-      />
-    </div>
-  );
-}
-
-function Textarea({ label, ...props }) {
-  return (
-    <div className="space-y-1">
-      <label className="text-xs text-gray-500">{label}</label>
-      <textarea
-        {...props}
-        rows={4}
-        className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-[#2a2a2a]
-        bg-white dark:bg-[#111] text-gray-900 dark:text-white resize-none
-        focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-[#07C5B9]"
-      />
-    </div>
-  );
-}
-
-function ChipInput({ label, values, setValues, placeholder }) {
-  const [input, setInput] = useState("");
-
-  const addChip = () => {
-    const val = input.trim();
-    if (!val) return;
-
-    const exists = values.some(
-      (v) => v.toLowerCase() === val.toLowerCase()
-    );
-    if (exists) return;
-
-    setValues([...values, val]);
-    setInput("");
-  };
-
-  const removeChip = (index) => {
-    setValues(values.filter((_, i) => i !== index));
-  };
-
-  return (
-    <div className="space-y-2">
-      <p className="text-xs text-gray-500">{label}</p>
-
-      <div className="flex flex-wrap gap-2">
-        {values?.map((v, i) => (
-          <button
-            key={i * 0.25487}
-            onClick={() => removeChip(i)}
-            className="flex items-center gap-1 px-2 py-1 text-xs rounded-full cursor-pointer bg-orange-100 dark:bg-[#07C5B9]/20 text-orange-600 dark:text-[#07C5B9] group"
-          >
-            {v} <X size={16} className="group-hover:text-red-500" />
-          </button>
-        ))}
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-2 w-full">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder={placeholder}
-          className="w-full min-w-0 px-3 py-2 rounded-lg border border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-[#07C5B9]"
-        />
-
-        <button
-          onClick={addChip}
-          className="w-full sm:w-auto px-4 py-2 rounded-lg
-                     bg-orange-500 dark:bg-[#07C5B9]
-                     text-white text-sm font-medium
-                     hover:opacity-90"
-        >
-          Add
-        </button>
-      </div>
-    </div>
-  );
-}
-
- 
 export default function ProfileSettings({ user }) {
+  const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false);
+  const [isUpdatingEmail, setIsUpdatingEmail] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
+  // Email update states
+  const [emailForm, setEmailForm] = useState({
+    newEmail: '',
+    otp: '',
+    currentPassword: ''
+  });
+  const [emailStep, setEmailStep] = useState('enterEmail');
+  const [emailOtpSent, setEmailOtpSent] = useState(false);
+
+  // Password update states
+  const [passwordForm, setPasswordForm] = useState({
+    email: user?.email || '',
+    otp: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [passwordStep, setPasswordStep] = useState('enterEmail');
+  const [passwordOtpSent, setPasswordOtpSent] = useState(false);
+
+  const emailOtp = useOtpTimer();
+  const passwordOtp = useOtpTimer();
+
+  // Show/hide password
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Form state
   const [form, setForm] = useState({
     firstName: user?.profile?.firstName || "",
     lastName: user?.profile?.lastName || "",
@@ -125,30 +63,367 @@ export default function ProfileSettings({ user }) {
     knowsAbout: user?.knowsAbout || [],
   });
 
-  const [avatarPreview, setAvatarPreview] = useState(
-    user?.profile?.profilePicture
-  );
-  const [coverPreview, setCoverPreview] = useState(
-    user?.profile?.coverPicture
-  );
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [coverFile, setCoverFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(user?.profile?.profilePicture);
+  const [coverPreview, setCoverPreview] = useState(user?.profile?.coverPicture);
 
+  // Event Handlers
   const handleImageChange = (e, type) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const url = URL.createObjectURL(file);
-    type === "avatar" ? setAvatarPreview(url) : setCoverPreview(url);
+
+    if (type === "avatar") {
+      setAvatarPreview(url);
+      setAvatarFile(file);
+    } else {
+      setCoverPreview(url);
+      setCoverFile(file);
+    }
   };
 
-  const handleSave = () => {
-    console.log("Saving profile settings:", form);
-    // API call here
+  const validateInputs = () => {
+    const { firstName, lastName, bio, location, website, credentials, knowsAbout } = form;
+    return (
+      !!firstName &&
+      !!lastName &&
+      !!bio &&
+      !!location &&
+      !!website &&
+      !!credentials &&
+      !!knowsAbout
+    );
+  };
+
+  const handleSave = async () => {
+    if (!validateInputs()) {
+      enqueueSnackbar("Please fill out all required fields", { variant: "warning" });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await updateUserProfile(
+        form,
+        avatarFile,
+        coverFile,
+        user?._id
+      );
+
+      if (res?.success) {
+        enqueueSnackbar("Profile edited successfully", { variant: "success" });
+        setAvatarFile(null);
+        setCoverFile(null);
+      } else {
+        enqueueSnackbar("Update failed", { variant: "error" });
+      }
+    } catch (error) {
+      enqueueSnackbar(
+        error?.response?.data?.message || "Something went wrong.",
+        { variant: "error" }
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendEmailOtp = async () => {
+    if (!emailForm.newEmail || !validateEmail(emailForm.newEmail)) {
+      enqueueSnackbar("Please enter a valid email address", { variant: "error" });
+      return;
+    }
+
+    if (isSameEmail(emailForm.newEmail, user.email)) {
+      enqueueSnackbar("New email cannot be same as current email", {
+        variant: "warning",
+      });
+      return;
+    }
+
+    const result = await emailUpdateService.checkAndSendEmailOtp(
+      user._id,
+      emailForm.newEmail,
+      user
+    );
+
+    if (!result.success) {
+      enqueueSnackbar(result.message, { variant: "error" });
+      return;
+    }
+
+    emailOtp.setTimer(300);
+    setEmailStep("verifyOtp");
+    enqueueSnackbar(result.message, { variant: "success" });
+  };
+
+  const handleVerifyEmailOtp = async () => {
+    if (!emailForm?.otp || emailForm?.otp.length !== 6) {
+      enqueueSnackbar("Please enter the 6-digit OTP", { variant: "error" });
+      return;
+    }
+
+    const result = await emailUpdateService.verifyEmailOtp(
+      user._id,
+      emailForm.newEmail,
+      emailForm.otp
+    );
+
+    if (!result.success) {
+      enqueueSnackbar(result.message, { variant: "error" });
+      return;
+    }
+
+    setEmailStep("enterPassword");
+    enqueueSnackbar(
+      "OTP verified! Please enter your current password",
+      { variant: "success" }
+    );
+  };
+
+  const handleConfirmEmailPassword = async () => {
+    if (!emailForm.currentPassword) {
+      enqueueSnackbar("Please enter your current password", {
+        variant: "error",
+      });
+      return;
+    }
+
+    const result = await emailUpdateService.updateEmail(
+      user._id,
+      emailForm.newEmail,
+      emailForm.currentPassword,
+      emailForm.otp
+    );
+
+    if (!result.success) {
+      enqueueSnackbar(result.message, { variant: "error" });
+      return;
+    }
+
+    await emailUpdateService.sendEmailUpdateConfirmation(
+      emailForm.newEmail,
+      user,
+      user.email
+    );
+
+    enqueueSnackbar(
+      "Email updated successfully! Please verify your new email.",
+      { variant: "success" }
+    );
+
+    setIsUpdatingEmail(false);
+    resetEmailForm();
+  };
+
+  const emailStepHandlers = {
+    enterEmail: handleSendEmailOtp,
+    verifyOtp: handleVerifyEmailOtp,
+    enterPassword: handleConfirmEmailPassword,
+  };
+
+  const handleEmailUpdate = async () => {
+    try {
+      setLoading(true);
+      await emailStepHandlers[emailStep]?.();
+    } catch (error) {
+      enqueueSnackbar("Something went wrong", { variant: "error" });
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSendPasswordOtp = async () => {
+    const result = await passwordUpdateService.sendPasswordOtp(user._id, user);
+
+    if (!result.success) {
+      enqueueSnackbar(result.message, { variant: "error" });
+      return;
+    }
+
+    passwordOtp.setTimer(300);
+    setPasswordStep("verifyOtp");
+    enqueueSnackbar(result.message, { variant: "success" });
+  };
+
+  const handleVerifyPasswordOtp = async () => {
+    if (!passwordForm?.otp || passwordForm?.otp.length !== 6) {
+      enqueueSnackbar("Please enter the 6-digit OTP", { variant: "error" });
+      return;
+    }
+
+    const result = await passwordUpdateService.verifyPasswordOtp(
+      user._id,
+      user.email,
+      passwordForm.otp
+    );
+
+    if (!result.success) {
+      enqueueSnackbar(result.message, { variant: "error" });
+      return;
+    }
+
+    setPasswordStep("enterPassword");
+    enqueueSnackbar(
+      "OTP verified! Please enter your new password",
+      { variant: "success" }
+    );
+  };
+
+  const handleUpdatePassword = async () => {
+    const validationResult = passwordUpdateService.validatePassword(
+      passwordForm.newPassword,
+      passwordForm.confirmPassword
+    );
+
+    if (!validationResult.isValid) {
+      enqueueSnackbar(validationResult.message, { variant: "error" });
+      return;
+    }
+
+    const result = await passwordUpdateService.updatePassword(
+      user._id,
+      passwordForm.newPassword,
+      passwordForm.otp
+    );
+
+    if (!result.success) {
+      enqueueSnackbar(result.message, { variant: "error" });
+      return;
+    }
+
+    await passwordUpdateService.sendPasswordChangeConfirmation(user);
+
+    enqueueSnackbar("Password updated successfully!", { variant: "success" });
+    setIsUpdatingPassword(false);
+    resetPasswordForm();
+  };
+
+  const passwordStepHandlers = {
+    enterEmail: handleSendPasswordOtp,
+    verifyOtp: handleVerifyPasswordOtp,
+    enterPassword: handleUpdatePassword,
+  };
+
+
+  const handlePasswordUpdate = async () => {
+    try {
+      setLoading(true);
+      await passwordStepHandlers[passwordStep]?.();
+    } catch (error) {
+      enqueueSnackbar("Something went wrong", { variant: "error" });
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  // Resend OTP handlers
+  const resendEmailOtp = async () => {
+    if (emailOtp.timer > 0) return;
+
+    try {
+      setLoading(true);
+      const result = await emailUpdateService.resendEmailOtp(
+        user._id,
+        emailForm.newEmail,
+        user
+      );
+
+      if (result.success) {
+        emailOtp.setTimer(300);
+        enqueueSnackbar(result.message, { variant: "success" });
+      } else {
+        enqueueSnackbar(result.message, { variant: "error" });
+      }
+    } catch (error) {
+      enqueueSnackbar("Failed to resend OTP", { variant: "error" });
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resendPasswordOtp = async () => {
+    if (passwordOtp.timer > 0) return;
+
+    try {
+      setLoading(true);
+      const result = await passwordUpdateService.resendPasswordOtp(user._id, user);
+
+      if (result.success) {
+        passwordOtp.setTimer(300);
+        enqueueSnackbar(result.message, { variant: "success" });
+      } else {
+        enqueueSnackbar(result.message, { variant: "error" });
+      }
+    } catch (error) {
+      enqueueSnackbar("Failed to resend OTP", { variant: "error" });
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reset form functions
+  const resetEmailForm = () => {
+    setEmailForm({
+      newEmail: '',
+      otp: '',
+      currentPassword: ''
+    });
+    setEmailStep('enterEmail');
+    setEmailOtpSent(false);
+    emailOtp.setTimer(0);
+  };
+
+  const resetPasswordForm = () => {
+    setPasswordForm({
+      email: user?.email || '',
+      otp: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    setPasswordStep('enterEmail');
+    setPasswordOtpSent(false);
+    passwordOtp.setTimer(0);
+  };
+
+  const handleModalClose = (type) => {
+    if (type === 'email') {
+      setIsUpdatingEmail(false);
+      resetEmailForm();
+    } else {
+      setIsUpdatingPassword(false);
+      resetPasswordForm();
+    }
+  };
+
+  // Helper functions
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const getEmailButtonLabel = () => {
+    if (emailStep === "enterEmail") return "Send OTP";
+    if (emailStep === "verifyOtp") return "Verify OTP";
+    return "Update Email";
+  };
+
+  const getPasswordButtonLabel = () => {
+    if (passwordStep === "enterEmail") return "Send OTP";
+    if (passwordStep === "verifyOtp") return "Verify OTP";
+    return "Update Password";
   };
 
   return (
     <div id="profile_settings" className="max-w-5xl mx-auto space-y-4 mt-4 md:mt-0">
-
-      {/* HEADER */}
+      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
           Profile Settings
@@ -158,135 +433,81 @@ export default function ProfileSettings({ user }) {
         </p>
       </div>
 
-      {/* COVER */}
-      <Section icon={Camera} title="Profile Media">
-        <div className="space-y-4">
-          <div className="relative">
-            <img
-              src={coverPreview}
-              alt="cover"
-              className="w-full h-40 object-cover rounded-lg bg-gray-100 dark:bg-[#202020]"
-            />
-            <label className="absolute right-3 bottom-3 cursor-pointer px-3 py-1 text-sm rounded-lg
-              bg-black/60 text-white">
-              Change Cover
-              <input hidden type="file" onChange={(e) => handleImageChange(e, "cover")} />
-            </label>
-          </div>
+      {/* Profile Media Section */}
+      <ProfileMediaSection
+        coverPreview={coverPreview}
+        avatarPreview={avatarPreview}
+        handleImageChange={handleImageChange}
+      />
 
-          <div className="flex items-center gap-4">
-            <img
-              src={avatarPreview}
-              alt="avatar"
-              className="w-20 h-20 rounded-full object-cover bg-gray-100 dark:bg-[#202020]"
-            />
-            <label className="cursor-pointer px-4 py-2 text-sm rounded-lg bg-gray-100 dark:bg-[#2a2a2a]">
-              Change Avatar
-              <input hidden type="file" onChange={(e) => handleImageChange(e, "avatar")} />
-            </label>
-          </div>
-        </div>
-      </Section>
+      {/* Basic Information Section */}
+      <BasicInfoSection form={form} setForm={setForm} />
 
-      {/* BASIC INFO */}
-      <Section icon={User} title="Basic Information">
-        <div className="grid sm:grid-cols-2 gap-4">
-          <Input
-            label="First Name"
-            value={form.firstName}
-            onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-          />
-          <Input
-            label="Last Name"
-            value={form.lastName}
-            onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-          />
-        </div>
+      {/* Professional Details Section */}
+      <ProfessionalDetailsSection form={form} setForm={setForm} />
 
-        <Textarea
-          label="Bio"
-          value={form.bio}
-          onChange={(e) => setForm({ ...form, bio: e.target.value })}
-        />
+      {/* Notifications Section */}
+      <NotificationsSection />
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <Input
-            label="Location"
-            value={form.location}
-            onChange={(e) => setForm({ ...form, location: e.target.value })}
-          />
-          <Input
-            label="Website"
-            value={form.website}
-            onChange={(e) => setForm({ ...form, website: e.target.value })}
-          />
-        </div>
-      </Section>
+      {/* Privacy & Security Section */}
+      <PrivacySecuritySection
+        setIsUpdatingEmail={setIsUpdatingEmail}
+        setIsUpdatingPassword={setIsUpdatingPassword}
+      />
 
-      {/* PROFESSIONAL */}
-      <Section icon={MapPin} title="Professional Details">
-        <ChipInput
-          label="Credentials"
-          values={form.credentials}
-          setValues={(v) => setForm({ ...form, credentials: v })}
-          placeholder="e.g. MERN Developer"
-        />
+      {/* Email Update Modal */}
+      <EmailUpdateModal
+        isOpen={isUpdatingEmail}
+        onClose={() => handleModalClose('email')}
+        user={user}
+        loading={loading}
+        emailForm={emailForm}
+        setEmailForm={setEmailForm}
+        emailStep={emailStep}
+        emailOtp={emailOtp}
+        handleEmailUpdate={handleEmailUpdate}
+        resendEmailOtp={resendEmailOtp}
+        formatTime={formatTime}
+        buttonLabelForEmail={getEmailButtonLabel()}
+      />
 
-        <ChipInput
-          label="Knows About"
-          values={form.knowsAbout}
-          setValues={(v) => setForm({ ...form, knowsAbout: v })}
-          placeholder="e.g. JavaScript"
-        />
-      </Section>
+      {/* Password Update Modal */}
+      <PasswordUpdateModal
+        isOpen={isUpdatingPassword}
+        onClose={() => handleModalClose('password')}
+        user={user}
+        loading={loading}
+        passwordForm={passwordForm}
+        setPasswordForm={setPasswordForm}
+        passwordStep={passwordStep}
+        passwordOtp={passwordOtp}
+        handlePasswordUpdate={handlePasswordUpdate}
+        resendPasswordOtp={resendPasswordOtp}
+        formatTime={formatTime}
+        showNewPassword={showNewPassword}
+        setShowNewPassword={setShowNewPassword}
+        showConfirmPassword={showConfirmPassword}
+        setShowConfirmPassword={setShowConfirmPassword}
+        buttonLabelForPassword={getPasswordButtonLabel()}
+      />
 
-      {/* NOTIFICATIONS */}
-      <Section icon={Bell} title="Notifications">
-        <label className="flex items-center gap-2 text-sm">
-          <input type="radio" name="notify" defaultChecked />
-          Enable notifications
-        </label>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="radio" name="notify" />
-          Disable notifications
-        </label>
-      </Section>
-
-      {/* SECURITY */}
-      <Section icon={Shield} title="Privacy & Security">
-        <div className="flex flex-wrap gap-3">
-          <button className="px-4 py-2 text-sm rounded-lg bg-gray-100 dark:bg-[#2a2a2a] hover:opacity-80 border border-gray-300 dark:border-[#5c5c5c]">
-            Update Email
-          </button>
-          <button className="px-4 py-2 text-sm rounded-lg bg-gray-100 dark:bg-[#2a2a2a] hover:opacity-80 border border-gray-300 dark:border-[#5c5c5c]">
-            Update Password
-          </button>
-        </div>
-        <p className="text-xs text-gray-500 flex items-center gap-1">
-          <Lock className="w-3 h-3" />
-          Username & verification cannot be changed here
-        </p>
-      </Section>
-
-      {/* SAVE */}
+      {/* Save Button */}
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          className="px-4 py-2 rounded-lg bg-orange-500 dark:bg-[#07C5B9] text-white font-medium hover:opacity-80"
+          disabled={loading}
+          className="px-4 py-2 rounded-lg bg-orange-500 dark:bg-[#07C5B9] text-white font-medium hover:opacity-80 disabled:opacity-50"
         >
-          Save Changes
+          {loading ? "Saving..." : "Save Changes"}
         </button>
       </div>
 
-      <Section icon={Trash2} title="Danger Zone">
-        <button className="px-4 py-2 text-sm rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20">
-          Delete Account
-        </button>
-      </Section>
+      {/* Danger Zone Section */}
+      <DangerZoneSection />
     </div>
   );
 }
 
 ProfileSettings.propTypes = {
-    user: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
 };
