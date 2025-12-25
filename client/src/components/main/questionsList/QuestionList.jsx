@@ -3,14 +3,14 @@ import PropTypes from 'prop-types';
 import QuestionCard from './QuestionCard';
 import QuestionContext from '../../../context/QuestionContext';
 import QuestionFilterDropdown from "../common/QuestionFilterDropdown"
-import { useSearchParams } from 'react-router-dom';
+// import { useSearchParams } from 'react-router-dom';
 import { Filter } from 'lucide-react';
 
 export default function QuestionList() {
 
-    const [searchParams] = useSearchParams();
-    const filter = searchParams.get("filter");
-    const topic = searchParams.get("topic");
+    // const [searchParams] = useSearchParams();
+    // const filter = searchParams.get("filter");
+    // const topic = searchParams.get("topic");
 
     const { questions } = useContext(QuestionContext);
 

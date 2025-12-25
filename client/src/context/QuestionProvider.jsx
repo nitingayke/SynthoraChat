@@ -3,7 +3,7 @@ import QuestionContext from "./QuestionContext"
 
 export const QuestionProvider = ({ children }) => {
 
-    const [questions, setQuestions] = useState([
+    const [questions] = useState([
         {
             _id: "676a983197cd8b2b496ef001",
             author: {
@@ -367,7 +367,7 @@ If flexibility and speed matter → use NoSQL
             ],
         },
     ]);
-    const [filterOptions, setFilterOptions] = useState([
+    const [filterOptions] = useState([
         {
             label: "Trending",
             link: "filter=trending"
@@ -393,7 +393,7 @@ If flexibility and speed matter → use NoSQL
             link: "topic=ml"
         }
     ]);
-    const [loadingQuestions, setLoadingQuestions] = useState(false);
+    const [loadingQuestions] = useState(false);
 
     const values = useMemo(() => ({
         questions,

@@ -95,7 +95,7 @@ export default function ProfileHeader({ user, isOwnProfile = false }) {
                     </div>
 
                     {/* Camera icon */}
-                    {isOwnProfile && <Link to={`/main/u/profile/${username}?tab=settings#profile_settings`} className="absolute bottom-1 right-1 p-2 rounded-full bg-white dark:bg-[#262626] border border-gray-200 dark:border-[#333] shadow hover:scale-105 transition">
+                    {isOwnProfile && <Link to={`/main/u/profile/${username}?tab=settings`} className="absolute bottom-1 right-1 p-2 rounded-full bg-white dark:bg-[#262626] border border-gray-200 dark:border-[#333] shadow hover:scale-105 transition">
                         <Camera size={16} />
                     </Link>}
                 </div>
