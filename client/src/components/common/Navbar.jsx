@@ -29,43 +29,60 @@ export default function Navbar() {
 
   const isActiveLink = (linkPath) => location.pathname.startsWith(linkPath);
 
-  const renderNavLinks = (isMobile = false) => (
-    <ul
-      className={`flex ${isMobile
-        ? "flex-col gap-4 text-lg font-semibold overflow-auto scrollbar-hide"
-        : "hidden lg:flex gap-5 lg:gap-1 font-semibold"
-        } text-gray-800 dark:text-gray-200`}
-    >
-      {navLinks.map((link) => (
-        <li key={link.name}>
+  const renderNavLinks = (isMobile = false) => {
+    const commonClass = (path, isMobile) =>`relative transition-all duration-200 ${isActiveLink(path) ? "text-orange-600 dark:text-[#07C5B9] font-bold" : "text-gray-700 dark:text-gray-300 hover:text-orange-500 dark:hover:text-[#07C5B9]"} ${isMobile ? "px-2 py-1.5 rounded-lg font-semibold" : "px-3 py-2"}`;
+
+    return (
+      <div
+        className={
+          isMobile
+            ? "flex-1 flex flex-col gap-3 overflow-auto scrollbar-hide"
+            : "hidden lg:flex items-center gap-2"
+        }
+      >
+        {navLinks.map((link) => (
           <Link
+            key={link.name}
             to={link.path}
             onClick={() => isMobile && setOpenSidebar(false)}
-            className={`
-              relative block px-3 py-2 rounded transition duration-200
-              hover:text-orange-500 dark:hover:text-[#07C5B9]
-              ${isActiveLink(link.path)
-                ? "text-orange-600 dark:text-[#07C5B9] font-bold"
-                : "text-gray-700 dark:text-gray-300"}
-            `}
+            className={commonClass(link.path, isMobile)}
           >
             {link.name}
           </Link>
-        </li>
-      ))}
-    </ul>
-  );
+        ))}
+
+        {isMobile && loginUser?.username && (
+          <>
+            <Link to={`/main/u/profile/${loginUser.username}`} onClick={() => setOpenSidebar(false)} className={commonClass("/main/u/profile", isMobile)}>
+              My Profile
+            </Link>
+
+            <Link to={`/main/u/profile/${loginUser.username}?tab=notifications`} onClick={() => setOpenSidebar(false)} className={commonClass("tab=notifications", isMobile)}>
+              Notifications
+            </Link>
+
+            <Link to={`/main/u/profile/${loginUser.username}?tab=settings`} onClick={() => setOpenSidebar(false)} className={commonClass("tab=saved-settings", isMobile)}>
+              Settings
+            </Link>
+
+            <Link to={`/main/u/profile/${loginUser.username}?tab=saved-questions`} onClick={() => setOpenSidebar(false)} className={commonClass("tab=saved-questions", isMobile)}>
+              Saved Questions
+            </Link>
+
+            {!loginUser?.isVerified && <Link to={`/user-verification`} onClick={() => setOpenSidebar(false)} className={commonClass("/user-verification", isMobile)}>
+              User Verification
+            </Link>}
+          </>
+        )}
+      </div>
+    );
+  };
+
 
   return (
     <>
       <nav
-        className="
-          w-full sticky top-0 z-40
-          bg-white dark:bg-[#0D1117]
-          shadow-lg backdrop-blur-md
-          transition-all duration-300
-          hover:shadow-orange-500/20 dark:hover:shadow-[#07C5B9]/40
-        "
+        className="w-full sticky top-0 z-40 bg-white dark:bg-[#0D1117] shadow-lg backdrop-blur-md transition-all duration-300 hover:shadow-orange-500/20 dark:hover:shadow-[#07C5B9]/40"
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center py-4 sm:py-2 px-4 md:px-6">
           {/* Logo */}
@@ -83,7 +100,6 @@ export default function Navbar() {
           {renderNavLinks(false)}
 
           <div className="flex items-center gap-2 sm:gap-4">
-            {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
               className="hidden sm:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#252525] dark:text-white transition"
@@ -145,7 +161,7 @@ export default function Navbar() {
         onClose={() => setOpenSidebar(false)}
         className="lg:hidden"
       >
-        <div className="w-64 h-full bg-gray-100 dark:bg-[#191919] dark:text-gray-100 flex flex-col justify-between p-6">
+        <div className="w-64 h-full bg-gray-100 dark:bg-[#191919] dark:text-gray-100 flex flex-col justify-between p-4">
           {/* Header */}
           <div className="sticky top-0 z-50 flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">

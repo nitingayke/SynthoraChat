@@ -71,6 +71,10 @@ export default function Navbar() {
                         <Link to={`/main/u/profile/${loginUser?.username}?tab=saved-questions`} onClick={() => setOpenSidebar(false)} className={commonClass("/main/saved")}>
                             Saved Questions
                         </Link>
+
+                        {!loginUser?.isVerified && <Link to={`/user-verification`} onClick={() => setOpenSidebar(false)} className={commonClass("/user-verification", isMobile)}>
+                            User Verification
+                        </Link>}
                     </>
                 )}
             </div>

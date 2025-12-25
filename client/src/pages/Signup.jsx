@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthContext";
-import { ArrowLeft, Eye, EyeOff, Github, Loader2, Twitter } from "lucide-react";
-import GoogleIcon from '@mui/icons-material/Google';
+import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useSnackbar } from "notistack";
-import { signupService } from "../services/app/auth.service";
+import { signupService } from "../services/auth.service";
+import GoogleLoginButton from "../components/auth/GoogleLoginButton";
 
 export default function Signup() {
 
@@ -76,7 +76,7 @@ export default function Signup() {
                 enqueueSnackbar("Account created successfully 🎉", {
                     variant: "success",
                 });
-                navigate("/home");
+                navigate("/user-verification");
             }
         } catch (error) {
             enqueueSnackbar(
@@ -177,34 +177,7 @@ export default function Signup() {
                     <hr className="flex-grow border-gray-300 dark:border-gray-700" />
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 mt-4">
-
-                    {/* Google */}
-                    <button
-                        disabled={loading}
-                        className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
-                    >
-                        <GoogleIcon className="w-5 h-5" />
-                    </button>
-
-                    {/* GitHub */}
-                    <button
-                        disabled={loading}
-                        className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
-                    >
-                        <Github className="w-5 h-5" />
-                    </button>
-
-                    {/* Twitter */}
-                    <button
-                        disabled={loading}
-                        className="flex items-center justify-center p-2 rounded-lg bg-gray-100 dark:bg-[#191919] hover:opacity-80 transition text-gray-700 dark:text-gray-200 disabled:cursor-not-allowed"
-                    >
-                        <Twitter className="w-5 h-5" />
-                    </button>
-
-                </div>
-
+                {!loading && <GoogleLoginButton />}
 
                 {/* Login Link */}
                 <p className="mt-5 text-center text-gray-700 dark:text-gray-300">

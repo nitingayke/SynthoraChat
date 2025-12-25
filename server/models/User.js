@@ -27,10 +27,25 @@ const userSchema = new mongoose.Schema(
       trim: true,
       match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
     },
+
+    authProvider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local",
+    },
+
+    googleId: {
+      type: String,
+      required: function () {
+        return this.authProvider === "google";
+      },
+    },
+
     password: {
       type: String,
-      required: [true, "Password is required"],
-      minlength: [6, "Password must be at least 6 characters"],
+      required: function () {
+        return this.authProvider === "local";
+      },
     },
 
     // Profile Information
@@ -193,10 +208,27 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    isBlocked: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.pre("validate", function (next) {
+  if (this.authProvider === "local" && !this.password) {
+    return next(new Error("Password is required for local authentication"));
+  }
+
+  if (this.authProvider === "google" && !this.googleId) {
+    return next(new Error("Google ID is required for Google authentication"));
+  }
+
+  next();
+});
+
 
 export default mongoose.model("User", userSchema);

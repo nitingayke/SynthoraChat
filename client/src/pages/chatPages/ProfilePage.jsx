@@ -4,7 +4,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProfileItems from "../../components/main/profile/ProfileItems";
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../../context/AuthContext";
-import { fetchUserProfile } from "../../services/app/user.service.js"
+import { fetchUserProfile } from "../../services/user.service.js"
 
 import UserOverview from "../../components/main/profile/UserOverview";
 import UserActivity from "../../components/main/profile/UserActivity"

@@ -7,6 +7,7 @@ import { UIStateProvider } from "./context/UIStateProvider";
 import { QuestionProvider } from "./context/QuestionProvider";
 import { AIChatProvider } from "./context/AIChatProvider";
 import { PostProvider } from "./context/PostProvider";
+import { SocketProvider } from "./context/SocketProvider";
 
 function App() {
 
@@ -19,7 +20,9 @@ function App() {
               <AuthProvider>
                 <AIChatProvider>
                   <PostProvider>
-                    <AppRoutes />
+                    <SocketProvider>
+                      <AppRoutes />
+                    </SocketProvider>
                   </PostProvider>
                 </AIChatProvider>
               </AuthProvider>

@@ -12,6 +12,7 @@ import {
   Sun,
   Moon,
   ChevronDown,
+  UserCheck,
 } from 'lucide-react';
 import Avatar from '@mui/material/Avatar';
 import AuthContext from '../../context/AuthContext';
@@ -127,7 +128,11 @@ export default function ProfileDropdown() {
                 </Link>
               );
             })}
-            
+
+            {!loginUser?.isVerified && <Link to={`/user-verification`} className='flex px-4 py-1.5 gap-3 items-center text-gray-700 dark:text-gray-300'>
+              <UserCheck className='w-4 h-4 text-gray-500 dark:text-gray-400' />
+              <span>User Verification</span>
+            </Link>}
 
             {/* Theme Toggle */}
             <div className="border-t border-gray-200 dark:border-gray-800 mt-2 pt-2">

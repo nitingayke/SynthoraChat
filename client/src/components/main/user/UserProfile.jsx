@@ -37,6 +37,8 @@ export default function UserProfile() {
         blocked: userData?.blockedUsers?.length || 0
     };
 
+    const fullName = `${profile?.firstName || ""} ${profile?.lastName || ""}`
+
     return (
         <div className="w-full bg-white dark:bg-[#161616] rounded-lg border border-gray-200 dark:border-gray-800/50 overflow-hidden transition-all duration-300">
 
@@ -49,8 +51,10 @@ export default function UserProfile() {
                         backgroundPosition: 'center'
                     }}
                 />
+                <h2 className="absolute text-2xl font-bold z-50 top-2 left-3 line-clamp-1 opacity-20">
+                    {fullName}
+                </h2>
 
-                {/* Verification Badge on Cover */}
                 {userData?.isVerified && (
                     <div className="absolute top-3 right-3 flex items-center gap-1 bg-white/90 dark:bg-[#161616]/90 backdrop-blur-sm px-2 py-1 rounded-full">
                         <CheckCircle className="w-3 h-3 text-orange-500 dark:text-[#07C5B9]" />
@@ -71,7 +75,7 @@ export default function UserProfile() {
                     </div>
 
                     <h1 className="text-lg font-bold text-gray-900 dark:text-white mt-3 text-center leading-tight">
-                        {profile?.firstName} {profile?.lastName}
+                        {fullName}
                     </h1>
 
                     <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
@@ -80,7 +84,7 @@ export default function UserProfile() {
 
                     {/* Bio with fade effect */}
                     {profile?.bio && (
-                        <div className="relative mt-2 w-full">
+                        <div className="relative w-full">
                             <p className="text-gray-600 dark:text-gray-300 text-xs text-center leading-relaxed line-clamp-2 px-2">
                                 {profile.bio}
                             </p>
@@ -282,12 +286,12 @@ export default function UserProfile() {
                 </div>
 
                 <div className="mt-5 flex gap-2">
-                    <Link to={`/profile/${loginUser?.username}/edit`} className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-gray-200 dark:bg-[#202020] text-gray-700 dark:text-gray-200 rounded-lg hover:opacity-80 transition-all duration-200 text-sm font-medium border border-gray-300 dark:border-gray-700">
+                    <Link to={`/main/u/profile/${loginUser?.username}?tab=settings`} className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 bg-gray-200 dark:bg-[#202020] text-gray-700 dark:text-gray-200 rounded-lg hover:opacity-80 transition-all duration-200 text-sm font-medium border border-gray-300 dark:border-gray-700">
                         <Edit3 className="w-4 h-4" />
                         Edit
                     </Link>
                     <Link
-                        to={`/profile/${loginUser?.username}`}
+                        to={`/main/u/profile/${loginUser?.username}`}
                         className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 dark:bg-[#07C5B9] bg-orange-500 text-white rounded-lg hover:opacity-80 transition-all duration-200 text-sm font-medium shadow-md hover:shadow-lg transform"
                     >
                         <Users className="w-4 h-4" />

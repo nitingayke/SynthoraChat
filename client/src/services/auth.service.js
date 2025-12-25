@@ -1,4 +1,4 @@
-import api from "../../api/api";
+import api from "../api/api";
 
 /**
  * Signup user
@@ -17,6 +17,7 @@ export const signupService = async (payload) => {
   return response.data;
 };
 
+
 /**
  * Login user
  * @param {Object} payload
@@ -29,6 +30,31 @@ export const loginService = async (payload) => {
   const { token } = response.data.data;
 
   localStorage.setItem("token", token);
+
+  return response.data;
+};
+
+/**
+ * Google Sign-In/Sign-Up
+ * @param {string} googleToken - Google ID token from credentialResponse.credential
+ */
+export const googleLoginService = async (idToken) => {
+  const response = await api.post("/auth/google", { idToken });
+
+  const { token } = response.data.data;
+  localStorage.setItem("token", token);
+
+  return response.data;
+};
+
+/**
+ * Verify logged-in user
+ * @param {string} userId
+ */
+export const verifyUserService = async (userId) => {
+  const response = await api.post("/auth/verify-user", {
+    userId,
+  });
 
   return response.data;
 };
