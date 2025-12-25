@@ -22,6 +22,7 @@ import Temp from "../pages/chatPages/Temp";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import ScreenLoader from "../components/loader/ScreenLoader";
+import UserVerification from "../pages/UserVerification";
 
 export default function AppRoutes() {
 
@@ -36,6 +37,7 @@ export default function AppRoutes() {
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+                <Route path="/user-verification" element={<UserVerification />} />
 
                 <Route path="/" element={<Layout><Landing /></Layout>} />
                 <Route path="/home" element={<Layout><Home /></Layout>} />

@@ -2,6 +2,8 @@ import httpStatus from "http-status";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/token.js";
 import User from "../models/User.js";
+import { googleAuth } from "../services/googleAuth.service.js";
+import mongoose from "mongoose";
 
 export const userSignup = async (req, res) => {
   let { username, email, password } = req.body;
@@ -88,6 +90,13 @@ export const userLogin = async (req, res) => {
     });
   }
 
+  if (user.isBlocked) {
+    return res.status(httpStatus.FORBIDDEN).json({
+      success: false,
+      message: "Your account has been blocked. Please contact support.",
+    });
+  }
+
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
@@ -112,5 +121,65 @@ export const userLogin = async (req, res) => {
       token,
       user: userResponse,
     },
+  });
+};
+
+export const googleLogin = async (req, res) => {
+  const { idToken } = req.body;
+
+  if (!idToken) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "Google ID token is required",
+    });
+  }
+
+  const { token, user } = await googleAuth(idToken);
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    message: "Google login successful",
+    data: { token, user },
+  });
+};
+
+export const verifyUser = async (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "User ID is required",
+    });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "Invalid user ID format",
+    });
+  }
+
+  if (userId !== req.user.id) {
+    return res.status(httpStatus.FORBIDDEN).json({
+      success: false,
+      message: "You are not allowed to verify this user",
+    });
+  }
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  user.isVerified = true;
+  await user.save();
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    message: "User verified successfully",
   });
 };

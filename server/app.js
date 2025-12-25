@@ -5,6 +5,8 @@ import http from "node:http";
 
 import { connectDatabase } from "./config/database.js";
 
+import { initSocket } from "./sockets/index.js"
+
 import authRoute from "./routes/authRoute.js";
 import questionRoute from "./routes/questionRoute.js"
 import userRoute from "./routes/userRoute.js";
@@ -29,6 +31,12 @@ app.use(
 connectDatabase(MONGODB_URL);
 
 const server = http.createServer(app);
+const io = initSocket(server);
+
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 app.use("/auth", authRoute);
 

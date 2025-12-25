@@ -65,8 +65,8 @@ export default function ProfileHeader({ user, isOwnProfile = false }) {
                         className="w-full h-full object-cover"
                     />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-6xl bg-gray-300 dark:bg-[#303030]">
-                        <h1 className="font-['Satisfy',cursive]">{firstName} {lastName}</h1>
+                    <div className="w-full h-full flex items-center justify-center bg-gray-300 dark:bg-[#303030] p-4">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-['Satisfy',cursive] line-clamp-2 opacity-30">{`${firstName} ${lastName}`?.slice(0, 23)?.toUpperCase()}</h1>
                     </div>
                 )}
 
@@ -102,13 +102,13 @@ export default function ProfileHeader({ user, isOwnProfile = false }) {
 
                 {/* Right action buttons */}
                 <div className="flex justify-end gap-3 pt-4">
-                    <Link
-                        to={`/main/u/profile/gaykenitin92?tab=settings`}
+                    {isOwnProfile && <Link
+                        to={`/main/u/profile/${user?.username}?tab=settings#profile_settings`}
                         className="flex items-center gap-2 px-3 p-2 w-10 h-10 sm:w-auto sm:h-auto rounded-full sm:rounded-lg bg-orange-500 dark:bg-[#07C5B9] text-white font-semibold hover:opacity-90 transition"
                     >
                         <Edit3 size={16} />
                         <span className="hidden sm:flex">Edit Profile</span>
-                    </Link>
+                    </Link>}
                     <button
                         onClick={handleShareProfile}
                         disabled={sharing}

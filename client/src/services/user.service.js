@@ -1,9 +1,9 @@
 import api from "../api/api";
 
-export const fetchCurrentUser = async () => {
+export const fetchCurrentUser = async() => {
   const res = await api.get("/u/me");
   return res.data;
-};
+}
 
 /**
  * Get user profile

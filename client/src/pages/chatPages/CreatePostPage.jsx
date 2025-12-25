@@ -5,9 +5,55 @@ import { AlertTriangle, CheckCircle, ChevronRight, ClipboardCheck, ImageIcon, Li
 import { useContext } from "react";
 import PostContext from "../../context/PostContext";
 import MediaProgress from "../../components/main/createPost/MediaProgress";
+
+const POST_RULES = {
+  TITLE_MIN: 10,
+  TITLE_MAX: 120,
+  CONTENT_MIN: 50,
+  MAX_MEDIA: 7,
+  MIN_TOPICS: 1,
+};
+
+
 export default function CreatePostPage() {
 
   const { title, content, topics, media } = useContext(PostContext);
+
+  const safeTitle = title ?? "";
+  const safeContent = content ?? "";
+  const safeTopics = topics ?? [];
+  const safeMedia = media ?? [];
+
+  const postQuality = {
+    title: {
+      isValid:
+        safeTitle.length >= POST_RULES.TITLE_MIN &&
+        safeTitle.length <= POST_RULES.TITLE_MAX,
+      error:
+        safeTitle.length < POST_RULES.TITLE_MIN
+          ? "Title may be too short"
+          : "Title is too long",
+      success: "Title looks good",
+    },
+
+    content: {
+      isValid: safeContent.length >= POST_RULES.CONTENT_MIN,
+      error: "Add more details to your description",
+      success: "Good description length",
+    },
+
+    topics: {
+      isValid: safeTopics.length >= POST_RULES.MIN_TOPICS,
+      error: "Add at least one topic",
+      success: "Topics added",
+    },
+
+    media: {
+      isValid: safeMedia.length <= POST_RULES.MAX_MEDIA,
+      error: "Too many files uploaded",
+      success: "Media usage okay",
+    },
+  };
 
   const tips = [
     "Write a clear and descriptive title",
@@ -18,6 +64,20 @@ export default function CreatePostPage() {
     "Use AI suggestions to make your post more clear",
     "Let AI generate topic tags for better visibility",
   ];
+
+  const QualityRow = ({ isValid, error, success, icon }) => (
+    <div className="flex items-center gap-2">
+      {isValid ? (
+        icon ?? <CheckCircle size={18} className="text-green-500" />
+      ) : (
+        <AlertTriangle size={18} className="text-red-500" />
+      )}
+      <span className={isValid ? "text-green-500" : "text-red-500"}>
+        {isValid ? success : error}
+      </span>
+    </div>
+  );
+
 
   return (
     <section className="max-w-5xl w-full mx-auto h-full px-1 sm:px-0">
@@ -65,8 +125,8 @@ export default function CreatePostPage() {
 
           <div className="bg-white dark:bg-[#161616] rounded-lg p-4">
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-orange-100 dark:bg-orange-500/20 rounded-xl">
-                <Zap className="text-orange-500" />
+              <div className="p-2 bg-orange-500/10 dark:bg-[#07C5B6]/10 rounded-xl">
+                <Zap className="text-orange-500 dark:text-[#07C5B6]" />
               </div>
               <h3 className="font-semibold text-gray-900 dark:text-white">Quick Tips</h3>
             </div>
@@ -84,68 +144,28 @@ export default function CreatePostPage() {
           <div className="bg-white dark:bg-[#161616] rounded-lg p-4">
             <h3 className="font-semibold mb-3 dark:text-white">Media Stats</h3>
 
-            <MediaProgress />
+            <MediaProgress MAX_MEDIA={POST_RULES.MAX_MEDIA} />
           </div>
 
           <div className="bg-white dark:bg-[#161616] p-4 rounded-lg">
-
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 bg-orange-100 dark:bg-orange-500/20 rounded-xl">
-                <ClipboardCheck className="text-orange-500" />
+              <div className="p-2 bg-orange-500/10 dark:bg-[#07C5B6]/10 rounded-xl">
+                <ClipboardCheck className="text-orange-500 dark:text-[#07C5B6]" />
               </div>
               <h3 className="font-semibold dark:text-white">Post Quality Check</h3>
             </div>
 
             <div className="space-y-3 text-sm">
-              <div className="flex items-center gap-2">
-                {title.length < 20 ? (
-                  <AlertTriangle size={18} className="text-red-500" />
-                ) : (
-                  <CheckCircle size={18} className="text-green-500" />
-                )}
-
-                <span className={`${title.length < 20 ? "text-red-500" : "text-green-500"}`}>
-                  {title.length < 20 ? "Title may be too short" : "Title looks good"}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {content.length < 80 ? (
-                  <AlertTriangle size={18} className="text-red-500" />
-                ) : (
-                  <CheckCircle size={18} className="text-green-500" />
-                )}
-
-                <span className={`${content.length < 80 ? "text-red-500" : "text-green-500"}`}>
-                  {content.length < 80 ? "Add more details" : "Good description length"}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {topics.length === 0 ? (
-                  <AlertTriangle size={18} className="text-red-500" />
-                ) : (
-                  <CheckCircle size={18} className="text-green-500" />
-                )}
-
-                <span className={`${topics.length === 0 ? "text-red-500" : "text-green-500"}`}>
-                  {topics.length === 0 ? "Add at least one topic" : "Topics added"}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {media.length > 7 ? (
-                  <AlertTriangle size={18} className="text-red-500" />
-                ) : (
-                  <ImageIcon size={18} className="text-green-500" />
-                )}
-
-                <span className={`${media.length > 7 ? "text-red-500" : "text-green-500"}`}>
-                  {media.length > 7 ? "Too many files!" : "Media usage okay"}
-                </span>
-              </div>
+              <QualityRow {...postQuality.title} />
+              <QualityRow {...postQuality.content} />
+              <QualityRow {...postQuality.topics} />
+              <QualityRow
+                {...postQuality.media}
+                icon={<ImageIcon size={18} className="text-green-500" />}
+              />
             </div>
           </div>
+
         </motion.div>
       </div>
     </section>
