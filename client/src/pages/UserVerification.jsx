@@ -8,64 +8,66 @@ import {
 import AuthContext from "../context/AuthContext";
 import { useSnackbar } from "notistack";
 import { verifyUserService } from "../services/auth.service";
+import { generateOtp } from "../utils/helper"
+import { sendEmailService } from "../services/email.service";
+import { Link, useNavigate } from "react-router-dom";
+import UIStateContext from "../context/UIStateContext";
 
 export default function UserVerification() {
 
+  const navigate = useNavigate();
   const { loginUser, setLoginUser } = useContext(AuthContext);
+  const { setOpenEmailDialog } = useContext(UIStateContext);
   const { enqueueSnackbar } = useSnackbar();
 
   const beforeUnloadRef = useRef(null);
 
   const [otp, setOtp] = useState(new Array(6).fill(""));
-  const [timer, setTimer] = useState(60);
+  const [timer, setTimer] = useState(0);
   const [loading, setLoading] = useState(false);
   const [generatedOtp, setGeneratedOtp] = useState("");
 
   const inputsRef = useRef([]);
 
-  const generateOtp = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
-
   const handleSendOTP = useCallback(async () => {
+
+    if (!loginUser?.email) {
+      enqueueSnackbar("User email not found", { variant: "error" });
+      return;
+    }
+
     try {
+      setTimer(60);
+
       const otpValue = generateOtp();
       setGeneratedOtp(otpValue);
       setOtp(new Array(6).fill(""));
-      setTimer(60);
 
-      const emailTemplate = `
-      Subject: SkillAsync Email Verification
+      const fullName = `${loginUser.profile?.firstName || ""} ${loginUser?.profile?.lastName || ""}`.trim();
 
-      Hello User 👋,
+      const templateParams = {
+        email: loginUser.email,
+        name: fullName || "User",
+        otp: otpValue,
+      };
 
-      Your OTP for verifying your SkillAsync account is:
+      const res = await sendEmailService(
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams
+      );
 
-      👉 ${otpValue}
+      if (res.status) {
+        enqueueSnackbar("OTP sent to your registered email", {
+          variant: "success",
+        });
 
-      This OTP is valid for 60 seconds.
-      Please do not share it with anyone.
-
-      Thanks,
-      Team SkillAsync 🚀
-    `;
-
-      console.log("📧 DUMMY EMAIL SENT:");
-      console.log(emailTemplate);
-
-      enqueueSnackbar("OTP sent to your registered email", {
-        variant: "success",
-      });
-
-      setTimer(60);
-    } catch {
+        setTimer(60);
+      }
+    } catch (error) {
+      console.log(error);
       enqueueSnackbar("Failed to send OTP", { variant: "error" });
     }
-  }, [enqueueSnackbar]);
-
-  useEffect(() => {
-    handleSendOTP();
-  }, [handleSendOTP]);
+  }, [enqueueSnackbar, loginUser]);
 
   useEffect(() => {
     if (timer === 0) return;
@@ -124,7 +126,7 @@ export default function UserVerification() {
         enqueueSnackbar("Email verified successfully 🎉", {
           variant: "success",
         });
-        window.location.href = "/home";
+        navigate("/home");
       }
 
     } catch (error) {
@@ -159,12 +161,16 @@ export default function UserVerification() {
       <div className="w-full max-w-md bg-white dark:bg-[#111] rounded-xl p-6 shadow-lg border border-gray-200 dark:border-[#222]">
 
         <h1 className="text-2xl font-bold text-center text-orange-500 dark:text-[#07C5B9]">
-          SkillAsync
+          SynthoraChat
         </h1>
 
-        <p className="text-center mt-2 text-gray-600 dark:text-gray-400">
-          Verify your email to continue
+        <p className="text-center mt-1 text-sm text-gray-500 dark:text-gray-400">
+          OTP sent to
+          <span className="ml-1 font-medium text-gray-800 dark:text-gray-200">
+            {loginUser?.email}
+          </span>
         </p>
+
 
         <div className="flex justify-between mt-6">
           {otp.map((digit, i) => (
@@ -187,7 +193,7 @@ export default function UserVerification() {
           {loading ? "Verifying..." : "Verify OTP"}
         </button>
 
-        <div className="text-center mt-4 text-sm flex justify-between ">
+        <div className="text-center mt-4 text-sm flex justify-between">
           {timer > 0 ? (
             <span className="text-gray-500">
               Resend OTP in {timer}s
@@ -195,9 +201,9 @@ export default function UserVerification() {
           ) : (
             <button
               onClick={handleSendOTP}
-              className="text-orange-500 dark:text-[#07C5B9] font-semibold"
+              className="text-orange-500 dark:text-[#07C5B9] font-semibold cursor-pointer"
             >
-              Resend OTP
+              Send OTP
             </button>
           )}
 
@@ -208,6 +214,16 @@ export default function UserVerification() {
           >
             Reset
           </button>
+        </div>
+
+        <div className="text-center">
+          <Link
+            to={`/main/u/profile/${loginUser?.username}?tab=settings`}
+            onClick={() => setOpenEmailDialog(true)}
+            className="text-xs font-medium text-gray-500 hover:text-orange-500 dark:text-gray-400 dark:hover:text-[#07C5B9] underline"
+          >
+            Wrong email? Update email
+          </Link>
         </div>
       </div>
     </div>

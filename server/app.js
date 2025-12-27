@@ -44,7 +44,7 @@ app.use("/u", userRoute);
 
 app.use("/q", questionRoute);
 
-app.use("/user-profile", profileEditRoute);
+app.use("/profile", profileEditRoute);
 
 
 app.use((err, req, res, next) => {
