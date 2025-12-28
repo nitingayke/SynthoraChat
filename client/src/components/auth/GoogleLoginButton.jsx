@@ -21,8 +21,15 @@ export default function GoogleLoginButton() {
                     const idToken = credentialResponse.credential;
 
                     const res = await googleLoginService(idToken);
+                    const user = res?.data?.user;
 
-                    setLoginUser(res?.data?.user);
+                    setLoginUser(user);
+
+                    if (!user?.isVerified) {
+                        if (openLoginDialog) setOpenLoginDialog(false);
+                        navigate("/user-verification");
+                        return;
+                    }
 
                     if (openLoginDialog) setOpenLoginDialog(false);
                     else navigate("/home");
