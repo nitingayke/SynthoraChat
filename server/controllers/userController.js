@@ -52,9 +52,67 @@ export const getUserProfile = async (req, res) => {
   });
 };
 
+export const getUserQuestions = async (req, res) => {
+  const { userId } = req.params;
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
 
+  const questions = await Question.find({ author: userId })
+    .select(
+      "title content topics allowComments answers likes upvotes saves views status createdAt"
+    )
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
 
+  const total = await Question.countDocuments({ author: userId });
 
+  res.json({
+    data: questions,
+    pagination: {
+      page,
+      limit,
+      total,
+      hasMore: skip + questions.length < total,
+    },
+  });
+};
+
+export const getUserAnswers = async (req, res) => {
+  const answers = await Answer.find({ author: userId })
+    .select(
+      "questionId content upvotes likes comments aiAccuracy views status createdAt"
+    )
+    .populate({
+      path: "questionId",
+      select: "title",
+    })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  const total = await Answer.countDocuments({ author: userId });
+
+  return res.json({
+    data: answers,
+    pagination: {
+      page,
+      limit,
+      total,
+      hasMore: skip + answers.length < total,
+    },
+  });
+};
+
+export const getSavedQuestions = async (req, res) => {
+  const { userId } = req.params;
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+}
 
 // .populate({
 //       path: "questions",
