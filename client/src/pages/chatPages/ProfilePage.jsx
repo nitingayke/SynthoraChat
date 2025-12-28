@@ -95,13 +95,13 @@ export default function ProfilePage() {
                 return <UserActivity user={profileUser} />
 
             case "questions":
-                return <UserQuestions userQuestions={profileUser?.questions || []} isOwnProfile={isOwnProfile} />
+                return <UserQuestions userId={profileUser?._id} isOwnProfile={isOwnProfile} />
 
             case "answers":
-                return <UserAnswers userAnswers={profileUser?.answers || []} isOwnProfile={isOwnProfile} />;
+                return <UserAnswers userId={profileUser?._id} userAnswers={profileUser?.answers || []} isOwnProfile={isOwnProfile} />;
 
             case "saved-questions":
-                return <SavedQuestions savedQuestions={profileUser?.savedQuestions || []} isOwnProfile={isOwnProfile} />;
+                return <SavedQuestions userId={profileUser?._id} savedQuestions={profileUser?.savedQuestions || []} isOwnProfile={isOwnProfile} />;
 
             case "notifications":
                 return <Notifications notifications={profileUser?.notifications || []} />;

@@ -17,8 +17,8 @@ export default function CreateQuestionForm() {
     const [duplicateTopic, setDuplicateTopic] = useState("");
     const [topicLoading, setTopicLoading] = useState(false);
     const [openEmoji, setOpenEmoji] = useState(false);
-    const [submitting, setSubmitting] = useState(true);
-
+    const [submitting, setSubmitting] = useState(false);
+0
 
     useEffect(() => {
         const timeout = setTimeout(() => {
