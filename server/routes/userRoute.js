@@ -9,4 +9,10 @@ router.get("/me", authMiddleware, wrapAsync(getCurrentUser));
 
 router.get("/profile/:identifier", wrapAsync(getUserProfile));
 
+router.get("/profile/:userId/questions", wrapAsync({}));
+
+router.get("/profile/:userId/answers", wrapAsync({}));
+
+router.get("/profile/:userId/saved-questions", wrapAsync({}));
+
 export default router;

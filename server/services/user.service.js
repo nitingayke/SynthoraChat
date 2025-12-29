@@ -15,19 +15,21 @@ export const findUserWithProfile = async (query) => {
       select:
         "username profile credentials topicsOfInterest followers following lastActive createdAt isVerified",
       model: "User",
+      options: { limit: 15 },
     })
     .populate({
       path: "following.user",
       select:
         "username profile credentials topicsOfInterest followers following lastActive createdAt isVerified",
       model: "User",
+      options: { limit: 15 },
     })
     .populate({
       path: "answers",
       select:
         "questionId content upvotes likes comments aiAccuracy views shares status createdAt",
       model: "Answer",
-      options: { limit: 7 },
+      options: { limit: 15 },
     });
 };
 
