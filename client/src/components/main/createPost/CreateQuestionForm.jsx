@@ -19,7 +19,6 @@ export default function CreateQuestionForm() {
     const [openEmoji, setOpenEmoji] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-
     useEffect(() => {
         const timeout = setTimeout(() => {
             localStorage.setItem("draft_title", title);

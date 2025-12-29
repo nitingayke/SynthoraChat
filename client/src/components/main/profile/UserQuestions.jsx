@@ -1,50 +1,55 @@
-import { useContext, useState, useMemo } from "react";
+import { useContext, useState, useMemo, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 
-import QuestionContext from "../../../context/QuestionContext";
 import UIStateContext from "../../../context/UIStateContext";
 
 import QuestionList from "./QuestionList";
-import {
-    filterQuestionsByQuery,
-    filterUserQuestions
-} from "../../../utils/questionUtils";
+import { filterQuestionsByQuery } from "../../../utils/questionUtils";
+import { fetchUserQuestions } from "../../../services/user.service";
+import { enqueueSnackbar } from "notistack";
 
 const PAGE_SIZE = 15;
 
-export default function UserQuestions({ userQuestions = [], isOwnProfile = false }) {
+export default function UserQuestions({ userId, isOwnProfile = false }) {
 
-    const { questions, loadingQuestions } = useContext(QuestionContext);
     const { searchQuery } = useContext(UIStateContext);
 
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    const [questions, setQuestions] = useState([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const userOnlyQuestions = useMemo(() => {
-        return filterUserQuestions(questions, userQuestions);
-    }, [questions, userQuestions]);
 
-    const searchedQuestions = useMemo(() => {
-        return filterQuestionsByQuery(userOnlyQuestions, searchQuery);
-    }, [userOnlyQuestions, searchQuery]);
+    const loadQuestions = useCallback(async () => {
+        if (loading || !hasMore) return;
 
-    const visibleQuestions = useMemo(() => {
-        return searchedQuestions.slice(0, visibleCount);
-    }, [searchedQuestions, visibleCount]);
+        try {
+            setLoading(true);
+            const res = await fetchUserQuestions(userId, page, PAGE_SIZE);
 
-    const hasMoreQuestions = visibleCount < searchedQuestions.length;
+            if (res.success) {
+                setQuestions((prev) => [...prev, ...(res?.data?.questions ?? [])]);
+                setHasMore(res?.pagination?.hasMore ?? false);
+                setPage((prev) => prev + 1);
+            }
+        } catch (error) {
+            enqueueSnackbar(error?.response?.data?.message || "", { variant: "error" });
+        } finally {
+            setLoading(false);
+        }
+    }, [hasMore, loading, page, userId]);
 
-    const handleLoadMore = () => {
-        setVisibleCount((prev) => prev + PAGE_SIZE);
-    };
+    useEffect(() => {
+        setQuestions([]);
+        setPage(1);
+        setHasMore(false);
+        loadQuestions();
+    }, [userId, loadQuestions]);
 
-    if (loadingQuestions) {
-        return (
-            <div className="text-[15px] flex justify-center px-2 space-x-2 py-20">
-                <div className="animate-spin rounded-full border-3 border-x-0 w-7 h-7"></div>
-                <span className="text-lg">Loading...</span>
-            </div>
-        );
-    }
+    const filteredQuestions = useMemo(() => {
+        return filterQuestionsByQuery(questions, searchQuery);
+    }, [questions, searchQuery]);
+
 
     return (
         <>
@@ -62,31 +67,27 @@ export default function UserQuestions({ userQuestions = [], isOwnProfile = false
                 <button>Filter</button>
             </div>
 
-            {searchedQuestions.length === 0 ? (
+            {filteredQuestions?.length === 0 && !loading ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center border-t border-gray-300 dark:border-[#202020]">
                     <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
                         No questions found
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {searchQuery
-                            ? "Try changing your search keywords."
-                            : isOwnProfile ? "You haven't asked any questions yet." : "This user hasn't asked any public questions."}
+                        {searchQuery ? "Try changing your search keywords." : "User hasn't asked any public questions."}
                     </p>
                 </div>
             ) : (
                 <>
-                    <QuestionList
-                        questions={visibleQuestions}
-                        userQuestion={true}
-                    />
+                    <QuestionList questions={filteredQuestions} userQuestion={true} />
 
-                    {hasMoreQuestions && (
+                    {hasMore && (
                         <div className="flex justify-center mt-4">
                             <button
-                                onClick={handleLoadMore}
+                                onClick={loadQuestions}
+                                disabled={loading}
                                 className="px-6 py-2 rounded-lg font-medium bg-orange-500 hover:bg-orange-600 dark:bg-[#07C5B9] dark:hover:bg-[#06b1a7] text-white transition"
                             >
-                                Load More
+                                {loading ? "Loading..." : "Load More"}
                             </button>
                         </div>
                     )}
@@ -97,6 +98,6 @@ export default function UserQuestions({ userQuestions = [], isOwnProfile = false
 }
 
 UserQuestions.propTypes = {
-    userQuestions: PropTypes.array.isRequired,
+    userId: PropTypes.string.isRequired,
     isOwnProfile: PropTypes.bool.isRequired
 };
