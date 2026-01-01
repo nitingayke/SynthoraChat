@@ -27,6 +27,10 @@ const questionSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
+        filename: {
+          type: String,
+          required: true,
+        },
       },
     ],
     topics: [

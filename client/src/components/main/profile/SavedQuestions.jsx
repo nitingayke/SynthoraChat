@@ -1,56 +1,64 @@
-import { useContext, useState, useMemo } from "react";
+import { useContext, useState, useMemo, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 
-import QuestionContext from "../../../context/QuestionContext";
 import UIStateContext from "../../../context/UIStateContext";
 
 import QuestionList from "./QuestionList";
-import {
-    filterQuestionsByQuery,
-    filterUserQuestions,
-} from "../../../utils/questionUtils";
+import { filterQuestionsByQuery } from "../../../utils/questionUtils";
+import { fetchSavedQuestions } from "../../../services/user.service";
+import { enqueueSnackbar } from "notistack";
 
 const PAGE_SIZE = 15;
 
-export default function SavedQuestions({
-    savedQuestions = [],
-    isOwnProfile = false,
-}) {
-    const { questions, loadingQuestions } = useContext(QuestionContext);
+export default function SavedQuestions({ userId, isOwnProfile = false }) {
+
     const { searchQuery } = useContext(UIStateContext);
 
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    const [questions, setQuestions] = useState([]);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const savedQuestionIds = useMemo(() => {
-        return savedQuestions.map((sq) => String(sq.question));
-    }, [savedQuestions]);
+    const loadSavedQuestions = useCallback(async () => {
+        if (loading || (!hasMore && page !== 1)) return;
 
-    const savedOnlyQuestions = useMemo(() => {
-        return filterUserQuestions(questions, savedQuestionIds);
-    }, [questions, savedQuestionIds]);
+        try {
+            setLoading(true);
 
-    const searchedQuestions = useMemo(() => {
-        return filterQuestionsByQuery(savedOnlyQuestions, searchQuery);
-    }, [savedOnlyQuestions, searchQuery]);
+            const res = await fetchSavedQuestions(userId, page, PAGE_SIZE);
 
-    const visibleQuestions = useMemo(() => {
-        return searchedQuestions.slice(0, visibleCount);
-    }, [searchedQuestions, visibleCount]);
+            if (res?.success) {
+                const newQuestions =
+                    res?.data?.questions?.map((sq) => sq.question) ?? [];
 
-    const hasMoreQuestions = visibleCount < searchedQuestions.length;
+                setQuestions((prev) => [...prev, ...newQuestions]);
+                setHasMore(res?.pagination?.hasMore ?? false);
+                setPage((prev) => prev + 1);
+            }
+        } catch (error) {
+            enqueueSnackbar(
+                error?.response?.data?.message || "Failed to load saved questions",
+                { variant: "error" }
+            );
+        } finally {
+            setLoading(false);
+        }
+    }, [userId, page, loading, hasMore]);
 
-    const handleLoadMore = () => {
-        setVisibleCount((prev) => prev + PAGE_SIZE);
-    };
+    useEffect(() => {
+        setQuestions([]);
+        setPage(1);
+        setHasMore(false);
+    }, [userId]);
 
-    if (loadingQuestions) {
-        return (
-            <div className="text-[15px] flex justify-center px-2 space-x-2 py-20">
-                <div className="animate-spin rounded-full border-3 border-x-0 w-7 h-7"></div>
-                <span className="text-lg">Loading...</span>
-            </div>
-        );
-    }
+
+    useEffect(() => {
+        loadSavedQuestions();
+    }, [loadSavedQuestions]);
+
+    const filteredQuestions = useMemo(() => {
+        return filterQuestionsByQuery(questions, searchQuery);
+    }, [questions, searchQuery]);
 
     return (
         <>
@@ -69,7 +77,7 @@ export default function SavedQuestions({
                 </button>
             </div>
 
-            {searchedQuestions.length === 0 ? (
+            {filteredQuestions.length === 0 && !loading ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center border-t border-gray-300 dark:border-[#202020]">
                     <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
                         No saved questions
@@ -84,15 +92,16 @@ export default function SavedQuestions({
                 </div>
             ) : (
                 <>
-                    <QuestionList questions={visibleQuestions} />
+                    <QuestionList questions={filteredQuestions} />
 
-                    {hasMoreQuestions && (
+                    {hasMore && (
                         <div className="flex justify-center mt-4">
                             <button
-                                onClick={handleLoadMore}
+                                onClick={loadSavedQuestions}
+                                disabled={loading}
                                 className="px-6 py-2 rounded-lg font-medium bg-orange-500 hover:bg-orange-600 dark:bg-[#07C5B9] dark:hover:bg-[#06b1a7] text-white transition"
                             >
-                                Load More
+                                {loading ? "Loading..." : "Load More"}
                             </button>
                         </div>
                     )}
@@ -103,6 +112,6 @@ export default function SavedQuestions({
 }
 
 SavedQuestions.propTypes = {
-    savedQuestions: PropTypes.array.isRequired,
+    userId: PropTypes.string.isRequired,
     isOwnProfile: PropTypes.bool.isRequired,
 };

@@ -11,7 +11,7 @@ export const getSocket = () => {
       withCredentials: true,
       reconnection: true,
       reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
+      reconnectionDelay: 2000,
       auth: {
         token: localStorage.getItem("token"),
       },

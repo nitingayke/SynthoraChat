@@ -1,15 +1,32 @@
 import api from "../api/api";
 
 /**
- * Create a new question
- * @param {Object} payload
- * @param {string} payload.title
- * @param {string} payload.content
- * @param {string[]} payload.topics
- * @param {boolean} payload.allowComments
- * @param {Array} payload.media
+ * Get all questions (paginated)
+ * @param {number} page - current page
+ * @param {number} limit - number of questions per page
  */
-export const createQuestionService = async (payload) => {
-  const response = await api.post("/q/new", payload);
-  return response.data; 
+export const getAllQuestionsService = async (page = 1, limit = 20) => {
+  const response = await api.get("/q", {
+    params: { page, limit },
+  });
+  return response.data;
+};
+
+/**
+ * Create a new question
+ * @param {FormData} formData
+ * formData fields:
+ * - title: string
+ * - content: string
+ * - topics[]: string[]
+ * - allowComments: boolean
+ * - media: File[]
+ */
+export const createQuestionService = async (formData) => {
+  const response = await api.post("/q/new", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
 };

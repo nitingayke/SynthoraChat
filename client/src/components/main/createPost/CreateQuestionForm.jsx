@@ -18,7 +18,6 @@ export default function CreateQuestionForm() {
     const [topicLoading, setTopicLoading] = useState(false);
     const [openEmoji, setOpenEmoji] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-0
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -32,7 +31,6 @@ export default function CreateQuestionForm() {
     useEffect(() => {
         localStorage.setItem("draft_topics", JSON.stringify(topics));
     }, [topics]);
-
 
     const getMediaType = (file) => {
         if (file.type.startsWith("image")) return "image";
@@ -84,7 +82,6 @@ export default function CreateQuestionForm() {
         }, 5000);
     };
 
-
     const handleSubmit = async () => {
         if (!title.trim()) {
             enqueueSnackbar("Title is required", { variant: "error" });
@@ -104,22 +101,26 @@ export default function CreateQuestionForm() {
         try {
             setSubmitting(true);
 
-            const payload = {
-                title: title.trim(),
-                content: content.trim(),
-                topics,
-                allowComments,
-                media: media.map((m) => ({
-                    type: m.type,
-                    name: m.file?.name,
-                    size: m.file?.size,
-                })),
-            }
+            const formData = new FormData();
 
-            const res = await createQuestionService(payload);
+            formData.append("title", title.trim());
+            formData.append("content", content.trim());
+            formData.append("allowComments", allowComments);
+
+            topics.forEach((topic) => {
+                formData.append("topics[]", topic);
+            });
+
+            media.forEach((m) => {
+                if (m.file) {
+                    formData.append("media", m.file);
+                }
+            });
+
+            const res = await createQuestionService(formData);
 
             if (res?.success) {
-                enqueueSnackbar("Question published successfully 🎉", {
+                enqueueSnackbar("Question published successfully", {
                     variant: "success",
                 });
 
@@ -137,8 +138,7 @@ export default function CreateQuestionForm() {
 
         } catch (error) {
             enqueueSnackbar(
-                error?.response?.data?.message ||
-                "Signup failed. Please try again.",
+                error?.response?.data?.message || "Failed to publish question",
                 { variant: "error" }
             );
         } finally {
@@ -257,7 +257,7 @@ export default function CreateQuestionForm() {
                     {[
                         { label: "Image", icon: <Image size={18} />, accept: "image/*" },
                         { label: "Video", icon: <Video size={18} />, accept: "video/*" },
-                        { label: "Audio", icon: <FileAudio size={18} />, accept: "audio/*" },
+                        { label: "Audio", icon: <FileAudio size={18} />, accept: "audio/*"},
                         { label: "Document", icon: <File size={18} />, accept: "*" }
                     ].map((item) => (
                         <label

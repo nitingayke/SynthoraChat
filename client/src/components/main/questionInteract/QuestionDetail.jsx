@@ -214,6 +214,7 @@ function ActionButton({
   loading,
   onClick,
   count,
+  ActiveIcon,
   activeClass,
 }) {
   return (
