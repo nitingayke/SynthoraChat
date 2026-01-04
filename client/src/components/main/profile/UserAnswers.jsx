@@ -1,4 +1,4 @@
-import { useContext, useState, useMemo, useEffect, useCallback } from "react";
+import { useContext, useState, useMemo, useEffect, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
 
 import UIStateContext from "../../../context/UIStateContext";
@@ -18,6 +18,8 @@ export default function UserAnswers({ userId, isOwnProfile }) {
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
+
+    const isInitialFetch = useRef(false);
 
     const loadAnswers = useCallback(async () => {
         if (loading || !hasMore) return;
@@ -52,6 +54,8 @@ export default function UserAnswers({ userId, isOwnProfile }) {
     }, [userId]);
 
     useEffect(() => {
+        if(isInitialFetch.current) return;
+        isInitialFetch.current = true;
         loadAnswers();
     }, [userId, loadAnswers]);
 

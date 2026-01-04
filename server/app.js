@@ -5,12 +5,15 @@ import http from "node:http";
 
 import { connectDatabase } from "./config/database.js";
 
-import { initSocket } from "./sockets/index.js"
+import { initSocket } from "./sockets/index.js";
 
 import authRoute from "./routes/authRoute.js";
-import questionRoute from "./routes/questionRoute.js"
+import questionRoute from "./routes/questionRoute.js";
+import answerRoute from "./routes/answerRoute.js";
 import userRoute from "./routes/userRoute.js";
-import profileEditRoute from "./routes/profileEditRoute.js"
+import profileEditRoute from "./routes/profileEditRoute.js";
+import appAnalytics from "./routes/analyticsRoute.js";
+
 dotenv.config();
 
 const app = express();
@@ -44,7 +47,11 @@ app.use("/u", userRoute);
 
 app.use("/q", questionRoute);
 
+app.use("/answer", answerRoute);
+
 app.use("/profile", profileEditRoute);
+
+app.use("/app", appAnalytics);
 
 
 app.use((err, req, res, next) => {

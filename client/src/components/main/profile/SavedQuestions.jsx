@@ -1,4 +1,4 @@
-import { useContext, useState, useMemo, useEffect, useCallback } from "react";
+import { useContext, useState, useMemo, useEffect, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
 
 import UIStateContext from "../../../context/UIStateContext";
@@ -16,11 +16,13 @@ export default function SavedQuestions({ userId, isOwnProfile = false }) {
 
     const [questions, setQuestions] = useState([]);
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
 
+    const isInitialFetch = useRef(false);
+
     const loadSavedQuestions = useCallback(async () => {
-        if (loading || (!hasMore && page !== 1)) return;
+        if (loading || !hasMore) return;
 
         try {
             setLoading(true);
@@ -30,7 +32,7 @@ export default function SavedQuestions({ userId, isOwnProfile = false }) {
             if (res?.success) {
                 const newQuestions =
                     res?.data?.questions?.map((sq) => sq.question) ?? [];
-
+                
                 setQuestions((prev) => [...prev, ...newQuestions]);
                 setHasMore(res?.pagination?.hasMore ?? false);
                 setPage((prev) => prev + 1);
@@ -48,11 +50,14 @@ export default function SavedQuestions({ userId, isOwnProfile = false }) {
     useEffect(() => {
         setQuestions([]);
         setPage(1);
-        setHasMore(false);
-    }, [userId]);
+        setHasMore(true);
+    }, []);
 
 
     useEffect(() => {
+        if(isInitialFetch.current) return;
+
+        isInitialFetch.current = true;
         loadSavedQuestions();
     }, [loadSavedQuestions]);
 

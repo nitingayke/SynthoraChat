@@ -69,7 +69,6 @@ export const QuestionProvider = ({ children }) => {
         }
     }, [loadQuestions]);
 
-
     const handleNewQuestion = useCallback((data) => {
         const { question } = data;
         if (!question?._id) return;
@@ -77,11 +76,32 @@ export const QuestionProvider = ({ children }) => {
         setNewQuestions((prev) => [question, ...prev]);
     }, []);
 
+    const handleNewAnswer = (data) => {
+        const { answer, questionId } = data;
+
+        if (!answer?._id || !questionId) return;
+
+        setQuestions((prev) =>
+            prev.map((q) => {
+                if (q._id !== questionId) return q;
+
+                return {
+                    ...q,
+                    answers: q.answers
+                        ? [...q.answers, answer._id]
+                        : [answer._id],
+                };
+            })
+        );
+    }
+
     useEffect(() => {
         socket.on("question:new", handleNewQuestion);
+        socket.on("answer:new", handleNewAnswer);
 
         return () => {
             socket.off("question:new", handleNewQuestion);
+            socket.off("answer:new", handleNewAnswer);
         }
     }, [socket, handleNewQuestion]);
 

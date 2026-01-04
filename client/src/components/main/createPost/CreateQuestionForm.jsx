@@ -5,7 +5,7 @@ import { useSnackbar } from "notistack";
 import PostContext from "../../../context/PostContext";
 import EmojiPickerDialog from "../../common/EmojiPickerDialog";
 import { createQuestionService } from "../../../services/question.service"
-
+import { getMediaType } from "../../../utils/helper";
 
 export default function CreateQuestionForm() {
 
@@ -31,13 +31,6 @@ export default function CreateQuestionForm() {
     useEffect(() => {
         localStorage.setItem("draft_topics", JSON.stringify(topics));
     }, [topics]);
-
-    const getMediaType = (file) => {
-        if (file.type.startsWith("image")) return "image";
-        if (file.type.startsWith("video")) return "video";
-        if (file.type.startsWith("audio")) return "audio";
-        return "document";
-    };
 
     const handleMediaUpload = (e) => {
         const files = Array.from(e.target.files);
@@ -106,10 +99,7 @@ export default function CreateQuestionForm() {
             formData.append("title", title.trim());
             formData.append("content", content.trim());
             formData.append("allowComments", allowComments);
-
-            topics.forEach((topic) => {
-                formData.append("topics[]", topic);
-            });
+            formData.append("topics", JSON.stringify(topics));
 
             media.forEach((m) => {
                 if (m.file) {
@@ -202,6 +192,12 @@ export default function CreateQuestionForm() {
                             id="topic"
                             value={topicInput}
                             onChange={(e) => setTopicInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if(e.key === "Enter") {
+                                    e.preventDefault();
+                                    addTopic();
+                                }
+                            }}
                             placeholder="Add a topic (example: React, AI)..."
                             className="w-auto flex-1 px-3 py-2.5 rounded-lg bg-white dark:bg-neutral-900 dark:text-white outline-none border-2 border-gray-200 dark:border-[#222] focus:border-orange-500 dark:focus:border-[#07C5B9] disabled:cursor-not-allowed"
                             disabled={submitting}

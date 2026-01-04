@@ -28,6 +28,10 @@ const answerSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
+        filename: {
+          type: String,
+          required: true,
+        },
       },
     ],
     upvotes: [
