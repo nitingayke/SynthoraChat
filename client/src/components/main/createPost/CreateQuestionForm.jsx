@@ -345,7 +345,7 @@ export default function CreateQuestionForm() {
                 <button
                     className="w-full bg-orange-500 dark:bg-[#07C5B9] text-white font-semibold py-3 rounded-lg hover:opacity-90 flex items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50"
                     onClick={handleSubmit}
-                    disabled={title?.trim()?.length === 0 || content?.trim()?.length === 0 || topicLoading}
+                    disabled={submitting || title?.trim()?.length === 0 || content?.trim()?.length === 0 || topicLoading}
                 >
                     {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send size={18} />}
                     Publish Question

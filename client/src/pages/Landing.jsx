@@ -12,8 +12,6 @@ export default function Landing() {
             <Showcase />
             <Testimonials />
             <CTASection />
-
-            <div className="py-10"></div>
         </>
     )
 }

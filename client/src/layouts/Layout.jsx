@@ -9,12 +9,6 @@ export default function Layout({ children }) {
     const location = useLocation();
     const scrollRef = useRef(null);
 
-    let bgImage = 'src/assets/landingbgimage.png';
-
-    if (location.pathname != '/') {
-        bgImage = 'src/assets/bgimage.png'
-    }
-
     useEffect(() => {
         if(scrollRef.current) {
             scrollRef.current.scrollTo({ top: 0 });
@@ -22,10 +16,9 @@ export default function Layout({ children }) {
     }, [location.pathname]);
 
     return (
-        <div ref={scrollRef} className={`h-screen scroll-smooth flex flex-col overflow-y-auto overflow-x-hidde transition-colors duration-300 
-            bg-cover bg-center bg-no-repeat overflow-x-hidden`} style={{ backgroundImage: `url(${bgImage})` }} >
+        <div ref={scrollRef} className={`h-screen scroll-smooth flex flex-col overflow-y-auto overflow-x-hidde transition-colors duration-300 overflow-x-hidden bg-white dark:bg-[#161616]`} >
             <Navbar />
-            <main className='flex-1 backdrop-blur'>
+            <main className='flex-1'>
                 {children}
             </main>
             <Footer />

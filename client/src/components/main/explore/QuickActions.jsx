@@ -12,7 +12,7 @@ export default function QuickActions() {
             <h3 className="text-xl font-bold mb-4">Get Started</h3>
             <div className="space-y-3">
                 <Link
-                    to="/main/ai-chat"
+                    to="/main/create-post"
                     className="flex items-center gap-4 p-4 bg-white/20 rounded-lg hover:bg-white/30 transition-all group backdrop-blur-sm border border-white/20"
                 >
                     <MessageSquare className="w-5 h-5" />

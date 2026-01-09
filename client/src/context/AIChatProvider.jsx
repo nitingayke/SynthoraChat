@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import AIChatContext from "./AIChatContext"
 
 export const AIChatProvider = ({ children }) => {
@@ -52,20 +52,6 @@ export const AIChatProvider = ({ children }) => {
         },
     );
     const [isAnswerLoading, setIsAnswerLoading] = useState(false);
-
-    useEffect(() => {
-        const savedPrompt = localStorage.getItem("ai_user_prompt");
-
-        if (savedPrompt) {
-            try {
-                const parsedPrompt = JSON.parse(savedPrompt);
-                setUserPrompt(parsedPrompt.prompt || "");
-            } catch (error) {
-                console.error('Error parsing saved prompt:', error);
-                localStorage.removeItem('ai_user_prompt');
-            }
-        }
-    }, []);
 
     const values = useMemo(() => ({
         userPrompt,

@@ -1,20 +1,17 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { TrendingUp, Clock, Star, Brain, MessageSquare } from 'lucide-react';
+import { TrendingUp, Clock } from 'lucide-react';
 
 const filters = [
     { id: 'trending', label: 'Trending', icon: TrendingUp, path: "/main/explore?query=trending" },
     { id: 'recent', label: 'Recent', icon: Clock, path: "/main/explore?query=recent" },
-    { id: 'popular', label: 'Popular', icon: Star, path: "/main/explore?query=popular" },
-    { id: 'ai', label: 'AI Answers', icon: Brain, path: "/main/explore?query=ai" },
-    { id: 'unanswered', label: 'Unanswered', icon: MessageSquare, path: "/main/explore?query=unanswered" }
 ];
 
 export default function FilterTabs() {
 
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
-    const activeFilter = searchParams.get("query");
+    const activeFilter = searchParams.get("query") || "trending";
 
     return (
         <div className="p-4 sm:p-4">
