@@ -12,7 +12,7 @@ export default function FilterQuestionList() {
 
 
     return (
-        <div className="w-full space-y-4 p-3 sm:p-0">
+        <div className="w-full space-y-4">
             {questions?.slice(0, visibleCount).map((q) => {
                 const isActive = q?._id === questionId;
 

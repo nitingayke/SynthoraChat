@@ -23,12 +23,14 @@ import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import ScreenLoader from "../components/loader/ScreenLoader";
 import UserVerification from "../pages/UserVerification";
+import AnalyticsContext from "../context/AnalyticsContext";
 
 export default function AppRoutes() {
 
     const { authLoading } = useContext(AuthContext);
+    const { loading } = useContext(AnalyticsContext);
 
-    if(authLoading) {
+    if(authLoading || loading) {
         return <ScreenLoader />
     }
 

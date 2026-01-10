@@ -6,6 +6,7 @@ import {
   toggleLikeQuestion,
   toggleSaveQuestion,
   toggleUpvoteQuestion,
+  getAllTopics,
 } from "../controllers/questionController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import wrapAsync from "../utils/wrapAsync.js";
@@ -22,10 +23,14 @@ router.post(
   wrapAsync(createQuestion)
 );
 
-router.get("/getQuestionById", wrapAsync(getQuestionById))
+router.get("/getQuestionById", wrapAsync(getQuestionById));
 
-router.post("/like", wrapAsync(toggleLikeQuestion))
+router.post("/like", wrapAsync(toggleLikeQuestion));
+
 router.post("/upvote", wrapAsync(toggleUpvoteQuestion));
+
 router.post("/save", wrapAsync(toggleSaveQuestion));
+
+router.get("/topics", wrapAsync(getAllTopics));
 
 export default router;

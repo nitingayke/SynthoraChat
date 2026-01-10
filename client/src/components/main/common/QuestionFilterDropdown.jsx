@@ -6,7 +6,7 @@ import { Check, SlidersHorizontal, Tags, X } from "lucide-react";
 
 export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
 
-    const { filterOptions } = useContext(QuestionContext);
+    const { loadingTopics, filterOptions } = useContext(QuestionContext);
 
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
@@ -38,11 +38,7 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
                     </h2>
                     <button
                         onClick={() => setIsOpen(false)}
-                        className="
-                            p-2 rounded-full 
-                            hover:bg-gray-200 dark:hover:bg-[#2a2a2a] 
-                            transition-all
-                        "
+                        className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#2a2a2a] transition-all"
                     >
                         <X size={20} className="text-gray-700 dark:text-gray-300" />
                     </button>
@@ -50,37 +46,51 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
 
                 {/* FILTER LIST */}
                 <div className="space-y-2 p-4">
-                    {filterOptions.map((item, index) => {
-                        const isActive =
-                            item.link.includes("filter=" + activeFilter) ||
-                            item.link.includes("topic=" + activeTopic);
+                    {loadingTopics ? (
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Loading filters...
+                        </p>
+                    ) : (
+                        filterOptions.map((item) => {
+                            const isActive =
+                                (activeFilter && item.link === `filter=${activeFilter}`) ||
+                                (activeTopic && item.link === `topic=${activeTopic}`);
 
-                        return (
-                            <Link
-                                key={index * 0.1458}
-                                to={`/main?${item.link}`}
-                                className={`
-                                flex items-center justify-between 
-                                p-2 px-3 text-sm rounded-lg cursor-pointer transition-all
-                                ${isActive
-                                        ? "bg-orange-100 text-orange-500 dark:bg-[#07C5B9]/20 dark:text-[#07C5B9] font-semibold"
-                                        : "hover:bg-gray-100 dark:hover:bg-[#212121]"
-                                    }
-                            `}
-                                onClick={() => setIsOpen(false)}
-                            >
-                                <div className="flex items-center gap-2 dark:text-white">
-                                    {item.link.startsWith("filter") && <SlidersHorizontal size={16} />}
-                                    {item.link.startsWith("topic") && <Tags size={16} />}
-                                    {item.label}
-                                </div>
+                            const params = new URLSearchParams();
 
-                                {isActive && (
-                                    <Check size={16} className="text-orange-500 dark:text-[#07C5B9]" />
-                                )}
-                            </Link>
-                        );
-                    })}
+                            if (item.link.startsWith("filter")) {
+                                params.set("filter", item.link.split("=")[1]);
+                            }
+
+                            if (item.link.startsWith("topic")) {
+                                params.set("topic", item.link.split("=")[1]);
+                            }
+
+                            return (
+                                <Link
+                                    key={item.link}
+                                    to={`/main?${params.toString()}`}
+                                    onClick={() => setIsOpen(false)}
+                                    className={`flex items-center justify-between p-2 px-3 text-sm rounded-lg transition-all
+                                        ${isActive
+                                            ? "bg-orange-100 text-orange-500 dark:bg-[#07C5B9]/20 dark:text-[#07C5B9] font-semibold"
+                                            : "hover:bg-gray-100 dark:hover:bg-[#212121] dark:text-white"
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        {item.link.startsWith("filter") && <SlidersHorizontal size={16} />}
+                                        {item.link.startsWith("topic") && <Tags size={16} />}
+                                        {item.label}
+                                    </div>
+
+                                    {isActive && (
+                                        <Check size={16} className="text-orange-500 dark:text-[#07C5B9]" />
+                                    )}
+                                </Link>
+                            );
+                        })
+                    )}
+
                 </div>
             </div>
         </Drawer>

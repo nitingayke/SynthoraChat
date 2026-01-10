@@ -88,7 +88,7 @@ export default function QuestionAnswerForm({
 
     return (
         <div className="relative bg-white dark:bg-[#191919]/50 backdrop-blur-2xl rounded-lg max-w-5xl mx-auto w-full overflow-auto">
-            <div className="p-4 sticky top-0 backdrop-blur-xl bg-white dark:bg-[#191919]">
+            <div className="z-20 p-4 sticky top-0 backdrop-blur-xl bg-white dark:bg-[#191919]">
                 <h3 className="text-sm text-gray-500 dark:text-gray-400">
                     Answering question
                 </h3>
@@ -159,7 +159,7 @@ export default function QuestionAnswerForm({
                         ))}
                     </div>
 
-                    <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3 mt-4">
+                    <div className="z-10 grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-3 mt-4">
                         {media.map((m, i) => (
                             <div key={i * 0.2546} className="relative border h-fit rounded-lg border-gray-300 dark:border-gray-700 overflow-hidden">
                                 <button

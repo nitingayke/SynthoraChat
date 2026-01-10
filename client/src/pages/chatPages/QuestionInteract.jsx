@@ -8,6 +8,8 @@ import ScreenLoader from "../../components/loader/ScreenLoader";
 import { getQuestionById } from "../../services/question.service";
 import QuestionInteractSkeleton from "../../components/loader/QuestionInteractSkeleton";
 import PostAnswer from "../../components/main/questionInteract/AnswerForm";
+import QuestionFilterToggle from "../../components/main/common/QuestionFilterToggle";
+import { Hash } from "lucide-react";
 
 export default function QuestionInteract() {
 
@@ -66,31 +68,45 @@ export default function QuestionInteract() {
     }
 
     return (
-        <div className="w-full max-w-5xl mx-auto flex gap-4 py-4 h-[calc(100vh-64px)]">
+        <>
+            <QuestionFilterToggle />
 
-            {/* Sidebar */}
-            <div className="hidden md:block w-[35%] h-full overflow-y-auto no-scrollbar dark:border-[#2a2a2a]">
-                <FilterQuestionList />
-            </div>
+            <div className="w-full max-w-5xl mx-auto flex flex-col-reverse md:flex-row py-4 gap-4">
+                <div id="related-questions" className="h-fit w-full md:w-[35%]">
+                    <div className="md:hidden mb-2">
+                        <a
+                            href="#related-questions"
+                            className="group inline-block"
+                        >
+                            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 
+                       flex items-center gap-1
+                       group-hover:text-orange-500 
+                       dark:group-hover:text-[#07C5B9]
+                       transition-colors">
+                                <Hash
+                                    size={20}
+                                    className="opacity-70 group-hover:opacity-100"
+                                />
+                                <span>Related Questions</span>
+                            </h3>
+                        </a>
 
-
-            {/* Main content */}
-            {loadingQuestions || loading ? (
-                <div className="flex-1 h-full overflow-y-auto">
-                    <QuestionInteractSkeleton />
-                </div>
-            ) : (
-                    <div className="flex-1 h-full overflow-y-auto no-scrollbar space-y-3 rounded-lg border p-3 sm:p-4 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition">
-                        <QuestionDetail question={currentQuestion} />
-
-                        {/* <PostAnswer questionId={currentQuestion?._id} /> */}
-
-                        <AnswerList question={currentQuestion} />
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Based on this question
+                        </p>
                     </div>
 
-            )}
-        </div>
 
+                    <FilterQuestionList />
+                </div>
+                <div className="flex-1 space-y-3 rounded-lg border p-3 sm:p-4 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition h-fit">
+                    <QuestionDetail question={currentQuestion} />
 
+                    <AnswerList question={currentQuestion} />
+
+                    <br />
+                </div>
+            </div>
+        </>
     )
 }

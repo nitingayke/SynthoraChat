@@ -99,7 +99,10 @@ export default function CommentActions({ question, setAnswerSummary }) {
                             boxShadow: "none",
                             borderRadius: 1,
                             padding: 2,
-                            overflow: "hidden"
+                            overflow: "hidden",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
                         },
                     },
                 }}

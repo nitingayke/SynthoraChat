@@ -1,74 +1,75 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import {
     Users,
-    Star,
-    Zap,
     MessageSquare,
     ThumbsUp,
     Brain,
-    ArrowRight,
     Rocket,
     TrendingUp,
-    Award
+    Award,
+    ArrowRight,
 } from "lucide-react";
 import Avatar from "@mui/material/Avatar";
+import AnalyticsContext from "../../../context/AnalyticsContext";
+import { slugify } from "../../../utils/helper";
 
 export default function GuestProfile() {
+    const { loading, analytics } = useContext(AnalyticsContext);
+
+    if (loading || !analytics) {
+        return (
+            <div className="w-full rounded-lg bg-white dark:bg-[#191919] p-6 border border-gray-200 dark:border-[#222222]">
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                    Loading platform insights...
+                </p>
+            </div>
+        );
+    }
 
     const platformStats = [
         {
             icon: Users,
-            value: "10K+",
-            label: "Active Users",
-            color: "text-orange-500 dark:text-blue-400"
+            value: analytics?.users?.total?.toLocaleString(),
+            label: "Total Users",
         },
         {
             icon: MessageSquare,
-            value: "50K+",
+            value: analytics?.content?.questions?.total?.toLocaleString(),
             label: "Questions",
-            color: "text-green-500 dark:text-green-400"
         },
         {
             icon: ThumbsUp,
-            value: "100K+",
+            value: analytics?.content?.answers?.total?.toLocaleString(),
             label: "Answers",
-            color: "text-purple-500 dark:text-purple-400"
         },
         {
             icon: Brain,
-            value: "AI Powered",
-            label: "Smart Answers",
-            color: "text-orange-500 dark:text-orange-400"
-        }
+            value: analytics?.ai?.totalSessions?.toLocaleString(),
+            label: "AI Sessions",
+        },
     ];
 
     const features = [
         {
-            icon: Zap,
-            title: "AI-Powered Answers",
-            description: "Get instant, intelligent responses to your questions"
-        },
-        {
             icon: TrendingUp,
             title: "Community Driven",
-            description: "Learn from experts and share your knowledge"
+            description: "Learn from real developers and experts",
         },
         {
             icon: Award,
             title: "Build Reputation",
-            description: "Earn recognition for your contributions"
+            description: "Get recognized for quality answers",
         },
         {
-            icon: Rocket,
-            title: "Fast & Reliable",
-            description: "Quick responses with accurate information"
-        }
+            icon: Brain,
+            title: "AI Assisted",
+            description: "Smarter answers with AI collaboration",
+        },
     ];
 
     return (
-        <div className="w-full bg-white dark:bg-[#161616] rounded-lg border border-gray-200 dark:border-gray-800/50 overflow-hidden transition-all duration-300">
-            {/* Header with Gradient */}
+        <div className="w-full rounded-xl bg-white dark:bg-[#161616] border border-gray-200 dark:border-[#222222] overflow-hidden">
             <div className="relative h-30 bg-gradient-to-r from-[#07C5B9] to-[#0EA5E9]">
                 <div className="absolute inset-0" />
                 <div className="absolute top-3 left-4">
@@ -76,9 +77,8 @@ export default function GuestProfile() {
                 </div>
             </div>
 
-            {/* Profile Content */}
-            <div className="px-4 pb-5">
-                {/* Avatar & Welcome */}
+            <div className="px-4 pb-6">
+
                 <div className="flex flex-col items-center -mt-12">
                     <div className="relative">
                         <Avatar
@@ -103,112 +103,94 @@ export default function GuestProfile() {
                     </div>
                 </div>
 
-                {/* Platform Stats */}
                 <div className="mt-5 grid grid-cols-2 gap-3">
-                    {platformStats.map((stat, index) => {
-                        const IconComponent = stat.icon;
+                    {platformStats.map((stat, idx) => {
+                        const Icon = stat.icon;
                         return (
-                            <div 
-                                key={index * 0.254}
-                                className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-500/10 dark:to-gray-600/10 p-3 rounded-lg border border-gray-200 dark:border-gray-500/20"
+                            <div
+                                key={idx}
+                                className="rounded-xl p-3 bg-gray-50 dark:bg-[#202020] border border-gray-200 dark:border-gray-700"
                             >
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <div className="text-sm font-bold text-gray-900 dark:text-white">
+                                        <p className="text-sm font-bold text-gray-900 dark:text-white">
                                             {stat.value}
-                                        </div>
-                                        <div className="text-xs text-gray-500 dark:text-gray-400">
+                                        </p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
                                             {stat.label}
-                                        </div>
+                                        </p>
                                     </div>
-                                    <IconComponent className={`w-4 h-4 ${stat.color}`} />
+                                    <Icon className="w-4 h-4 text-orange-500 dark:text-[#07C5B9]" />
                                 </div>
                             </div>
                         );
                     })}
                 </div>
 
-                {/* Features List */}
-                <div className="mt-4 space-y-3">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                        <Zap className="w-4 h-4 text-orange-500 dark:text-[#07C5B9]" />
-                        Why Join Us?
-                    </h3>
-                    
-                    <div className="space-y-2">
-                        {features.map((feature, index) => {
-                            const IconComponent = feature.icon;
-                            return (
-                                <div 
-                                    key={index * 0.2548}
-                                    className="flex items-start gap-3 p-2 bg-gray-200 dark:bg-[#202020] rounded-lg transition-colors"
-                                >
-                                    <IconComponent className="w-4 h-4 text-orange-500 dark:text-[#07C5B9] mt-0.5 flex-shrink-0" />
-                                    <div>
-                                        <div className="text-xs font-medium text-gray-900 dark:text-white">
-                                            {feature.title}
-                                        </div>
-                                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                            {feature.description}
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Trending Topics */}
-                <div className="mt-4">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                        Popular Topics
-                    </h3>
-                    <div className="flex flex-wrap gap-1">
-                        {[
-                            "React", "JavaScript", "Python", "AI/ML", 
-                            "Web Development", "Data Science", "DevOps", "Mobile"
-                        ].map((topic, index) => (
-                            <span
-                                key={index * 0.2587}
-                                className="px-2 py-1 bg-orange-100 dark:bg-[#07C5B9]/20 text-orange-500 dark:text-[#07C5B9] text-xs rounded-full border border-orange-200 dark:border-[#07C5B9]/30"
-                            >
-                                {topic}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Call to Action */}
                 <div className="mt-5 space-y-3">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                        Why Join?
+                    </h4>
+
+                    {features.map((feature, idx) => {
+                        const Icon = feature.icon;
+                        return (
+                            <div
+                                key={idx}
+                                className="flex gap-3 p-3 rounded-xl bg-gray-100 dark:bg-[#202020]"
+                            >
+                                <Icon className="w-4 h-4 text-orange-500 dark:text-[#07C5B9]" />
+                                <div>
+                                    <p className="text-xs font-medium text-gray-900 dark:text-white">
+                                        {feature.title}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        {feature.description}
+                                    </p>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {analytics.trendingTopics?.length > 0 && (
+                    <div className="mt-4">
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">
+                            Trending Topics
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                            {analytics.trendingTopics.slice(0, 8).map((topic) => (
+                                <Link
+                                    key={topic?._id}
+                                    to={`/main?topic=${slugify(topic?._id)}`}
+                                    className="px-2 py-1 text-xs rounded-full bg-orange-100 dark:bg-[#07C5B9]/20 text-orange-500 dark:text-[#07C5B9]"
+                                >
+                                    #{topic?._id}
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                <div className="mt-6 space-y-3">
                     <Link
-                        to="/login"
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#07C5B9] text-white rounded-lg hover:opacity-80 transition-all duration-200 font-medium shadow-md hover:shadow-lg"
+                        to="/signup"
+                        className="flex items-center justify-center gap-2 py-2 rounded-lg bg-orange-500 dark:bg-[#07C5B9] text-white font-medium hover:opacity-90"
                     >
                         <Rocket className="w-4 h-4" />
-                        Get Started - It's Free
+                        Get Started Free
                         <ArrowRight className="w-4 h-4" />
                     </Link>
-                    
-                    <div className="text-center">
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Already have an account?{" "}
-                            <Link 
-                                to="/signup" 
-                                className="text-orange-500 dark:text-[#07C5B9] hover:underline font-medium"
-                            >
-                                Sign In
-                            </Link>
-                        </p>
-                    </div>
-                </div>
 
-                {/* Quick Stats Footer */}
-                <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <span>🚀 Fast Learning</span>
-                        <span>💡 Expert Community</span>
-                        <span>🤖 AI Powered</span>
-                    </div>
+                    <p className="text-center text-xs text-gray-500 dark:text-gray-400">
+                        Already a member?{" "}
+                        <Link
+                            to="/login"
+                            className="text-orange-500 dark:text-[#07C5B9] font-medium hover:underline"
+                        >
+                            Sign In
+                        </Link>
+                    </p>
                 </div>
             </div>
         </div>

@@ -31,6 +31,10 @@ export const createQuestionService = async (formData) => {
   return response.data;
 };
 
+/**
+ * get question by id
+ * @param {string} id - question id
+ */
 export const getQuestionById = async (id) => {
    const response = await api.get("/q/getQuestionById", {
      params: { id },
@@ -39,6 +43,11 @@ export const getQuestionById = async (id) => {
    return response.data;
 }
 
+/**
+ * toggle question like
+ * @param {string} questionId
+ * @param {string} userId
+ */
 export const toggleLikeQuestion = async (questionId, userId) => {
   const res = await api.post("/q/like", {
     questionId,
@@ -47,6 +56,11 @@ export const toggleLikeQuestion = async (questionId, userId) => {
   return res.data;
 };
 
+/**
+ * toggle upvote question
+ * @param {string} questionId
+ * @param {string} userId
+ */
 export const toggleUpvoteQuestion = async (questionId, userId) => {
   const res = await api.post("/q/upvote", {
     questionId,
@@ -55,6 +69,11 @@ export const toggleUpvoteQuestion = async (questionId, userId) => {
   return res.data;
 };
 
+/**
+ * toggle save question
+ * @param {string} questionId
+ * @param {string} userId
+ */
 export const toggleSaveQuestion = async (questionId, userId) => {
   const res = await api.post("/q/save", {
     questionId,
@@ -64,3 +83,10 @@ export const toggleSaveQuestion = async (questionId, userId) => {
 };
 
 
+/**
+ * Get all topics (paginated)
+ */
+export const getAllTopics = async () => {
+  const response = await api.get("/q/topics");
+  return response.data;
+}

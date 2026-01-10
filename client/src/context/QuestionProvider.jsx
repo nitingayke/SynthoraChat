@@ -1,7 +1,8 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
 import QuestionContext from "./QuestionContext"
 import SocketContext from "./SocketContext";
-import { getAllQuestionsService } from "../services/question.service";
+import { getAllQuestionsService, getAllTopics } from "../services/question.service";
+import { slugify } from "../utils/helper";
 
 const QUESTION_PAGE_LIMIT = 20;
 
@@ -16,7 +17,10 @@ export const QuestionProvider = ({ children }) => {
     const [hasMore, setHasMore] = useState(true);
     const loadOnce = useRef(false); 
 
-    const [filterOptions] = useState([
+    const [filterOptions, setFilterOptions] = useState([]);
+    const [loadingTopics, setLoadingTopics] = useState(false);
+
+    const filter = useMemo(() => [
         {
             label: "Trending",
             link: "filter=trending"
@@ -29,19 +33,7 @@ export const QuestionProvider = ({ children }) => {
             label: "Popular",
             link: "filter=popular"
         },
-        {
-            label: "Data Science",
-            link: "topic=data-science"
-        },
-        {
-            label: "Web Development",
-            link: "topic=web-development"
-        },
-        {
-            label: "Machine Learning",
-            link: "topic=ml"
-        }
-    ]);
+    ], []);
 
     const loadQuestions = useCallback(async(nextPage = 1) => {
         if(loadingQuestions || !hasMore) return;
@@ -68,6 +60,31 @@ export const QuestionProvider = ({ children }) => {
             loadOnce.current = true;
         }
     }, [loadQuestions]);
+
+    const loadTopics = useCallback(async () => {
+        try {
+            setLoadingTopics(true);
+            const res = await getAllTopics();
+
+            const topicFilters = res.data.topics.map((topic) => ({
+                label: topic
+                    .split(" ")
+                    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                    .join(" "),
+                link: `topic=${slugify(topic)}`
+            }));
+
+            setFilterOptions([...filter, ...topicFilters]);
+        } catch (error) {
+            console.error("Failed to load topics", error);
+        } finally {
+            setLoadingTopics(false);
+        }
+    }, [filter]);
+
+    useEffect(() => {
+        loadTopics();
+    }, [loadTopics]);
 
     const handleNewQuestion = useCallback((data) => {
         const { question } = data;
@@ -107,13 +124,14 @@ export const QuestionProvider = ({ children }) => {
 
     const values = useMemo(() => ({
         questions,
+        loadingTopics,
         filterOptions,
         loadingQuestions,
         newQuestions,
         hasMore,
         page,
         loadQuestions
-    }), [questions, filterOptions, loadingQuestions, newQuestions, hasMore, loadQuestions, page]);
+    }), [questions, loadingTopics, filterOptions, loadingQuestions, newQuestions, hasMore, loadQuestions, page]);
 
     return (
         <QuestionContext.Provider value={values}>

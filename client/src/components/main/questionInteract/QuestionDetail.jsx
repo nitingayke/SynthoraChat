@@ -358,7 +358,7 @@ export default function QuestionDetail({ question }) {
       </header>
 
       {/* ACTIONS */}
-      <div className="relative flex flex-nowrap items-center justify-between sm:justify-start sm:gap-2 lg:gap-4 mt-5 py-2 border-y border-gray-200 dark:border-[#2a2a2a]">
+      <div className="relative flex flex-nowrap items-center justify-between sm:justify-start gap-2 lg:gap-4 mt-5 py-2 border-y border-gray-200 dark:border-[#2a2a2a] overflow-x-auto scrollbar-hide">
 
         <ActionButton
           active={isLiked}
@@ -393,10 +393,7 @@ export default function QuestionDetail({ question }) {
         <button
           onClick={handleQuestionShare}
           disabled={isLoading.share}
-          className={`
-            group flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium
-            text-gray-600 dark:text-gray-400 transition-all duration-200
-            hover:bg-gray-200 dark:hover:bg-[#212121]
+          className={`group flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-400 transition-all duration-200 hover:bg-gray-200 dark:hover:bg-[#212121]
             ${isLoading.share ? "opacity-50 cursor-not-allowed" : ""}
           `}
         >
