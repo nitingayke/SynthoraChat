@@ -91,6 +91,13 @@ export default function UserVerification() {
       window.removeEventListener("beforeunload", handleBeforeUnload);
   }, []);
 
+  useEffect(() => {
+    if (!loginUser) {
+      navigate("/login", { replace: true });
+    }
+  }, [loginUser, navigate]);
+
+
   const verifyOtp = async () => {
     const finalOtp = otp.join("");
 

@@ -218,6 +218,8 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.index({ lastActive: 1 });
+
 userSchema.pre("validate", function (next) {
   if (this.authProvider === "local" && !this.password) {
     return next(new Error("Password is required for local authentication"));

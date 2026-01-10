@@ -1,9 +1,14 @@
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { TrendingUp, Users, Trophy } from "lucide-react";
+import { useContext, useMemo } from "react";
+import AnalyticsContext from "../../context/AnalyticsContext";
+import { Link } from "react-router-dom";
 
 export default function CommunityHighlights() {
-  
+  const { analytics, loading } = useContext(AnalyticsContext);
+
+  /* -------------------- TEMP: STATIC (AI LATER) -------------------- */
   const topContributors = [
     {
       name: "Sarah Chen",
@@ -11,8 +16,7 @@ export default function CommunityHighlights() {
       answers: 142,
       streak: 15,
       role: "AI Expert",
-      points: 2840,
-      badge: "🏆"
+      badge: "🏆",
     },
     {
       name: "Mike Rodriguez",
@@ -20,8 +24,7 @@ export default function CommunityHighlights() {
       answers: 128,
       streak: 12,
       role: "ML Engineer",
-      points: 2560,
-      badge: "⭐"
+      badge: "⭐",
     },
     {
       name: "Alex Thompson",
@@ -29,115 +32,116 @@ export default function CommunityHighlights() {
       answers: 98,
       streak: 8,
       role: "Full Stack",
-      points: 1960,
-      badge: "🔥"
+      badge: "🔥",
     },
-    {
-      name: "Emily Park",
-      avatar: "👩‍💼",
-      answers: 87,
-      streak: 6,
-      role: "DevOps",
-      points: 1740,
-      badge: "🚀"
-    }
   ];
 
-  const communityStats = [
-    { label: "Questions Today", value: "127", change: "+15%" },
-    { label: "Answers Today", value: "342", change: "+22%" },
-    { label: "New Members", value: "48", change: "+8%" }
-  ];
+  const communityStats = useMemo(() => {
+    const questionsDaily = analytics?.content?.questions?.daily ?? [];
+    const answersDaily = analytics?.content?.answers?.daily ?? [];
+    const usersDaily = analytics?.users?.dailyNewUsers ?? [];
+
+    return [
+      {
+        label: "Questions Today",
+        value: questionsDaily.at(-1)?.count ?? 0,
+      },
+      {
+        label: "Answers Today",
+        value: answersDaily.at(-1)?.count ?? 0,
+      },
+      {
+        label: "New Members",
+        value: usersDaily.at(-1)?.count ?? 0,
+      },
+    ];
+  }, [analytics]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 30 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6"
+    <section
+      className="w-full max-w-6xl mx-auto bg-white dark:bg-[#161616] border border-gray-200 dark:border-white/10 rounded-lg shadow-sm p-4"
     >
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
-          <Trophy className="w-6 h-6 text-yellow-500" />
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+          <Trophy className="w-5 h-5 text-orange-500 dark:text-[#07C5B9]" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             Community Leaders
           </h3>
         </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          This Week
-        </div>
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          This Month
+        </span>
       </div>
 
-      {/* Top Contributors */}
-      <div className="space-y-4 mb-6">
-        {topContributors.map((contributor, index) => (
-          <motion.div
+      <div className="space-y-3 mb-6">
+        {topContributors.map((contributor) => (
+          <div
             key={contributor.name}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors cursor-pointer group"
+            className="group flex items-center justify-between p-3 rounded-lg bg-gray-100 dark:bg-[#1b1b1b] border border-transparent hover:border-orange-300 dark:hover:border-[#07C5B9]/40 hover:bg-gray-100 dark:hover:bg-[#202020] transition"
           >
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="text-2xl">{contributor.avatar}</div>
-                <div className="absolute -top-1 -right-1 text-xs">
+              <div className="relative text-2xl">
+                {contributor.avatar}
+                <span className="absolute -top-1 -right-1 text-xs">
                   {contributor.badge}
-                </div>
+                </span>
               </div>
+
               <div>
-                <h4 className="font-semibold text-gray-900 dark:text-white text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-orange-500 dark:group-hover:text-[#07C5B9]">
                   {contributor.name}
-                </h4>
+                </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   {contributor.role}
                 </p>
               </div>
             </div>
+
             <div className="text-right">
-              <div className="text-sm font-bold text-gray-900 dark:text-white">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">
                 {contributor.answers}
-              </div>
-              <div className="text-xs text-green-500 flex items-center gap-1">
+              </p>
+              <p className="text-xs flex items-center gap-1 text-orange-500 dark:text-[#07C5B9]">
                 <TrendingUp className="w-3 h-3" />
                 {contributor.streak} days
-              </div>
+              </p>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      {/* Community Stats */}
-      <div className="border-t border-gray-200 dark:border-gray-600 pt-6">
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+      <div className="border-t border-gray-200 dark:border-white/10 pt-5">
+        <h4 className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white mb-4">
           <Users className="w-4 h-4" />
           Community Stats
         </h4>
-        <div className="grid grid-cols-3 gap-4">
-          {communityStats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 + index * 0.1 }}
-              className="text-center"
-            >
-              <div className="text-lg font-bold text-gray-900 dark:text-white">
-                {stat.value}
+
+        {loading ? (
+          <p className="text-center text-xs text-gray-500 dark:text-gray-400">
+            Loading stats...
+          </p>
+        ) : (
+          <div className="grid grid-cols-3 gap-4 text-center">
+            {communityStats.map((stat) => (
+              <div key={stat.label}>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {stat.value}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {stat.label}
+                </p>
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {stat.label}
-              </div>
-              <div className="text-xs text-green-500">
-                {stat.change}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      <button className="w-full mt-6 py-3 text-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium text-sm border border-gray-200 dark:border-gray-600 rounded-xl hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200">
-        View Full Leaderboard
-      </button>
-    </motion.div>
+      <Link
+        to="/leaderboard"
+        className="block mt-6 text-center text-sm font-medium text-orange-500 dark:text-[#07C5B9] border border-gray-200 dark:border-gray-700 rounded-lg py-2 hover:border-orange-400 dark:hover:border-[#07C5B9] transition"
+      >
+        View full Leaderboard
+      </Link>
+    </section>
   );
 }

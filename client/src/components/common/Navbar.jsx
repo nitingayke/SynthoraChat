@@ -82,7 +82,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className="w-full sticky top-0 z-40 bg-white dark:bg-[#0D1117] shadow-lg backdrop-blur-md transition-all duration-300 hover:shadow-orange-500/20 dark:hover:shadow-[#07C5B9]/40"
+        className="w-full sticky top-0 z-40 bg-white/70 hover:bg-white dark:bg-[#161616]/80 dark:hover:bg-[#161616] shadow-md hover:shadow-lg backdrop-blur-md transition-all duration-300 shadow-orange-500/20 dark:shadow-[#07C5B9]/40 hover:shadow-orange-500/20 dark:hover:shadow-[#07C5B9]/40"
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center py-4 sm:py-2 px-4 md:px-6">
           {/* Logo */}

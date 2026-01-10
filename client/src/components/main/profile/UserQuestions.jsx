@@ -1,4 +1,4 @@
-import { useContext, useState, useMemo, useEffect, useCallback } from "react";
+import { useContext, useState, useMemo, useEffect, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
 
 import UIStateContext from "../../../context/UIStateContext";
@@ -16,24 +16,31 @@ export default function UserQuestions({ userId, isOwnProfile = false }) {
 
     const [questions, setQuestions] = useState([]);
     const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
 
+    const isInitialFetch = useRef(false);
 
     const loadQuestions = useCallback(async () => {
         if (loading || !hasMore) return;
 
         try {
             setLoading(true);
+
             const res = await fetchUserQuestions(userId, page, PAGE_SIZE);
 
             if (res.success) {
-                setQuestions((prev) => [...prev, ...(res?.data?.questions ?? [])]);
+                const newQuestions = res?.data?.questions ?? [];
+
+                setQuestions((prev) => [...prev, ...newQuestions]);
                 setHasMore(res?.pagination?.hasMore ?? false);
                 setPage((prev) => prev + 1);
             }
         } catch (error) {
-            enqueueSnackbar(error?.response?.data?.message || "", { variant: "error" });
+            enqueueSnackbar(
+                error?.response?.data?.message || "Failed to load questions",
+                { variant: "error" }
+            );
         } finally {
             setLoading(false);
         }
@@ -42,10 +49,13 @@ export default function UserQuestions({ userId, isOwnProfile = false }) {
     useEffect(() => {
         setQuestions([]);
         setPage(1);
-        setHasMore(false);
-    }, [userId, loadQuestions]);
+        setHasMore(true);
+    }, [userId]);
 
     useEffect(() => {
+        if (isInitialFetch.current) return;
+
+        isInitialFetch.current = true;
         loadQuestions();
     }, [userId, loadQuestions]);
 

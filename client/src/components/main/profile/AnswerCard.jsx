@@ -33,7 +33,7 @@ export default function AnswerCard({ answer }) {
                 </div>
 
                 <Link
-                    to={`/main/questions/${questionId}`}
+                    to={`/main/questions/${questionId?._id}`}
                     className="text-orange-500 dark:text-[#07C5B9] hover:underline font-medium"
                 >
                     View Question →

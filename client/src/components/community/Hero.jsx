@@ -1,12 +1,51 @@
-import React from 'react';
+import React, { useContext, useMemo } from "react";
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
-import { Users, Heart, MessageCircle, Award } from 'lucide-react';
+import { motion } from "framer-motion";
+import { Users, Heart, MessageCircle, Award, Sparkles } from "lucide-react";
+import AnalyticsContext from "../../context/AnalyticsContext";
 
 export default function Hero() {
+    const { analytics } = useContext(AnalyticsContext);
+
+    const stats = useMemo(() => {
+        const safeNumber = (val) => `${(val ?? 0).toLocaleString()}+`;
+
+        const possibleStats = [
+            {
+                number: safeNumber(analytics?.users?.total),
+                label: "Community Members",
+                icon: Users,
+            },
+            {
+                number: safeNumber(analytics?.content?.questions?.total),
+                label: "Questions Asked",
+                icon: MessageCircle,
+            },
+            {
+                number: safeNumber(analytics?.content?.answers?.total),
+                label: "Answers Shared",
+                icon: Award,
+            },
+            {
+                number: safeNumber(analytics?.users?.totalHelpfulAnswers),
+                label: "Helpful Moments",
+                icon: Heart,
+            },
+            {
+                number: safeNumber(analytics?.ai?.totalSessions),
+                label: "AI Sessions",
+                icon: Sparkles,
+            },
+        ];
+
+        return possibleStats.slice(0, 4);
+    }, [analytics]);
+    
+
     return (
         <section className="flex justify-center items-center min-h-[calc(100vh-50px)] relative bg-gradient-to-br from-sky-100 to-indigo-200 dark:from-sky-900 dark:via-indigo-900 dark:to-gray-900 text-gray-900 dark:text-white py-20 lg:py-28">
 
+            {/* Background blobs */}
             <div className="absolute inset-0 overflow-hidden">
                 <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-sky-400/20 dark:bg-sky-500/10 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/20 dark:bg-indigo-500/10 rounded-full blur-3xl"></div>
@@ -18,6 +57,7 @@ export default function Hero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
                 >
+                    {/* Badge */}
                     <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
@@ -25,33 +65,24 @@ export default function Hero() {
                         className="inline-flex items-center gap-2 px-6 py-3 bg-white/80 dark:bg-white/10 backdrop-blur-sm rounded-2xl border border-gray-300 dark:border-white/20 mb-8"
                     >
                         <Users className="w-5 h-5 text-sky-600" />
-                        <span className="text-sm font-semibold text-gray-800 dark:text-white">Welcome to Our Family</span>
+                        <span className="text-sm font-semibold">Welcome to Our Community</span>
                     </motion.div>
 
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                    {/* Heading */}
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6">
                         More Than Just a{" "}
                         <span className="bg-gradient-to-r from-sky-500 to-indigo-600 bg-clip-text text-transparent">
-                            Community
+                            Platform
                         </span>
                     </h1>
 
-                    {/* Subtitle */}
-                    <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8 leading-relaxed hidden sm:block">
-                        A family of curious minds, passionate learners, and kind helpers.
-                        Where every question matters and every answer comes from the heart.
+                    <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-10 hidden sm:block">
+                        Real people. Real questions. Real impact.
                     </p>
 
-                    <p className="text-base text-gray-600 dark:text-gray-300 max-w-xs mx-auto mb-8 leading-relaxed sm:hidden">
-                        Curious minds. Kind hearts. One community.
-                    </p>
-
+                    {/* ✅ Dynamic Stats */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-2xl mx-auto">
-                        {[
-                            { number: "50K+", label: "Friends & Members", icon: Users },
-                            { number: "1M+", label: "Helpful Moments", icon: Heart },
-                            { number: "200K+", label: "Conversations", icon: MessageCircle },
-                            { number: "500+", label: "Community Stars", icon: Award }
-                        ].map((stat, index) => (
+                        {stats.map((stat, index) => (
                             <motion.div
                                 key={stat.label}
                                 initial={{ opacity: 0, y: 20 }}
@@ -62,8 +93,10 @@ export default function Hero() {
                                 <div className="flex justify-center mb-2">
                                     <stat.icon className="w-8 h-8 text-sky-600" />
                                 </div>
-                                <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.number}</div>
-                                <div className="text-sm text-gray-600 dark:text-gray-300">{stat.label}</div>
+                                <div className="text-2xl font-bold mb-1">{stat.number}</div>
+                                <div className="text-sm text-gray-600 dark:text-gray-300">
+                                    {stat.label}
+                                </div>
                             </motion.div>
                         ))}
                     </div>

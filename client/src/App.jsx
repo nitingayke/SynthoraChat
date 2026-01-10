@@ -8,6 +8,7 @@ import { QuestionProvider } from "./context/QuestionProvider";
 import { AIChatProvider } from "./context/AIChatProvider";
 import { PostProvider } from "./context/PostProvider";
 import { SocketProvider } from "./context/SocketProvider";
+import { AnalyticsProvider } from "./context/AnalyticsProvider";
 
 function App() {
 
@@ -16,17 +17,19 @@ function App() {
       <SnackbarProvider maxSnack={1}>
         <ThemeProvider>
           <SocketProvider>
-            <QuestionProvider>
-              <UIStateProvider>
-                <AuthProvider>
-                  <AIChatProvider>
-                    <PostProvider>
-                      <AppRoutes />
-                    </PostProvider>
-                  </AIChatProvider>
-                </AuthProvider>
-              </UIStateProvider>
-            </QuestionProvider>
+            <AnalyticsProvider>
+              <QuestionProvider>
+                <UIStateProvider>
+                  <AuthProvider>
+                    <AIChatProvider>
+                      <PostProvider>
+                        <AppRoutes />
+                      </PostProvider>
+                    </AIChatProvider>
+                  </AuthProvider>
+                </UIStateProvider>
+              </QuestionProvider>
+            </AnalyticsProvider>
           </SocketProvider>
         </ThemeProvider>
       </SnackbarProvider>

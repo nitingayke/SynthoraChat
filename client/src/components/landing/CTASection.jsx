@@ -4,40 +4,62 @@ import { Link } from "react-router-dom";
 
 export default function CTASection() {
   return (
-    <section className="relative px-4 py-20 overflow-hidden">
-      {/* Animated Background - Matching Hero */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+    <section className="relative px-4 py-16 lg:py-24 bg-gradient-to-b from-gray-100 to-gray-50 dark:from-[#0f0f0f] dark:to-[#161616] overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-20 -left-20 w-80 h-80 bg-gradient-to-r from-orange-500/5 to-orange-600/5 dark:from-[#07C5B9]/10 dark:to-[#06b3a8]/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-gradient-to-r from-orange-500/5 to-orange-600/5 dark:from-[#07C5B9]/10 dark:to-[#06b3a8]/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="relative max-w-6xl mx-auto rounded-3xl py-20 px-6 bg-gradient-to-br from-blue-900 via-purple-900 to-gray-900 border border-white/20 shadow-2xl text-center transition-colors duration-500">
+      <div className="max-w-7xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto text-white"
+          className="relative rounded-xl lg:rounded-2xl px-6 py-12 lg:px-12 lg:py-16 text-center bg-orange-500 dark:bg-[#07C5B9]/10 shadow-xl overflow-hidden"
         >
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
-            Ready to Shape the Future of Q&A?
-          </h2>
-          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Connect, learn, and grow with SynthoraChat — where ideas meet intelligence.
-          </p>
+          {/* Pattern overlay */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, white 1px, transparent 0)`,
+              backgroundSize: '40px 40px'
+            }} />
+          </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              to={"/signup"} 
-              className="group px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 flex items-center gap-3"
-            >
-              Join Now
-            </Link>
-            <Link 
-              to={"/features"} 
-              className="group px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-bold rounded-2xl hover:bg-white/20 transition-all duration-300 hover:scale-105 flex items-center gap-3"
-            >
-              Explore Features
-            </Link>
+          <div className="relative z-10">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">
+              Ready to Transform Your Learning Experience?
+            </h2>
+
+            <p className="text-orange-50/90 mb-8 lg:mb-12 max-w-2xl mx-auto text-lg leading-relaxed">
+              Connect, learn, and grow with SynthoraChat — where AI intelligence meets
+              human collaboration. Join thousands of developers already improving their skills.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  to="/signup"
+                  className="inline-flex items-center justify-center px-8 py-3 lg:py-4 rounded-lg lg:rounded-xl font-semibold text-orange-600 dark:text-[#07C5B9] bg-white hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto"
+                >
+                  Get Started Free
+                </Link>
+              </motion.div>
+
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  to="/features"
+                  className="inline-flex items-center justify-center px-8 py-3 lg:py-4 rounded-lg lg:rounded-xl font-semibold text-white bg-transparent border-2 border-white/30 hover:bg-white/10 transition-all duration-300 w-full sm:w-auto"
+                >
+                  Explore Features
+                </Link>
+              </motion.div>
+            </div>
+
+            <p className="text-orange-50/70 text-sm mt-8 lg:mt-10">
+              No credit card required • 14-day free trial • Cancel anytime
+            </p>
           </div>
         </motion.div>
       </div>

@@ -118,7 +118,6 @@ export default function ProfilePage() {
             default:
                 return <UserOverview user={profileUser} />;
         }
-
     }
 
     return (

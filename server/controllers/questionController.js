@@ -39,9 +39,13 @@ export const getAllQuestions = async (req, res) => {
 
 export const createQuestion = async (req, res) => {
   const { title, content, allowComments } = req.body;
-  const topics = req.body["topics[]"] || [];
   const userId = req.user?.id;
   const files = req.files || [];
+
+  let topics = [];
+  if (req.body.topics) {
+    topics = JSON.parse(req.body.topics);
+  }
 
   if (!userId) {
     await cleanupCloudinaryFiles(files);

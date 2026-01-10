@@ -101,4 +101,6 @@ const questionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+questionSchema.index({ createdAt: 1 });
+
 export default mongoose.model("Question", questionSchema);

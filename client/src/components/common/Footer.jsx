@@ -7,7 +7,7 @@ export default function Footer() {
   const { theme, toggleTheme } = useContext(ThemeContext);
 
   return (
-    <footer className="bg-gray-100 dark:bg-[#0D1117] text-gray-700 dark:text-gray-300 pt-14 pb-10 px-4 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
+    <footer className="bg-gray-100 dark:bg-[#161616] text-gray-700 dark:text-gray-300 pt-14 pb-10 px-4 border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
         {/* Brand */}
         <div>

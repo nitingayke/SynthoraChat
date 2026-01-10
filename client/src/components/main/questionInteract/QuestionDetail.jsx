@@ -420,7 +420,7 @@ export default function QuestionDetail({ question }) {
           {author?.profile?.firstName && (
             
             <Link
-              to={`/main/profile/${author?.username}`}
+              to={`/main/u/profile/${author?.username}`}
               className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition underline underline-offset-2"
             >
               By {author.profile.firstName} {author.profile.lastName}

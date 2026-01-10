@@ -17,7 +17,7 @@ const aiFeatures = [
         description: "Automatic summary of long discussions with key insights extraction",
         color: "from-blue-500 to-cyan-500",
         action: "View Demo",
-        path: "/main/ai-summary"
+        path: "/main/questions"
     },
     {
         icon: Shield,

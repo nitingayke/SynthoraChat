@@ -88,7 +88,7 @@ export default function ChatInput() {
             icon: Paperclip,
             label: "Examples",
             prompt:
-                "Provide 2–3 short, practical examples that clearly illustrate this concept or topic."
+                "Provide 2-3 short, practical examples that clearly illustrate this concept or topic."
         },
         {
             icon: Send,

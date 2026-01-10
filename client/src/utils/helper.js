@@ -8,3 +8,12 @@ export const getMediaType = (file) => {
   if (file.type.startsWith("audio")) return "audio";
   return "document";
 };
+
+export const slugify = (text = "") => {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};

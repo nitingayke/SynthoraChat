@@ -1,46 +1,67 @@
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 export default function FeatureComparison() {
   return (
-    <section className="py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <section className="py-14 sm:py-20 bg-gray-100 dark:bg-[#0f0f0f]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+        {/* Header */}
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6"
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4"
         >
           Feature Comparison
         </motion.h2>
-        <p className="text-gray-600 dark:text-gray-100 mb-12">
-          See how we stack up against the competition.
+
+        <p className="text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">
+          See how our platform compares with traditional solutions.
         </p>
 
-        <div className="overflow-x-auto dark:text-white">
-          <table className="min-w-full text-left border-collapse border border-gray-300 dark:border-gray-600">
-            <thead className="bg-gray-200 dark:bg-gray-700">
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table
+            className="min-w-full border border-gray-200 dark:border-gray-800
+                       bg-white dark:bg-[#161616] rounded-xl overflow-hidden"
+          >
+            <thead className="bg-gray-50 dark:bg-[#1f1f1f]">
               <tr>
-                <th className="p-4 border border-gray-300 dark:border-gray-600">Feature</th>
-                <th className="p-4 border border-gray-300 dark:border-gray-600">Our Platform</th>
-                <th className="p-4 border border-gray-300 dark:border-gray-600">Competitor</th>
+                <th className="p-4 text-left text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  Feature
+                </th>
+                <th className="p-4 text-center text-sm font-semibold text-orange-500 dark:text-[#07C5B9]">
+                  Our Platform
+                </th>
+                <th className="p-4 text-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  Competitor
+                </th>
               </tr>
             </thead>
-            <tbody>
-              <tr className="bg-white dark:bg-gray-800">
-                <td className="p-4 border border-gray-300 dark:border-gray-600">AI Answer Generation</td>
-                <td className="p-4 border border-gray-300 dark:border-gray-600">✅</td>
-                <td className="p-4 border border-gray-300 dark:border-gray-600">❌</td>
+
+            <tbody className="text-sm">
+              <tr className="border-t border-gray-200 dark:border-gray-800">
+                <td className="p-4 text-gray-900 dark:text-gray-100">
+                  AI Answer Generation
+                </td>
+                <td className="p-4 text-center text-green-600">✅</td>
+                <td className="p-4 text-center text-red-500">❌</td>
               </tr>
-              <tr className="bg-gray-50 dark:bg-gray-700">
-                <td className="p-4 border border-gray-300 dark:border-gray-600">Community Collaboration</td>
-                <td className="p-4 border border-gray-300 dark:border-gray-600">✅</td>
-                <td className="p-4 border border-gray-300 dark:border-gray-600">✅</td>
+
+              <tr className="border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#1a1a1a]">
+                <td className="p-4 text-gray-900 dark:text-gray-100">
+                  Community Collaboration
+                </td>
+                <td className="p-4 text-center text-green-600">✅</td>
+                <td className="p-4 text-center text-green-600">✅</td>
               </tr>
-              <tr className="bg-white dark:bg-gray-800">
-                <td className="p-4 border border-gray-300 dark:border-gray-600">Real-time Answers</td>
-                <td className="p-4 border border-gray-300 dark:border-gray-600">✅</td>
-                <td className="p-4 border border-gray-300 dark:border-gray-600">❌</td>
+
+              <tr className="border-t border-gray-200 dark:border-gray-800">
+                <td className="p-4 text-gray-900 dark:text-gray-100">
+                  Real-time Answers
+                </td>
+                <td className="p-4 text-center text-green-600">✅</td>
+                <td className="p-4 text-center text-red-500">❌</td>
               </tr>
             </tbody>
           </table>
