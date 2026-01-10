@@ -27,6 +27,10 @@ const questionSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
+        filename: {
+          type: String,
+          required: true,
+        },
       },
     ],
     topics: [
@@ -43,6 +47,16 @@ const questionSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Answer",
+      },
+    ],
+    answerCount: {
+      type: Number,
+      default: 0,
+    },
+    answerAuthors: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
       },
     ],
     likes: [

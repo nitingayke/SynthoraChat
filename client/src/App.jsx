@@ -15,19 +15,19 @@ function App() {
     <BrowserRouter>
       <SnackbarProvider maxSnack={1}>
         <ThemeProvider>
-          <QuestionProvider>
-            <UIStateProvider>
-              <AuthProvider>
-                <AIChatProvider>
-                  <PostProvider>
-                    <SocketProvider>
+          <SocketProvider>
+            <QuestionProvider>
+              <UIStateProvider>
+                <AuthProvider>
+                  <AIChatProvider>
+                    <PostProvider>
                       <AppRoutes />
-                    </SocketProvider>
-                  </PostProvider>
-                </AIChatProvider>
-              </AuthProvider>
-            </UIStateProvider>
-          </QuestionProvider>
+                    </PostProvider>
+                  </AIChatProvider>
+                </AuthProvider>
+              </UIStateProvider>
+            </QuestionProvider>
+          </SocketProvider>
         </ThemeProvider>
       </SnackbarProvider>
     </BrowserRouter>

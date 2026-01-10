@@ -1,52 +1,90 @@
-import { Hash } from "lucide-react";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
-import AnswerCard from "./AnswerCard";
+import { MessageCircle } from "lucide-react";
+import AnswerItem from "./AnswerItem";
 
-export default function AnswerList({ question }) {
-
-  const [answers, setAnswers] = useState([]);
-  const [currLength, setCurrLength] = useState(10);
-
-  useEffect(() => {
-    if (!question?.answers) return;
-
-    const filtered = question.answers.filter((a) => a.status === "published");
-    setAnswers(filtered || []);
-  }, [question?.answers]);
-
-  if (!answers || answers.length === 0) {
+function AnswerList({
+  answers,
+  isLoading,
+  currentUserId,
+  onVote,
+  onLike,
+  onShare,
+  onDelete,
+  onUpdate,
+  deletingAnswerId,
+  showAnswerForm,
+  onWriteAnswer
+}) {
+  // Loading state
+  if (isLoading) {
     return (
-      <div className="px-4 py-7 text-gray-600 dark:text-gray-400 text-center">
-        No answers yet — be the first to contribute!
+      <div className="flex justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
       </div>
     );
   }
 
-  return (
-    <div className="space-y-2">
-
-      <div id="answers" className="pb-3 mb-0" />
-      
-      <a href={"#answers"} className="flex items-center gap-1 text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-        <Hash size={20} /> Answers ({answers?.length || 0})
-      </a>
-      <div className="border-b border-gray-300 dark:border-[#2a2a2a]"></div>
-
-
-      {answers.slice(0, currLength).map((a) =>
-        <AnswerCard key={a?._id} answer={a} allowComments={question?.allowComments} />
-      )}
-
-      {
-        (answers?.length > currLength) && <div className="flex justify-center items-center mt-3">
-        <button className="text-sm rounded-md px-3 py-2 bg-gray-100 dark:bg-[#111] hover:bg-gray-200 dark:hover:bg-[#212121]" onClick={() => setCurrLength(prev => Math.min(prev + 10, answers?.length))}>Load More</button>
+  // Empty state
+  if (answers?.length === 0) {
+    return (
+      <div className="text-center py-12 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
+        <MessageCircle className="mx-auto text-gray-400 mb-3" size={48} />
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+          No answers yet
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
+          Be the first to answer this question!
+        </p>
+        {currentUserId && !showAnswerForm && (
+          <button
+            onClick={onWriteAnswer}
+            className="px-6 py-2 bg-orange-500 hover:bg-orange-600 dark:bg-[#07C5B9] dark:hover:bg-[#06b4a8] text-white font-medium rounded-lg transition-colors"
+          >
+            Write First Answer
+          </button>
+        )}
       </div>
-      }
+    );
+  }
+
+  // Answers list
+  return (
+    <div className="space-y-4">
+      {answers?.map((answer) => (
+        <AnswerItem
+          key={answer._id}
+          answer={answer}
+          currentUserId={currentUserId}
+          onVote={onVote}
+          onLike={onLike}
+          onShare={onShare}
+          onDelete={onDelete}
+          onUpdate={onUpdate}
+          isDeleting={deletingAnswerId === answer._id}
+        />
+      ))}
     </div>
   );
 }
 
 AnswerList.propTypes = {
-  question: PropTypes.object.isRequired,
+  answers: PropTypes.array,
+  isLoading: PropTypes.bool,
+  currentUserId: PropTypes.string,
+  onVote: PropTypes.func,
+  onLike: PropTypes.func,
+  onShare: PropTypes.func,
+  onDelete: PropTypes.func,
+  onUpdate: PropTypes.func,
+  deletingAnswerId: PropTypes.string,
+  showAnswerForm: PropTypes.bool,
+  onWriteAnswer: PropTypes.func
 };
+
+AnswerList.defaultProps = {
+  answers: [],
+  isLoading: false,
+  showAnswerForm: false
+};
+
+export default AnswerList;

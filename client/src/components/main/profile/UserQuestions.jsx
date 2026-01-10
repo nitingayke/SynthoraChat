@@ -43,6 +43,9 @@ export default function UserQuestions({ userId, isOwnProfile = false }) {
         setQuestions([]);
         setPage(1);
         setHasMore(false);
+    }, [userId, loadQuestions]);
+
+    useEffect(() => {
         loadQuestions();
     }, [userId, loadQuestions]);
 

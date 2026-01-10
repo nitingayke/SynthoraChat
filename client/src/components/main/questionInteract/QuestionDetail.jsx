@@ -6,29 +6,33 @@ import {
   Loader2,
   ThumbsUp,
   ArrowBigUp,
+  MessageCircle,
 } from "lucide-react";
 
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../../../context/AuthContext";
 import { Link } from "react-router-dom";
+import AnswerForm from "./AnswerForm";
+import AnswerItem from "./AnswerItem";
 import MediaDialog from "./MediaDialog";
 import CommentActions from "./CommentActions";
+import { toggleLikeQuestion, toggleUpvoteQuestion, toggleSaveQuestion } from "../../../services/question.service";
+import answerService from "../../../services/answer.service"
+import { useSnackbar } from "notistack";
+import AnswerList from "./AnswerList";
 
 export default function QuestionDetail({ question }) {
 
   const { loginUser } = useContext(AuthContext);
+  const { enqueueSnackbar } = useSnackbar();
 
+  // Loading states for question like, save , upvote and share.
   const [isLoading, setIsLoading] = useState({
     save: false,
     like: false,
     upvote: false,
     share: false,
   });
-
-  const [isLiked, setIsLiked] = useState(false);
-  const [isUpvoted, setIsUpvoted] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
-  const [answerSummary, setAnswerSummary] = useState(null);
 
   const {
     _id,
@@ -40,10 +44,46 @@ export default function QuestionDetail({ question }) {
     upvotes = [],
     saves = [],
     views = 0,
-    answers = [],
+    // answers = [],
     shares = 0,
     media = [],
   } = question ?? {};
+
+  //Question like status and count .
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(likes?.length);
+
+  //Question upvote status and count .
+  const [isUpvoted, setIsUpvoted] = useState(false);
+  const [upvotesCount, setUpvotesCount] = useState(upvotes?.length);
+
+  //Question save status and count .
+  const [isSaved, setIsSaved] = useState(false);
+  // eslint-disable-next-line no-unused-vars
+  const [savesCount, setSavesCount] = useState(saves?.length);
+
+  const [answerSummary, setAnswerSummary] = useState(null);
+
+  const [answers, setAnswers] = useState([]);
+  const [isLoadingAnswers, setIsLoadingAnswers] = useState(false);
+  const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
+  const [showAnswerForm, setShowAnswerForm] = useState(false);
+
+  const [deletingAnswerId, setDeletingAnswerId] = useState(null);
+
+
+  useEffect(() => {
+    setLikesCount(likes.length);
+  }, [likes?.length, _id]);
+
+  useEffect(() => {
+    setUpvotesCount(upvotes.length);
+  }, [upvotes?.length, _id]);
+
+  useEffect(() => {
+    setSavesCount(saves.length);
+  }, [saves?.length, _id]);
+
 
   useEffect(() => {
     setAnswerSummary(null);
@@ -51,42 +91,235 @@ export default function QuestionDetail({ question }) {
 
   useEffect(() => {
     if (!loginUser || !question) return;
-    setIsLiked(likes.includes(loginUser._id));
-    setIsUpvoted(upvotes.includes(loginUser._id));
-    setIsSaved(loginUser?.savedQuestions?.includes(_id));
+    setIsLiked(likes?.includes(loginUser?._id));
+    setIsUpvoted(upvotes?.includes(loginUser?._id));
+    setIsSaved(
+      loginUser?.savedQuestions?.some(
+        sq => sq?.question?.toString() === _id
+      )
+    );
   }, [_id, loginUser, likes, upvotes, question]);
 
+  // Fetch answers when question changes
+  useEffect(() => {
+    const fetchAnswers = async () => {
+      setIsLoadingAnswers(true);
+      try {
+        const response = await answerService.getAnswers(question._id);
+        setAnswers(response.data);
+      } catch (error) {
+        console.error("Error fetching answers:", error);
+      } finally {
+        setIsLoadingAnswers(false);
+      }
+    };
 
-  const handleToggle = async (key, delay, toggleFn) => {
-    if (!loginUser) return;
-    setIsLoading(prev => ({ ...prev, [key]: true }));
+    if (question?._id) {
+      fetchAnswers();
+    }
+  }, [question?._id]);
 
-    await new Promise(res => setTimeout(res, delay));
-    toggleFn();
+// Answer interaction api's
+  const handleSubmitAnswer = async (formData) => {
+    if (!loginUser) {
+      enqueueSnackbar("Please login to post an answer", { variant: "warning" });
+      return;
+    }
 
-    setIsLoading(prev => ({ ...prev, [key]: false }));
+    setIsSubmittingAnswer(true);
+
+    try {
+      // Make sure content type is set for FormData
+      const response = await answerService.postAnswer(formData);
+
+      if (response.success) {
+        // Add new answer to the list (response.data should be the full populated answer)
+        if (response.data) {
+          setAnswers(prev => [response.data, ...prev]);
+        }
+
+        // Reset form
+        setShowAnswerForm(false);
+
+        // Show success message
+        enqueueSnackbar("Answer posted successfully!", { variant: "success" });
+      } else {
+        throw new Error(response.message || "Failed to post answer");
+      }
+    } catch (error) {
+      console.error("Error posting answer:", error);
+      enqueueSnackbar(
+        error?.response?.data?.message || error.message || "Failed to post answer",
+        { variant: "error" }
+      );
+    } finally {
+      setIsSubmittingAnswer(false);
+    }
   };
 
-  const handleLike = () =>
-    handleToggle("like", 500, () => setIsLiked(prev => !prev));
+  const handleDeleteAnswer = async (answerId) => {
+    if (!loginUser) {
+      enqueueSnackbar("Please login to delete answer", { variant: "warning" });
+      return;
+    }
 
-  const handleUpvote = () =>
-    handleToggle("upvote", 500, () => setIsUpvoted(prev => !prev));
+    setDeletingAnswerId(answerId);
 
-  const handleSave = () =>
-    handleToggle("save", 600, () => setIsSaved(prev => !prev));
+    try {
+      const response = await answerService.deleteAnswer(answerId);
 
-  const handleShare = async () => {
+      if (response.success) {
+        // Remove answer from list
+        setAnswers(prev => prev.filter(answer => answer._id !== answerId));
+        enqueueSnackbar("Answer deleted successfully", { variant: "success" });
+      } else {
+        throw new Error(response.message || "Failed to delete answer");
+      }
+    } catch (error) {
+      console.error("Error deleting answer:", error);
+      enqueueSnackbar(
+        error?.response?.data?.message || error.message || "Failed to delete answer",
+        { variant: "error" }
+      );
+    } finally {
+      setDeletingAnswerId(null);
+    }
+  };
+
+  const handleUpdateAnswer = async (answerId, updateData) => {
+    if (!loginUser) {
+      enqueueSnackbar("Please login to edit answer", { variant: "warning" });
+      return;
+    }
+
+    try {
+      const response = await answerService.updateAnswer(answerId, updateData);
+
+      if (response.success) {
+        // Update answer in list
+        setAnswers(prev => prev.map(answer =>
+          answer._id === answerId ? { ...answer, ...response.data, updatedAt: new Date() } : answer
+        ));
+        return response;
+      } else {
+        throw new Error(response.message || "Failed to update answer");
+      }
+    } catch (error) {
+      console.error("Error updating answer:", error);
+      enqueueSnackbar(
+        error?.response?.data?.message || error.message || "Failed to update answer",
+        { variant: "error" }
+      );
+      throw error;
+    }
+  };
+
+  const handleAnswerUpvote = async (answerId, type) => {
+    try {
+      if (type === "upvote") {
+        await answerService.upvoteAnswer(answerId);
+      }
+      // ... other vote types
+    } catch (error) {
+      console.error("Error voting:", error);
+      // Rollback optimistic update
+    }
+  };
+
+  const handleAnswerLike = async (answerId) => {
+    try {
+      await answerService.likeAnswer(answerId);
+    } catch (error) {
+      console.error("Error liking answer:", error);
+      // Rollback optimistic update
+    }
+  };
+
+  const handleAnswerShare = async (answerId) => {
+    try {
+      await answerService.shareAnswer(answerId);
+    } catch (error) {
+      console.error("Error sharing answer:", error);
+    }
+  };
+
+  const handleLike = async () => {
+    if (!loginUser || isLoading.like) return;
+
+    // optimistic UI update
+    const prevLiked = isLiked;
+    setIsLiked(!prevLiked);
+    setLikesCount(prev => (prevLiked ? prev - 1 : prev + 1));
+
+    setIsLoading(prev => ({ ...prev, like: true }));
+
+    try {
+      await toggleLikeQuestion(_id, loginUser._id);
+    } catch (error) {
+      // rollback if API fails
+      setIsLiked(prevLiked);
+      setLikesCount(prev => (prevLiked ? prev + 1 : prev - 1));
+      console.error(error);
+    } finally {
+      setIsLoading(prev => ({ ...prev, like: false }));
+    }
+  };
+
+  const handleQuestionUpvote = async () => {
+    if (!loginUser || isLoading.upvote) return;
+
+    // optimistic UI
+    const prevUpvoted = isUpvoted;
+    setIsUpvoted(!prevUpvoted);
+    setUpvotesCount(prev => (prevUpvoted ? prev - 1 : prev + 1));
+
+    setIsLoading(prev => ({ ...prev, upvote: true }));
+
+    try {
+      await toggleUpvoteQuestion(_id, loginUser._id);
+    } catch (error) {
+      // rollback
+      setIsUpvoted(prevUpvoted);
+      setUpvotesCount(prev => (prevUpvoted ? prev + 1 : prev - 1));
+      console.error(error);
+    } finally {
+      setIsLoading(prev => ({ ...prev, upvote: false }));
+    }
+  };
+
+  const handleQuestionSave = async () => {
+    if (!loginUser || isLoading.save) return;
+
+    // optimistic UI
+    const prevSaved = isSaved;
+    setIsSaved(!prevSaved);
+    setSavesCount(prev => (prevSaved ? prev - 1 : prev + 1));
+
+    setIsLoading(prev => ({ ...prev, save: true }));
+
+    try {
+      await toggleSaveQuestion(_id, loginUser._id);
+    } catch (error) {
+      // rollback on failure
+      setIsSaved(prevSaved);
+      setSavesCount(prev => (prevSaved ? prev + 1 : prev - 1));
+      console.error(error);
+    } finally {
+      setIsLoading(prev => ({ ...prev, save: false }));
+    }
+  };
+
+  const handleQuestionShare = async () => {
     setIsLoading(prev => ({ ...prev, share: true }));
     try {
       if (navigator.share) {
         await navigator.share({
           title,
           text: content?.slice(0, 120),
-          url: window.location.href,
+          url: globalThis.location.href,
         });
       } else {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(globalThis.location.href);
       }
     } catch (err) {
       console.error(err);
@@ -131,34 +364,34 @@ export default function QuestionDetail({ question }) {
           active={isLiked}
           loading={isLoading.like}
           onClick={handleLike}
-          count={likes.length}
+          count={likesCount}
           ActiveIcon={ThumbsUp}
-          InactiveIcon={ThumbsUp}
-          activeClass="text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/30"
+          activeClass="text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30"
         />
+
 
         <ActionButton
           active={isUpvoted}
           loading={isLoading.upvote}
-          onClick={handleUpvote}
-          count={upvotes.length}
+          onClick={handleQuestionUpvote}
+          count={upvotesCount}
           ActiveIcon={ArrowBigUp}
-          InactiveIcon={ArrowBigUp}
           activeClass="text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30"
         />
+
 
         <ActionButton
           active={isSaved}
           loading={isLoading.save}
-          onClick={handleSave}
-          count={saves.length}
+          onClick={handleQuestionSave}
+          // count={savesCount}
           ActiveIcon={Bookmark}
-          InactiveIcon={Bookmark}
           activeClass="text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/30"
         />
 
+
         <button
-          onClick={handleShare}
+          onClick={handleQuestionShare}
           disabled={isLoading.share}
           className={`
             group flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium
@@ -181,10 +414,11 @@ export default function QuestionDetail({ question }) {
               <Eye size={14} />
               {views}
             </span>
-            <span>{answers.length} Answers</span>
+            <span>{answers?.length} Answers</span>
           </div>
 
           {author?.profile?.firstName && (
+            
             <Link
               to={`/main/profile/${author?.username}`}
               className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition underline underline-offset-2"
@@ -205,15 +439,59 @@ export default function QuestionDetail({ question }) {
           </div>
         }
       </footer>
+
+      <section className="mt-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Answers ({answers.length})
+          </h2>
+
+          {loginUser && (
+            <button
+              onClick={() => setShowAnswerForm(!showAnswerForm)}
+              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 dark:bg-[#07C5B9] dark:hover:bg-[#06b4a8] text-white font-medium rounded-lg transition-colors"
+            >
+              {showAnswerForm ? "Cancel" : "Write Answer"}
+            </button>
+          )}
+        </div>
+
+        {/* Answer Form */}
+        {showAnswerForm && loginUser && (
+          <AnswerForm
+            questionId={question?._id}
+            onSubmit={handleSubmitAnswer}
+            isSubmitting={isSubmittingAnswer}
+          />
+        )}
+
+        {/* Answers List */}
+        <AnswerList
+          answers={answers}
+          isLoading={isLoadingAnswers}
+          currentUserId={loginUser?._id}
+          onVote={handleAnswerUpvote}
+          onLike={handleAnswerLike}
+          onShare={handleAnswerShare}
+          onDelete={handleDeleteAnswer}
+          onUpdate={handleUpdateAnswer}
+          deletingAnswerId={deletingAnswerId}
+          showAnswerForm={showAnswerForm}
+          onWriteAnswer={() => setShowAnswerForm(true)}
+        />
+      </section>
     </article>
   );
 }
+
 
 function ActionButton({
   active,
   loading,
   onClick,
   count,
+  // eslint-disable-next-line no-unused-vars
+  ActiveIcon,
   activeClass,
 }) {
   return (

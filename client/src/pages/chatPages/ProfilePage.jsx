@@ -98,10 +98,10 @@ export default function ProfilePage() {
                 return <UserQuestions userId={profileUser?._id} isOwnProfile={isOwnProfile} />
 
             case "answers":
-                return <UserAnswers userId={profileUser?._id} userAnswers={profileUser?.answers || []} isOwnProfile={isOwnProfile} />;
+                return <UserAnswers userId={profileUser?._id} isOwnProfile={isOwnProfile} />;
 
             case "saved-questions":
-                return <SavedQuestions userId={profileUser?._id} savedQuestions={profileUser?.savedQuestions || []} isOwnProfile={isOwnProfile} />;
+                return <SavedQuestions userId={profileUser?._id} isOwnProfile={isOwnProfile} />;
 
             case "notifications":
                 return <Notifications notifications={profileUser?.notifications || []} />;
