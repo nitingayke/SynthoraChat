@@ -6,6 +6,7 @@ import AuthContext from "../../context/AuthContext";
 import UIStateContext from "../../context/UIStateContext";
 import ProfileDropdown from "../navbar/ProfileDropdown";
 import Drawer from "@mui/material/Drawer";
+import SearchSuggest from "./SearchSuggest";
 
 export default function Navbar() {
 
@@ -98,10 +99,10 @@ export default function Navbar() {
                         </span>
                     </Link>
 
-                    <div className="flex ps-3 w-fit justify-center items-center space-x-3 lg:space-x-6 text-gray-700 dark:text-gray-200">
+                    <div className="flex sm:ps-3 w-fit justify-center items-center space-x-3 lg:space-x-6 text-gray-700 dark:text-gray-200">
                         {renderMainNavLinks(false)}
 
-                        <div className="relative px-3 w-full sm:w-80 md:w-60 lg:w-70">
+                        <div className="relative px-3 w-full sm:w-80 md:w-60 lg:w-70 flex items-center">
                             <Search
                                 className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-gray-400"
                             />
@@ -110,8 +111,11 @@ export default function Navbar() {
                                 placeholder="Search..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-9 pr-3 py-1.5 bg-gray-100 dark:bg-[#202020] text-gray-700 dark:text-gray-200 rounded-full border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-[#07C5B9] placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-300"
+                                className="w-full pl-9 pr-7 py-1.5 bg-gray-100 dark:bg-[#202020] text-gray-700 dark:text-gray-200 rounded-full border border-gray-300 dark:border-[#383838] focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-[#07C5B9] placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-300"
                             />
+                            {
+                                searchQuery && <button onClick={() => setSearchQuery("")} className="absolute right-5 text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white"><X size={18} /></button>
+                            }
                         </div>
                     </div>
 
@@ -134,11 +138,7 @@ export default function Navbar() {
                         >
                             <Bell className="w-5 h-5" />
                             {(notifications?.length > 0) && (
-                                <span className="
-                                absolute top-0 right-0 bg-orange-500 dark:bg-[#07C5B9]
-                                text-white text-[12px] px-1 font-semibold flex items-center justify-center
-                                rounded-full
-                            ">
+                                <span className=" absolute top-0 right-0 bg-orange-500 dark:bg-[#07C5B9] text-white text-[12px] px-1 font-semibold flex items-center justify-center rounded-full">
                                     {Math.min(notifications?.length, 9)}
                                     {notifications?.length > 9 && "+"}
                                 </span>
@@ -239,6 +239,8 @@ export default function Navbar() {
                     </div>
                 </div>
             </Drawer >
+
+            <SearchSuggest />
         </>
     );
 }

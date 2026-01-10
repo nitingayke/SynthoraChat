@@ -120,3 +120,28 @@ export const createQuestion = async (req, res) => {
     });
   }
 };
+
+export const getAllTopics = async (req, res) => {
+  const topics = await Question.aggregate([
+    { $match: { status: "active" } },
+    { $unwind: "$topics" },
+
+    // unique topics as stored
+    {
+      $group: {
+        _id: "$topics",
+      },
+    },
+
+    // optional: alphabetical order
+    { $sort: { _id: 1 } },
+  ]);
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    message: "All topics fetched successfully",
+    data: {
+      topics: topics.map((t) => t._id),
+    },
+  });
+};

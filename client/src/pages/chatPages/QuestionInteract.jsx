@@ -5,6 +5,8 @@ import QuestionDetail from "../../components/main/questionInteract/QuestionDetai
 import { useParams } from "react-router-dom";
 import AnswerList from "../../components/main/questionInteract/AnswerList";
 import ScreenLoader from "../../components/loader/ScreenLoader";
+import QuestionFilterToggle from "../../components/main/common/QuestionFilterToggle";
+import { Hash } from "lucide-react";
 
 export default function QuestionInteract() {
 
@@ -38,17 +40,45 @@ export default function QuestionInteract() {
     }
 
     return (
-        <div className="w-full max-w-5xl mx-auto flex py-4 gap-4">
-            <div className="h-fit hidden md:block w-70 md:w-[35%] sticky bottom-4 self-start">
-                <FilterQuestionList />
-            </div>
-            <div className="flex-1 space-y-3 rounded-lg border p-3 sm:p-4 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition h-fit">
-                <QuestionDetail question={currentQuestion} />
+        <>
+            <QuestionFilterToggle />
 
-                <AnswerList question={currentQuestion} />
+            <div className="w-full max-w-5xl mx-auto flex flex-col-reverse md:flex-row py-4 gap-4">
+                <div id="related-questions" className="h-fit w-full md:w-[35%]">
+                    <div className="md:hidden mb-2">
+                        <a
+                            href="#related-questions"
+                            className="group inline-block"
+                        >
+                            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 
+                       flex items-center gap-1
+                       group-hover:text-orange-500 
+                       dark:group-hover:text-[#07C5B9]
+                       transition-colors">
+                                <Hash
+                                    size={20}
+                                    className="opacity-70 group-hover:opacity-100"
+                                />
+                                <span>Related Questions</span>
+                            </h3>
+                        </a>
 
-                <br />
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Based on this question
+                        </p>
+                    </div>
+
+
+                    <FilterQuestionList />
+                </div>
+                <div className="flex-1 space-y-3 rounded-lg border p-3 sm:p-4 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition h-fit">
+                    <QuestionDetail question={currentQuestion} />
+
+                    <AnswerList question={currentQuestion} />
+
+                    <br />
+                </div>
             </div>
-        </div>
+        </>
     )
 }

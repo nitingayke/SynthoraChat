@@ -16,3 +16,11 @@ export function matchUserSearch(user, query) {
     fullName.includes(q)
   );
 }
+
+export const filterSuggestions = (items = [], query = "") => {
+  if (!query.trim()) return [];
+
+  const q = query.toLowerCase();
+
+  return items.filter((item) => item?.title?.toLowerCase()?.includes(q));
+};

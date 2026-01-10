@@ -30,3 +30,11 @@ export const createQuestionService = async (formData) => {
   });
   return response.data;
 };
+
+/**
+ * Get all topics (paginated)
+ */
+export const getAllTopics = async () => {
+  const response = await api.get("/q/topics");
+  return response.data;
+}
