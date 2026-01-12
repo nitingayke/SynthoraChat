@@ -4,6 +4,9 @@ import Dialog from "@mui/material/Dialog";
 import Slide from "@mui/material/Slide";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 
+import ReactAudioPlayer from "react-audio-player";
+import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
+
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -12,6 +15,8 @@ export default function QuestionMedia({ media }) {
 
     const [open, setOpen] = useState(false);
     const [activeMedia, setActiveMedia] = useState(-1);
+
+    const mediaLen = media?.length || 0;
 
     if (!media || media.length === 0) return null;
 
@@ -95,7 +100,7 @@ export default function QuestionMedia({ media }) {
                 fullWidth
                 fullScreen
             >
-                <div className="w-fit flex items-center mx-auto rounded-md h-full">
+                <div className="flex items-center justify-center h-full w-full px-4">
                     {/* IMAGE */}
                     {media[activeMedia]?.type === "image" && (
                         <img
@@ -115,24 +120,33 @@ export default function QuestionMedia({ media }) {
                         />
                     )}
 
-                    {/* AUDIO */}
                     {media[activeMedia]?.type === "audio" && (
-                        <audio
-                            controls
-                            autoPlay
-                            className="w-full bg-white p-4 rounded-lg"
-                        >
-                            <source src={media[activeMedia]?.url} />
-                        </audio>
+                        <div className="bg-white dark:bg-[#161616] rounded-lg p-4 w-full max-w-xl shadow-lg">
+                            <ReactAudioPlayer
+                                src={media[activeMedia]?.url}
+                                controls
+                                autoPlay
+                                className="w-full"
+                            />
+                        </div>
                     )}
 
-                    {/* DOCUMENT */}
                     {media[activeMedia]?.type === "document" && (
-                        <iframe
-                            src={media[activeMedia]?.url}
-                            className="w-full h-[85vh] rounded-md bg-white"
-                            title="Document Viewer"
-                        ></iframe>
+                        <div className="bg-white dark:bg-[#161616] rounded-lg w-full max-w-6xl h-[85vh] overflow-hidden shadow-lg">
+                            <DocViewer
+                                documents={[
+                                    { uri: media[activeMedia]?.url }
+                                ]}
+                                pluginRenderers={DocViewerRenderers}
+                                config={{
+                                    header: {
+                                        disableHeader: false,
+                                        disableFileName: false,
+                                    },
+                                }}
+                                style={{ height: "100%" }}
+                            />
+                        </div>
                     )}
                 </div>
 
@@ -140,20 +154,20 @@ export default function QuestionMedia({ media }) {
                     <X />
                 </button>
 
-                <button
-                    onClick={() => handleImageUpdate(-1)}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 text-white px-3 py-2 rounded-full hover:bg-black/60 transition"
-                >
-                    <ArrowLeft />
-                </button>
-
-                <button
-                    onClick={() => handleImageUpdate(1)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 text-white px-3 py-2 rounded-full hover:bg-black/60 transition"
-                >
-                    <ArrowRight />
-                </button>
-
+                {mediaLen > 1 && <>
+                    <button
+                        onClick={() => handleImageUpdate(-1)}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 text-white px-3 py-2 rounded-full hover:bg-black/60 transition"
+                    >
+                        <ArrowLeft />
+                    </button>
+                    <button
+                        onClick={() => handleImageUpdate(1)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 text-white px-3 py-2 rounded-full hover:bg-black/60 transition"
+                    >
+                        <ArrowRight />
+                    </button>
+                </>}
             </Dialog>
         </>
     );

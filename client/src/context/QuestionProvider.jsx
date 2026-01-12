@@ -86,6 +86,7 @@ export const QuestionProvider = ({ children }) => {
         loadTopics();
     }, [loadTopics]);
 
+    // ------------- socket messages -------------------
     const handleNewQuestion = useCallback((data) => {
         const { question } = data;
         if (!question?._id) return;
@@ -112,13 +113,66 @@ export const QuestionProvider = ({ children }) => {
         );
     }
 
+    const handleQuestionLike = (data) => {
+        const { questionId, userId, liked } = data;
+
+        setQuestions((prev) => prev.map((q) => {
+            if(q?._id !== questionId) return q;
+
+            return {
+                ...q,
+                likes: liked ? [...(q.likes || []), userId] : (q.likes || []).filter((id) => id !== userId),
+            }
+        }));
+    }
+
+    const handleQuestionUpvote = (data) => {
+        const { questionId, userId, upvoted } = data;
+
+        setQuestions((prev) => prev.map((q) => {
+            if(q?._id !== questionId) return q;
+
+            return {
+                ...q,
+                upvotes: upvoted
+                    ? [...(q.upvotes || []), userId]
+                    : (q.upvotes || []).filter((id) => id !== userId),
+            }
+        }))
+    }
+
+    const handleQuestionSave = (data) => {
+        const { questionId, userId, saved } = data;
+
+        setQuestions((prev) =>
+            prev.map((q) => {
+                if (q._id !== questionId) return q;
+
+                return {
+                    ...q,
+                    saves: saved
+                    ? [...(q.saves || []), userId]
+                    : (q.saves || []).filter((id) => id !== userId),
+                };
+            })
+        );
+    }
+
     useEffect(() => {
         socket.on("question:new", handleNewQuestion);
         socket.on("answer:new", handleNewAnswer);
 
+        socket.on("question:like", handleQuestionLike);
+        socket.on("question:upvote", handleQuestionUpvote);
+        socket.on("question:save", handleQuestionSave);
+
         return () => {
             socket.off("question:new", handleNewQuestion);
             socket.off("answer:new", handleNewAnswer);
+
+            socket.off("question:like", handleQuestionLike);
+            socket.off("question:upvote", handleQuestionUpvote);
+            socket.off("question:save", handleQuestionSave);
         }
     }, [socket, handleNewQuestion]);
 

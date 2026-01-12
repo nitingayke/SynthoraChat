@@ -8,12 +8,14 @@ import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useSnackbar } from "notistack";
+import ExpandableText from "../common/ExpandableText";
 
 export default function AnswerCard({ answer, allowComments }) {
 
   const { loginUser } = useContext(AuthContext);
   const { enqueueSnackbar } = useSnackbar();
 
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState({
     like: false,
     upvote: false,
@@ -168,7 +170,7 @@ export default function AnswerCard({ answer, allowComments }) {
       : author?.username || "Unknown User";
 
   return (
-    <div className="rounded-xl border p-3 sm:p-5 bg-gray-100 dark:bg-[#111] border-gray-200 dark:border-[#222] shadow-sm">
+    <div className="rounded-xl border p-3 sm:p-4 bg-gray-100 dark:bg-[#111] border-gray-200 dark:border-[#222] shadow-sm">
 
       <div className="flex items-start gap-4">
         <Avatar
@@ -219,9 +221,9 @@ export default function AnswerCard({ answer, allowComments }) {
         )}
       </div>
 
-      <div className="mt-3 text-sm text-gray-800 dark:text-gray-300 whitespace-pre-wrap">
-        {answer?.content}
-      </div>
+      <hr className="my-2 text-gray-300/50 dark:text-[#191919]" />
+
+      <ExpandableText text={answer?.content} lines={6} />
 
       {answer?.media?.length > 0 && (
         <div className="mt-3">
@@ -419,7 +421,6 @@ export default function AnswerCard({ answer, allowComments }) {
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }

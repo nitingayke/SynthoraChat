@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, useSearchParams } from 'react-router-dom';
+import ExpandableText from '../common/ExpandableText';
 
 export default function QuestionContent({ question }) {
 
@@ -23,10 +24,8 @@ export default function QuestionContent({ question }) {
                 </h3>
             </Link>
 
-            {question.content && (
-                <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm leading-relaxed line-clamp-10 whitespace-pre-wrap">
-                    {question.content}
-                </p>
+            {question?.content && (
+                <ExpandableText text={question.content} lines={8}  />
             )}
         </div>
     );

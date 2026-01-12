@@ -10,7 +10,6 @@ export default function FilterQuestionList() {
 
     const [visibleCount, setVisibleCount] = useState(15);
 
-
     return (
         <div className="w-full space-y-4">
             {questions?.slice(0, visibleCount).map((q) => {
@@ -54,8 +53,7 @@ export default function FilterQuestionList() {
                         </div>
 
                         {/* Stats Row */}
-                        <div className="flex items-center flex-wrap gap-4 mt-3 text-xs 
-                                        text-gray-600 dark:text-gray-300">
+                        <div className="flex items-center flex-wrap gap-4 mt-3 text-xs text-gray-600 dark:text-gray-300">
 
                             <div className="flex items-center gap-1">
                                 <ArrowUp size={14} />

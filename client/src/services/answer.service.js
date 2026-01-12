@@ -17,3 +17,15 @@ export const createAnswerService = async (formData) => {
 
   return response.data;
 };
+
+/**
+ * get answers by question id with pagination
+ */
+export const getAnswersByQuestionId = async (
+  questionId,
+  skip = 0,
+  limit = 10
+) => {
+  const res = await api.get(`/q/${questionId}/answers?skip=${skip}&limit=${limit}`);
+  return res.data;
+};

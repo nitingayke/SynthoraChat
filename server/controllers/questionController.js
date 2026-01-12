@@ -1,8 +1,10 @@
+import mongoose from "mongoose";
 import httpStatus from "http-status";
 import Question from "../models/Question.js";
 import User from "../models/User.js";
 import { mapMediaType } from "../utils/mediaTypeMapper.js";
 import { cleanupCloudinaryFiles } from "../services/cleanupCloudinary.js";
+import Answer from "../models/Answer.js";
 
 export const getAllQuestions = async (req, res) => {
   const page = Number.parseInt(req.query.page) || 1;
@@ -124,16 +126,28 @@ export const createQuestion = async (req, res) => {
 export const getAllTopics = async (req, res) => {
   const topics = await Question.aggregate([
     { $match: { status: "active" } },
+
     { $unwind: "$topics" },
 
-    // unique topics as stored
+    // normalize topic
     {
-      $group: {
-        _id: "$topics",
+      $project: {
+        topic: {
+          $toLower: {
+            $trim: { input: "$topics" },
+          },
+        },
       },
     },
 
-    // optional: alphabetical order
+    // unique normalized topics
+    {
+      $group: {
+        _id: "$topic",
+      },
+    },
+
+    // alphabetical order
     { $sort: { _id: 1 } },
   ]);
 
@@ -143,5 +157,236 @@ export const getAllTopics = async (req, res) => {
     data: {
       topics: topics.map((t) => t._id),
     },
+  });
+};
+
+export const getQuestionById = async (req, res) => {
+  const { questionId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(questionId)) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "Invalid question questionId",
+    });
+  }
+
+  const question = await Question.findById(questionId)
+    .populate({
+      path: "author",
+      select: "username email profile",
+      populate: {
+        path: "profile",
+        select: "firstName lastName avatar bio",
+      },
+    })
+    .lean();
+
+  if (!question) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: "Question not found",
+    });
+  }
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    message: "Question found successfully",
+    data: { question },
+  });
+};
+
+export const getAnswersByQuestionId = async (req, res) => {
+  const { questionId } = req.params;
+  const skip = parseInt(req.query.skip) || 0;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const questionExists = await Question.exists({ _id: questionId });
+  if (!questionExists) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: "Question not found",
+    });
+  }
+
+  const answers = await Answer.find({
+    questionId,
+    // status: "published",
+  })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .populate({
+      path: "author",
+      select:
+        "_id username profile.firstName profile.lastName profile.profilePicture",
+    })
+    .populate({
+      path: "comments.author",
+      select:
+        "_id username profile.firstName profile.lastName profile.profilePicture",
+    });
+
+  const totalAnswers = await Answer.countDocuments({
+    questionId,
+    // status: "published",
+  });
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    data: { answers },
+    meta: {
+      skip,
+      limit,
+      total: totalAnswers,
+      hasMore: skip + answers.length < totalAnswers,
+    },
+  });
+};
+
+export const toggleLikeQuestion = async (req, res) => {
+  const userId = req.user?.id;
+  const { questionId } = req.params;
+
+  if (!userId) {
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      success: false,
+      message: "Unauthorized",
+    });
+  }
+
+  const question = await Question.findById(questionId);
+  if (!question) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: "Question not found",
+    });
+  }
+
+  const alreadyLiked = question.likes.includes(userId);
+
+  if (alreadyLiked) {
+    question.likes.pull(userId);
+  } else {
+    question.likes.push(userId);
+  }
+
+  await question.save();
+
+  req.io.emit("question:like", {
+    questionId,
+    userId,
+    liked: !alreadyLiked,
+  });
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    message: alreadyLiked ? "Like removed" : "Question liked",
+    data: {
+      likesCount: question.likes.length,
+      liked: !alreadyLiked,
+    },
+  });
+};
+
+export const toggleUpvoteQuestion = async (req, res) => {
+  const userId = req.user?.id;
+  const { questionId } = req.params;
+
+  if (!userId) {
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      success: false,
+      message: "Unauthorized",
+    });
+  }
+
+  const question = await Question.findById(questionId).select("upvotes author");
+  if (!question) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: "Question not found",
+    });
+  }
+
+  const alreadyUpvoted = question.upvotes.includes(userId);
+  const updates = [];
+
+  if (alreadyUpvoted) {
+    question.upvotes.pull(userId);
+
+    updates.push(
+      User.updateOne({ _id: question.author }, { $inc: { upvotesCount: -1 } })
+    );
+  } else {
+    question.upvotes.push(userId);
+
+    updates.push(
+      User.updateOne({ _id: question.author }, { $inc: { upvotesCount: 1 } })
+    );
+  }
+
+  updates.push(question.save());
+
+  await Promise.all(updates);
+
+  req.io.emit("question:upvote", {
+    questionId,
+    userId,
+    upvoted: !alreadyUpvoted,
+  });
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    message: alreadyUpvoted ? "Upvote removed" : "Question upvoted",
+    data: {
+      upvoted: !alreadyUpvoted,
+    },
+  });
+};
+
+export const toggleSaveQuestion = async (req, res) => {
+  const userId = req.user?.id;
+  const { questionId } = req.params;
+
+  const alreadySaved = await User.exists({
+    _id: userId,
+    "savedQuestions.question": questionId,
+  });
+
+  let saved;
+
+  if (alreadySaved) {
+    await Promise.all([
+      User.updateOne(
+        { _id: userId },
+        { $pull: { savedQuestions: { question: questionId } } }
+      ),
+      Question.updateOne({ _id: questionId }, { $pull: { saves: userId } }),
+    ]);
+    saved = false;
+  } else {
+    await Promise.all([
+      User.updateOne(
+        { _id: userId },
+        {
+          $addToSet: {
+            savedQuestions: { question: questionId, savedAt: new Date() },
+          },
+        }
+      ),
+      Question.updateOne({ _id: questionId }, { $addToSet: { saves: userId } }),
+    ]);
+    saved = true;
+  }
+
+  req.io.emit("question:save", {
+    questionId,
+    userId,
+    saved,
+  });
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    message: saved ? "Question saved" : "Question unsaved",
+    data: { saved },
   });
 };

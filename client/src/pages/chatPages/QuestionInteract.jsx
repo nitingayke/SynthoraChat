@@ -1,39 +1,61 @@
-import { useContext } from "react";
-import FilterQuestionList from "../../components/main/questionInteract/FilterQuestionList";
-import QuestionContext from "../../context/QuestionContext";
-import QuestionDetail from "../../components/main/questionInteract/QuestionDetail"
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import AnswerList from "../../components/main/questionInteract/AnswerList";
-import ScreenLoader from "../../components/loader/ScreenLoader";
-import QuestionFilterToggle from "../../components/main/common/QuestionFilterToggle";
 import { Hash } from "lucide-react";
+
+import FilterQuestionList from "../../components/main/questionInteract/FilterQuestionList";
+import QuestionDetail from "../../components/main/questionInteract/QuestionDetail"
+import AnswerList from "../../components/main/questionInteract/AnswerList";
+import FeatureScreenLoader from "../../components/loader/FeatureScreenLoader";
+import QuestionFilterToggle from "../../components/main/common/QuestionFilterToggle";
+
+import { getQuestionById } from "../../services/question.service";
+import { useSnackbar } from "notistack";
 
 export default function QuestionInteract() {
 
     const { questionId } = useParams();
-    const { questions, loadingQuestions } = useContext(QuestionContext);
 
-    if (loadingQuestions) {
+    const { enqueueSnackbar } = useSnackbar();
+
+    const [currentQuestion, setCurrentQuestion] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        if (!questionId) return;
+
+        const fetchQuestion = async (questionId) => {
+            try {
+                setLoading(true);
+                setError(null);
+                const res = await getQuestionById(questionId)
+                setCurrentQuestion(res?.data?.question)
+            } catch (error) {
+                const msg = error?.response?.data?.message || "Failed to load question";
+                setError(msg);
+                enqueueSnackbar(msg, { variant: "error" });
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchQuestion(questionId);
+
+    }, [questionId, enqueueSnackbar]);
+
+    if (loading) {
         return (
-            <ScreenLoader />
+            <div className="flex flex-1 items-center justify-center">
+                <FeatureScreenLoader />
+            </div>
         )
     }
-
-    if (!questions || questions.length === 0) {
-        return (
-            <div className="text-center py-20 text-gray-500 dark:text-gray-400 text-sm">
-                No questions found
-            </div>
-        );
-    }
-
-    const currentQuestion = questionId ? questions.find((q) => q?._id === questionId) : questions[0];
 
     if (questionId && !currentQuestion) {
         return (
             <div className="w-full max-w-5xl mx-auto py-12">
                 <div className="text-center text-gray-600 dark:text-gray-300">
-                    Question not found.
+                    { error }
                 </div>
             </div>
         );
@@ -50,11 +72,7 @@ export default function QuestionInteract() {
                             href="#related-questions"
                             className="group inline-block"
                         >
-                            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 
-                       flex items-center gap-1
-                       group-hover:text-orange-500 
-                       dark:group-hover:text-[#07C5B9]
-                       transition-colors">
+                            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-1 group-hover:text-orange-500  dark:group-hover:text-[#07C5B9] transition-colors">
                                 <Hash
                                     size={20}
                                     className="opacity-70 group-hover:opacity-100"
@@ -68,15 +86,12 @@ export default function QuestionInteract() {
                         </p>
                     </div>
 
-
                     <FilterQuestionList />
                 </div>
                 <div className="flex-1 space-y-3 rounded-lg border p-3 sm:p-4 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition h-fit">
                     <QuestionDetail question={currentQuestion} />
 
                     <AnswerList question={currentQuestion} />
-
-                    <br />
                 </div>
             </div>
         </>

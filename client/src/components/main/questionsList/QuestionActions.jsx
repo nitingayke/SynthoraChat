@@ -49,7 +49,7 @@ export default function QuestionActions({ question }) {
     const isQuestionSaved = totalSaved?.includes(loginUser?._id);
 
     return (
-        <div className="hidden sm:flex items-center gap-1 lg:gap-2">
+        <div className="flex items-center gap-1 lg:gap-2">
             <button
                 onClick={handleLike}
                 disabled={!loginUser}

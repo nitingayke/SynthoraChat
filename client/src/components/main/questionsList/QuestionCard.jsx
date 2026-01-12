@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import QuestionContent from './QuestionContent';
 import QuestionMedia from './QuestionMedia';
 import QuestionStats from './QuestionStats';
-import QuestionActions from './QuestionActions';
 import Avatar from '@mui/material/Avatar';
+import { slugify } from '../../../utils/helper';
 
 export default function QuestionCard({ question }) {
 
@@ -50,12 +50,13 @@ export default function QuestionCard({ question }) {
             {question.topics && question.topics.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-3">
                     {question.topics.slice(0, 5).map((topic, index) => (
-                        <span
+                        <Link
                             key={index * 0.2547}
+                            to={`/main?topic=${slugify(topic)}`}
                             className="px-2 py-1 bg-orange-100 dark:bg-[#07C5B9]/20 text-orange-500 dark:text-[#07C5B9] text-xs rounded-full"
                         >
                             {topic}
-                        </span>
+                        </Link>
                     ))}
                     {question.topics.length > 5 && (
                         <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs rounded-full">
@@ -66,10 +67,7 @@ export default function QuestionCard({ question }) {
             )}
 
             {/* Stats and Actions */}
-            <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100 dark:border-gray-800 gap-3">
-                <QuestionStats question={question} />
-                <QuestionActions question={question} />
-            </div>
+            <QuestionStats question={question} />
         </div>
     );
 }

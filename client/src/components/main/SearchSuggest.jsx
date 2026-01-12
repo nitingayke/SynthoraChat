@@ -4,11 +4,14 @@ import { useContext, useMemo } from "react";
 import UIStateContext from "../../context/UIStateContext";
 import { filterSuggestions } from "../../utils/search";
 import QuestionContext from "../../context/QuestionContext";
+import useDebounce from "../../hooks/useDebounce";
 
 export default function SearchSuggest() {
 
     const { questions, newQuestions, filterOptions } = useContext(QuestionContext);
     const { searchQuery } = useContext(UIStateContext);
+
+    const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
     const allSuggestions = useMemo(() => {
 
@@ -44,14 +47,14 @@ export default function SearchSuggest() {
     }, [questions, newQuestions, filterOptions]);
 
     const filteredSuggestions = useMemo(
-        () => filterSuggestions(allSuggestions, searchQuery),
-        [searchQuery, allSuggestions]
+        () => filterSuggestions(allSuggestions, debouncedSearchQuery),
+        [debouncedSearchQuery, allSuggestions]
     );
 
-    if (!searchQuery || filteredSuggestions.length === 0) return null;
+    if (!debouncedSearchQuery || debouncedSearchQuery.length < 2) return null;
 
     return (
-        <div className="absolute z-50 top-12 w-full p-2">
+        <div className="absolute z-50 top-13 w-full px-2 sm:px-4">
             <div className="w-full max-w-5xl mx-auto max-h-[calc(100vh-120px)] h-full overflow-y-auto rounded-xl border border-gray-200 dark:border-[#383838] bg-white dark:bg-[#202020] shadow-lg scrollbar-hide">
 
                 {filteredSuggestions.length === 0 && (
@@ -60,7 +63,7 @@ export default function SearchSuggest() {
                     </div>
                 )}
 
-                {filteredSuggestions.map((item, index) => {
+                {filteredSuggestions.slice(0, 12).map((item, index) => {
                     const isTopic = item?.type === "topic";
 
                     return (
@@ -83,7 +86,6 @@ export default function SearchSuggest() {
                         </Link>
                     );
                 })}
-
             </div>
         </div>
     );

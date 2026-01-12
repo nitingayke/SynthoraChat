@@ -53,7 +53,7 @@ const answerSchema = new mongoose.Schema(
           auto: true,
           default: () => new mongoose.Types.ObjectId(),
         },
-        author: {
+        author: { 
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
           required: true,

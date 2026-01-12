@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react";
 
 const FEATURES = [
-    "Ask meaningful questions and get community-driven answers",
-    "Answer questions and receive AI-based accuracy scores",
-    "Summarize discussions using AI-powered insights",
-    "Use AI tools to improve clarity, relevance, and quality",
-    "Discover top contributors, trending topics, and insights"
+  "Ask questions and get answers from a knowledge-driven community",
+  "Improve questions using AI-powered clarity and relevance suggestions",
+  "Receive AI-rated answers based on accuracy and usefulness",
+  "Summarize long discussions into clear, actionable insights",
+  "Generate instant AI answers when expert help is needed",
+  "Discover trending topics and top contributors in real time",
+  "Get personalized recommendations based on your interests",
+  "Highlight key insights and consensus from multiple answers",
+  "Filter answers by relevance, popularity, or AI confidence",
+  "Build reputation through high-quality contributions and engagement"
 ];
+
 
 export default function ScreenLoader() {
     const [index, setIndex] = useState(0);
