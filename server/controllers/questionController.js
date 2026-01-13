@@ -17,7 +17,7 @@ export const getAllQuestions = async (req, res) => {
     .limit(limit)
     .populate({
       path: "author",
-      select: "username email profile",
+      select: "username email profile isVerified",
     })
     .lean();
 
@@ -173,7 +173,7 @@ export const getQuestionById = async (req, res) => {
   const question = await Question.findById(questionId)
     .populate({
       path: "author",
-      select: "username email profile",
+      select: "username email profile isVerified",
       populate: {
         path: "profile",
         select: "firstName lastName avatar bio",

@@ -40,7 +40,7 @@ export default function UserProfile() {
     const fullName = `${profile?.firstName || ""} ${profile?.lastName || ""}`
 
     return (
-        <div className="w-full bg-white dark:bg-[#161616] rounded-lg border border-gray-200 dark:border-gray-800/50 overflow-hidden transition-all duration-300">
+        <div className="w-full bg-white dark:bg-[#161616] rounded-xl border border-gray-200 dark:border-gray-800/50 overflow-hidden transition-all duration-300">
 
             <div className="relative h-28">
                 <div

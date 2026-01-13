@@ -18,19 +18,19 @@ export default function QuestionCard({ question }) {
                         alt={question.author?.username}
                         className="!h-8 !w-8"
                     />
-                    <div>
+                    <Link to={`/main/u/profile/${question?.author?.username}`} className='group'>
                         <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
+                            <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-orange-500 group-hover:dark:text-[#07C5B9]">
                                 {question.author?.profile?.firstName} {question.author?.profile?.lastName}
                             </span>
                             {question.author?.isVerified && (
-                                <span className="text-blue-500 dark:text-[#07C5B9] text-xs">✓</span>
+                                <span className="text-orange-500 dark:text-[#07C5B9] text-xs" title='user verified'>✓</span>
                             )}
                         </div>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                            @{question.author?.username}
+                            @{question?.author?.username}
                         </p>
-                    </div>
+                    </Link>
                 </div>
 
                 <div className="text-xs text-gray-400 dark:text-gray-500">

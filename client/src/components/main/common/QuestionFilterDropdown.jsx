@@ -2,7 +2,7 @@ import { useContext } from "react";
 import QuestionContext from "../../../context/QuestionContext";
 import Drawer from "@mui/material/Drawer";
 import { Link, useLocation } from "react-router-dom";
-import { Check, SlidersHorizontal, Tags, X } from "lucide-react";
+import { BrushCleaning, Check, SlidersHorizontal, Tags, X } from "lucide-react";
 
 export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
 
@@ -46,6 +46,12 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
 
                 {/* FILTER LIST */}
                 <div className="space-y-2 p-4">
+
+                    <Link to={location.pathname} className={`flex items-center gap-2 p-2 px-3 text-sm rounded-lg transition-all hover:bg-gray-100 dark:hover:bg-[#212121] dark:text-white`} >
+                        <BrushCleaning size={18} />
+                        Clear Filter
+                    </Link>
+
                     {loadingTopics ? (
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                             Loading filters...
@@ -56,7 +62,7 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
                                 (activeFilter && item.link === `filter=${activeFilter}`) ||
                                 (activeTopic && item.link === `topic=${activeTopic}`);
 
-                            const params = new URLSearchParams();
+                            const params = new URLSearchParams(location.search);
 
                             if (item.link.startsWith("filter")) {
                                 params.set("filter", item.link.split("=")[1]);
@@ -69,7 +75,7 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
                             return (
                                 <Link
                                     key={item.link}
-                                    to={`/main?${params.toString()}`}
+                                    to={`${location.pathname}?${params.toString()}`}
                                     onClick={() => setIsOpen(false)}
                                     className={`flex items-center justify-between p-2 px-3 text-sm rounded-lg transition-all
                                         ${isActive
