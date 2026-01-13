@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Avatar from '@mui/material/Avatar';
 import { timeAgo } from "../../../utils/date";
+import ExpandableText from "../common/ExpandableText";
 
 export default function QuestionList({ questions, userQuestion }) {
 
@@ -86,11 +87,7 @@ export default function QuestionList({ questions, userQuestion }) {
                                 {title}
                             </Link>
 
-                            {content && (
-                                <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-3">
-                                    {content}
-                                </p>
-                            )}
+                            {content && <ExpandableText text={content} lines={8} />}
                         </div>
 
                         {topics.length > 0 && (
