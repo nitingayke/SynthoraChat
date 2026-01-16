@@ -48,14 +48,6 @@ export const createQuestion = async (req, res) => {
     topics = JSON.parse(req.body.topics);
   }
 
-  if (!userId) {
-    await cleanupCloudinaryFiles(files);
-    return res.status(httpStatus.UNAUTHORIZED).json({
-      success: false,
-      message: "Unauthorized access",
-    });
-  }
-
   if (!title?.trim() || !content?.trim()) {
     await cleanupCloudinaryFiles(files);
     return res.status(httpStatus.BAD_REQUEST).json({
@@ -224,16 +216,24 @@ export const getAnswersByQuestionId = async (req, res) => {
       path: "comments.author",
       select:
         "_id username profile.firstName profile.lastName profile.profilePicture",
-    });
+    })
+    .lean();
 
   const totalAnswers = await Answer.countDocuments({
     questionId,
     // status: "published",
   });
 
+  const formattedAnswers = answers.map((answer) => ({
+    ...answer,
+    comments: [...(answer.comments || [])].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    ),
+  }));
+
   return res.status(httpStatus.OK).json({
     success: true,
-    data: { answers },
+    data: { answers: formattedAnswers },
     meta: {
       skip,
       limit,
@@ -247,13 +247,6 @@ export const toggleLikeQuestion = async (req, res) => {
   const userId = req.user?.id;
   const { questionId } = req.params;
 
-  if (!userId) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
-
   const question = await Question.findById(questionId);
   if (!question) {
     return res.status(httpStatus.NOT_FOUND).json({
@@ -262,7 +255,7 @@ export const toggleLikeQuestion = async (req, res) => {
     });
   }
 
-  const alreadyLiked = question.likes.includes(userId);
+  const alreadyLiked = question.likes.some((id) => id.equals(userId));
 
   if (alreadyLiked) {
     question.likes.pull(userId);
@@ -272,7 +265,7 @@ export const toggleLikeQuestion = async (req, res) => {
 
   await question.save();
 
-  req.io.emit("question:like", {
+  req.io.to(`question:${questionId}`).emit("question:like", {
     questionId,
     userId,
     liked: !alreadyLiked,
@@ -292,13 +285,6 @@ export const toggleUpvoteQuestion = async (req, res) => {
   const userId = req.user?.id;
   const { questionId } = req.params;
 
-  if (!userId) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
-      success: false,
-      message: "Unauthorized",
-    });
-  }
-
   const question = await Question.findById(questionId).select("upvotes author");
   if (!question) {
     return res.status(httpStatus.NOT_FOUND).json({
@@ -307,7 +293,7 @@ export const toggleUpvoteQuestion = async (req, res) => {
     });
   }
 
-  const alreadyUpvoted = question.upvotes.includes(userId);
+  const alreadyUpvoted = question.upvotes.some((id) => id.equals(userId));
   const updates = [];
 
   if (alreadyUpvoted) {
@@ -328,7 +314,7 @@ export const toggleUpvoteQuestion = async (req, res) => {
 
   await Promise.all(updates);
 
-  req.io.emit("question:upvote", {
+  req.io.to(`question:${questionId}`).emit("question:upvote", {
     questionId,
     userId,
     upvoted: !alreadyUpvoted,
@@ -378,7 +364,7 @@ export const toggleSaveQuestion = async (req, res) => {
     saved = true;
   }
 
-  req.io.emit("question:save", {
+  req.io.to(`question:${questionId}`).emit("question:save", {
     questionId,
     userId,
     saved,

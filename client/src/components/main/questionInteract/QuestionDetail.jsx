@@ -7,7 +7,7 @@ import {
   ThumbsUp,
   ArrowBigUp,
 } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
@@ -21,14 +21,19 @@ import {
   toggleSaveQuestion,
 } from "../../../services/question.service";
 
-import { shareContent } from "../../../utils/share";
+import { shareContent } from "../../../services/share.service";
 import { formatCount } from "../../../utils/formatCount";
 import { slugify } from "../../../utils/helper";
+import SocketContext from "../../../context/SocketContext";
+import UIStateContext from "../../../context/UIStateContext";
 
 export default function QuestionDetail({ question }) {
 
   const { enqueueSnackbar } = useSnackbar();
+
   const { loginUser } = useContext(AuthContext);
+  const { socket } = useContext(SocketContext);
+  const { isAuthorize } = useContext(UIStateContext);
 
   const [likesArr, setLikesArr] = useState([]);
   const [upvotesArr, setUpvotesArr] = useState([]);
@@ -63,20 +68,58 @@ export default function QuestionDetail({ question }) {
     setAnswerSummary(null);
   }, [_id]);
 
+  const handleQuestionLike = useCallback(({ questionId, userId, liked }) => {
+    if (questionId !== _id) return;
+
+    setLikesArr(prev =>
+      liked
+        ? prev.includes(userId) ? prev : [...prev, userId]
+        : prev.filter(id => id !== userId)
+    );
+  }, [_id]);
+
+  const handleQuestionUpvote = useCallback(({ questionId, userId, upvoted }) => {
+    if (questionId !== _id) return;
+
+    setUpvotesArr(prev =>
+      upvoted
+        ? prev.includes(userId) ? prev : [...prev, userId]
+        : prev.filter(id => id !== userId)
+    );
+  }, [_id])
+
+  const handleQuestionSave = useCallback(({ questionId, userId, saved, }) => {
+    if (questionId !== _id) return;
+
+    setSavesArr(prev =>
+      saved
+        ? prev.includes(userId) ? prev : [...prev, userId]
+        : prev.filter(id => id !== userId)
+    );
+  }, [_id])
+
+  useEffect(() => {
+    socket.on("question:like", handleQuestionLike);
+    socket.on("question:upvote", handleQuestionUpvote);
+    socket.on("question:save", handleQuestionSave);
+
+    return () => {
+      socket.off("question:like", handleQuestionLike);
+      socket.off("question:upvote", handleQuestionUpvote);
+      socket.off("question:save", handleQuestionSave);
+    }
+  }, [socket, handleQuestionLike, handleQuestionUpvote, handleQuestionSave]);
+
   const userId = loginUser?._id;
 
   const handleLike = async () => {
-    if (!userId || loading.like) return;
 
-    setLoading(p => ({ ...p, like: true }));
+    if (!isAuthorize() || loading.like) return;
 
     try {
-      const res = await toggleLikeQuestion(_id);
-      const liked = res?.data?.liked;
+      setLoading(p => ({ ...p, like: true }));
 
-      setLikesArr(prev =>
-        liked ? [...prev, userId] : prev.filter(id => id !== userId)
-      );
+      await toggleLikeQuestion(_id);
     } catch (err) {
       enqueueSnackbar(err?.response?.data?.message || "Failed to like question", { variant: "error" });
     } finally {
@@ -85,16 +128,12 @@ export default function QuestionDetail({ question }) {
   };
 
   const handleUpvote = async () => {
-    if (!userId || loading.upvote) return;
+    if (!isAuthorize() || loading.like) return;
 
-    setLoading(p => ({ ...p, upvote: true }));
     try {
-      const res = await toggleUpvoteQuestion(_id);
-      const upvoted = res?.data?.upvoted;
+      setLoading(p => ({ ...p, upvote: true }));
 
-      setUpvotesArr(prev =>
-        upvoted ? [...prev, userId] : prev.filter(id => id !== userId)
-      );
+      await toggleUpvoteQuestion(_id);
     } catch (err) {
       enqueueSnackbar(err?.response?.data?.message || "Failed to upvote question", { variant: "error" });
     } finally {
@@ -103,17 +142,12 @@ export default function QuestionDetail({ question }) {
   };
 
   const handleSave = async () => {
-    if (!userId || loading.save) return;
+    if (!isAuthorize() || loading.like) return;
 
-    setLoading(p => ({ ...p, save: true }));
     try {
-      const res = await toggleSaveQuestion(_id);
-      const saved = res?.data?.saved;
+      setLoading(p => ({ ...p, save: true }));
 
-      setSavesArr(prev =>
-        saved ? [...prev, userId] : prev.filter(id => id !== userId)
-      );
-
+      await toggleSaveQuestion(_id);
     } catch (err) {
       enqueueSnackbar(err?.response?.data?.message || "Failed to save question", { variant: "error" });
     } finally {
@@ -128,7 +162,6 @@ export default function QuestionDetail({ question }) {
       url: window.location,
     });
   };
-
 
   if (!question) return null;
 
@@ -174,7 +207,7 @@ export default function QuestionDetail({ question }) {
           onClick={handleLike}
           count={formatCount(likesArr.length)}
           Icon={ThumbsUp}
-          activeClass="text-red-600 bg-red-500/10 border-red-500/50"
+          activeClass="text-red-500 bg-red-500/10 border-red-500/50"
         />
 
         <ActionButton
@@ -183,7 +216,7 @@ export default function QuestionDetail({ question }) {
           onClick={handleUpvote}
           count={formatCount(upvotesArr.length)}
           Icon={ArrowBigUp}
-          activeClass="text-green-600 bg-green-500/10 border-green-500/50"
+          activeClass="text-green-500 bg-green-500/10 border-green-500/50"
         />
 
         <ActionButton

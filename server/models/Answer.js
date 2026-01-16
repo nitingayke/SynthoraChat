@@ -100,7 +100,7 @@ const answerSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["published", "draft", "deleted"],
+      enum: ["published", "draft"],
       default: "published",
     },
   },

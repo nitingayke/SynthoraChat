@@ -21,10 +21,9 @@ import {
     toggleLikeQuestion,
     toggleSaveQuestion,
 } from "../../../services/question.service";
-import { shareContent } from "../../../utils/share"
+import { shareContent } from "../../../services/share.service"
 
-const baseBtn =
-    "flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium border transition-colors duration-200";
+const baseBtn = "flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium border transition-colors duration-200";
 
 const inactiveBtn = "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300 dark:bg-[#202020] dark:text-gray-300 dark:hover:bg-[#2a2a2a] dark:border-[#404040]";
 

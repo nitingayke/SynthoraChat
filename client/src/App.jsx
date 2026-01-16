@@ -19,15 +19,15 @@ function App() {
           <SocketProvider>
             <AnalyticsProvider>
               <QuestionProvider>
-                <UIStateProvider>
-                  <AuthProvider>
+                <AuthProvider>
+                  <UIStateProvider>
                     <AIChatProvider>
                       <PostProvider>
                         <AppRoutes />
                       </PostProvider>
                     </AIChatProvider>
-                  </AuthProvider>
-                </UIStateProvider>
+                  </UIStateProvider>
+                </AuthProvider>
               </QuestionProvider>
             </AnalyticsProvider>
           </SocketProvider>

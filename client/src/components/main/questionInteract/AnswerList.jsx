@@ -1,14 +1,21 @@
 import { Hash } from "lucide-react";
 import PropTypes from "prop-types";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { useSnackbar } from "notistack";
+
 import AnswerCard from "./AnswerCard";
 import { getAnswersByQuestionId } from "../../../services/answer.service";
-import { useSnackbar } from "notistack";
+import SocketContext from "../../../context/SocketContext";
+import AuthContext from "../../../context/AuthContext";
+
 
 const LIMIT = 10;
 
 export default function AnswerList({ question }) {
+
   const { enqueueSnackbar } = useSnackbar();
+  const { socket } = useContext(SocketContext);
+  const { loginUser } = useContext(AuthContext);
 
   const [answers, setAnswers] = useState([]);
   const [skip, setSkip] = useState(0);
@@ -58,6 +65,124 @@ export default function AnswerList({ question }) {
     fetchAnswers(0, true);
   }, [question?._id]); // DO NOT add fetchAnswers here
 
+  const handleAnswerLike = ({ answerId, userId, liked }) => {
+    setAnswers((prev) =>
+      prev.map((answer) => {
+        if (answer?._id !== answerId) return answer;
+
+        return {
+          ...answer,
+          likes: liked ? [...answer.likes, userId] : answer.likes.filter((id) => id !== userId),
+        };
+      })
+    );
+  };
+
+  const handleAnswerUpvote = ({ answerId, userId, upvoted }) => {
+    setAnswers((prev) =>
+      prev.map((answer) => {
+        if (answer?._id !== answerId) return answer;
+
+        return {
+          ...answer,
+          upvotes: upvoted
+            ? [...answer.upvotes, userId]
+            : answer.upvotes.filter((id) => id !== userId),
+        };
+      })
+    );
+  };
+
+  const handleAnswerEdit = ({ answerId, content, updatedAt }) => {
+    setAnswers((prev) =>
+      prev.map((answer) => {
+        if (answer._id !== answerId) return answer;
+
+        return {
+          ...answer,
+          content,
+          updatedAt
+        };
+      })
+    );
+  };
+
+  const handleAnswerDelete = ({ answerId }) => {
+    setAnswers(prev => prev.filter(a => a._id !== answerId));
+  }
+
+  const handleAnswerNewComment = useCallback(({ answerId, comment }) => {
+
+    const isOwnComment = comment?.author?._id === loginUser?._id;
+
+    setAnswers((prev) =>
+      prev.map((answer) => {
+        if (answer._id !== answerId) return answer;
+
+        return {
+          ...answer,
+          comments: isOwnComment
+            ? [comment, ...answer.comments]
+            : [...answer.comments, comment],
+        };
+      })
+    );
+  }, [loginUser]);
+
+  const handleUpvoteComment = ({ answerId, commentId, userId, upvoted }) => {
+    setAnswers((prev) =>
+      prev.map(answer => {
+        if (answer._id !== answerId) return answer;
+
+        return {
+          ...answer,
+          comments: answer.comments.map((comment) => {
+            if (comment._id !== commentId) return comment;
+
+            return {
+              ...comment,
+              upvotes: upvoted
+                ? [...comment.upvotes, userId]
+                : comment.upvotes.filter((id) => id !== userId),
+            };
+          }),
+        };
+      })
+    )
+  }
+
+  const handleDeleteComment = ({ answerId, commentId }) => {
+    setAnswers(prev =>
+      prev.map(a =>
+        a._id === answerId ? { ...a, comments: a.comments.filter(c => c._id !== commentId) } : a
+      )
+    );
+  };
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("answer:like", handleAnswerLike);
+    socket.on("answer:upvote", handleAnswerUpvote);
+    socket.on("answer:edit", handleAnswerEdit);
+    socket.on("answer:delete", handleAnswerDelete);
+    socket.on("answer:comment:new", handleAnswerNewComment);
+
+    socket.on("comment:upvote", handleUpvoteComment);
+    socket.on("comment:deleted", handleDeleteComment);
+
+    return () => {
+      socket.off("answer:like", handleAnswerLike);
+      socket.off("answer:upvote", handleAnswerUpvote);
+      socket.off("answer:edit", handleAnswerEdit);
+      socket.off("answer:delete", handleAnswerDelete);
+      socket.off("answer:comment:new", handleAnswerNewComment);
+
+      socket.off("comment:upvote", handleUpvoteComment);
+      socket.off("comment:deleted", handleDeleteComment);
+    }
+  }, [socket, handleAnswerNewComment]);
+
   if (!answers.length && !loading) {
     return (
       <div className="px-4 py-7 text-gray-600 dark:text-gray-400 text-center">
@@ -92,7 +217,7 @@ export default function AnswerList({ question }) {
           <button
             disabled={loading}
             onClick={() => fetchAnswers(skip, false)}
-            className="text-sm rounded-md px-3 py-2 bg-gray-100 dark:bg-[#111] hover:bg-gray-200 dark:hover:bg-[#212121] disabled:opacity-60"
+            className="text-sm rounded-md px-3 py-2 bg-gray-100 dark:bg-[#111] hover:bg-gray-200 dark:hover:bg-[#212121] disabled:opacity-60 border shadow-lg border-gray-300 dark:border-[#232323]"
           >
             {loading ? "Loading..." : "Load More"}
           </button>

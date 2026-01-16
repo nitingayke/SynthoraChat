@@ -51,17 +51,11 @@ export default function SearchSuggest() {
         [debouncedSearchQuery, allSuggestions]
     );
 
-    if (!debouncedSearchQuery || debouncedSearchQuery.length < 2) return null;
+    if (!debouncedSearchQuery || debouncedSearchQuery.length < 2 || filteredSuggestions.length === 0) return null;
 
     return (
         <div className="absolute z-50 top-13 w-full px-2 sm:px-4">
             <div className="w-full max-w-5xl mx-auto max-h-[calc(100vh-120px)] h-full overflow-y-auto rounded-xl border border-gray-200 dark:border-[#383838] bg-white dark:bg-[#202020] shadow-lg scrollbar-hide">
-
-                {filteredSuggestions.length === 0 && (
-                    <div className="px-4 py-6 text-sm text-center text-gray-500 dark:text-gray-400">
-                        No results found
-                    </div>
-                )}
 
                 {filteredSuggestions.slice(0, 12).map((item, index) => {
                     const isTopic = item?.type === "topic";

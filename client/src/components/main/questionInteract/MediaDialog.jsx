@@ -96,6 +96,12 @@ export default function QuestionMedia({ media }) {
                             overflow: "hidden",
                         },
                     },
+                    backdrop: {
+                        sx: {
+                            backdropFilter: "blur(8px)",
+                            backgroundColor: "rgba(0,0,0,0.4)",
+                        },
+                    },
                 }}
                 fullWidth
                 fullScreen
