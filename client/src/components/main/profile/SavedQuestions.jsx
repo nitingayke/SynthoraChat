@@ -12,7 +12,7 @@ const PAGE_SIZE = 15;
 
 export default function SavedQuestions({ userId, isOwnProfile = false }) {
 
-    const { searchQuery } = useContext(UIStateContext);
+    const { debouncedSearchQuery } = useContext(UIStateContext);
 
     const [questions, setQuestions] = useState([]);
     const [page, setPage] = useState(1);
@@ -62,8 +62,8 @@ export default function SavedQuestions({ userId, isOwnProfile = false }) {
     }, [loadSavedQuestions]);
 
     const filteredQuestions = useMemo(() => {
-        return filterQuestionsByQuery(questions, searchQuery);
-    }, [questions, searchQuery]);
+        return filterQuestionsByQuery(questions, debouncedSearchQuery);
+    }, [questions, debouncedSearchQuery]);
 
     return (
         <>
@@ -76,10 +76,6 @@ export default function SavedQuestions({ userId, isOwnProfile = false }) {
                         Questions you've bookmarked to revisit later
                     </p>
                 </div>
-
-                <button className="text-sm text-gray-500 dark:text-gray-400">
-                    Filter
-                </button>
             </div>
 
             {filteredQuestions.length === 0 && !loading ? (
@@ -88,7 +84,7 @@ export default function SavedQuestions({ userId, isOwnProfile = false }) {
                         No saved questions
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {searchQuery
+                        {debouncedSearchQuery
                             ? "Try changing your search keywords."
                             : isOwnProfile
                                 ? "You haven't saved any questions yet."

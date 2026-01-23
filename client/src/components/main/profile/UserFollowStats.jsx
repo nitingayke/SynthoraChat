@@ -7,22 +7,22 @@ export function UserFollowStats({ stats }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <Stat 
                 label="Total Followers" 
-                value={stats?.total} 
+                value={stats?.total || 0} 
                 icon={<Users className="w-5 h-5 text-blue-500" />} 
             />
             <Stat 
                 label="This Month" 
-                value={stats?.monthly} 
+                value={stats?.monthly || 0} 
                 icon={<Calendar className="w-5 h-5 text-green-500" />} 
             />
             <Stat 
                 label="Growth" 
-                value={`+${stats?.growth}`} 
+                value={`+${stats?.growth || 0}`} 
                 icon={<TrendingUp className="w-5 h-5 text-orange-500" />} 
             />
             <Stat 
                 label="Active Rate" 
-                value={`${stats?.activeRate}%`} 
+                value={`${stats?.activeRate || 0}%`} 
                 icon={<Activity className="w-5 h-5 text-purple-500" />} 
             />
         </div>

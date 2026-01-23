@@ -1,38 +1,11 @@
-import { useState } from "react";
-import { Camera, Edit3, Link2, MapPin, Share2, Loader2 } from "lucide-react";
+import { Camera, Edit3, Link2, MapPin, Share2 } from "lucide-react";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { useSnackbar } from "notistack";
+import { shareContent } from "../../../services/share.service";
+import FollowActionButton from "../common/FollowActionButton";
 
 export default function ProfileHeader({ user, isOwnProfile = false }) {
-
-    const { enqueueSnackbar } = useSnackbar();
-    const [sharing, setSharing] = useState(false);
-
-    const handleShareProfile = async () => {
-
-        const profileUrl = `${window.location.origin}/main/u/profile/${username}`;
-
-        try {
-            setSharing(true);
-
-            if (navigator.share) {
-                await navigator.share({
-                    title: `${firstName || username}'s Profile`,
-                    text: `Check out ${firstName || username}'s profile`,
-                    url: profileUrl,
-                });
-            } else {
-                await navigator.clipboard.writeText(profileUrl);
-                enqueueSnackbar("Profile link copied to clipboard", { variant: "error" }); // later replace with notistack
-            }
-        } catch {
-            enqueueSnackbar("Share failed", { variant: "error" });
-        } finally {
-            setSharing(false);
-        }
-    }
 
     if (!user) {
         return null;
@@ -45,19 +18,31 @@ export default function ProfileHeader({ user, isOwnProfile = false }) {
     } = user;
 
     const {
-        firstName,
-        lastName,
-        bio,
-        location,
-        website,
-        profilePicture,
-        coverPicture,
-    } = profile;
+        firstName = "",
+        lastName = "",
+        bio = "",
+        location = "",
+        website = "",
+        profilePicture = "",
+        coverPicture = "",
+    } = profile || {};
+
+
+    const handleShareProfile = async () => {
+
+        const profileUrl = `${window.location.origin}/main/u/profile/${username}`;
+
+        await shareContent({
+            title: "SynthoraChat",
+            text: (firstName && lastName) ? `${firstName} ${lastName}` : username,
+            url: profileUrl
+        });
+    }
 
     return (
         <div className="bg-white dark:bg-[#191919] rounded-lg overflow-hidden border border-gray-200 dark:border-[#2a2a2a]">
 
-            <div className="relative h-48 w-full">
+            <div className="relative h-30 sm:h-40 md:h-45 lg:h-48 w-full">
                 {coverPicture ? (
                     <img
                         src={coverPicture}
@@ -77,10 +62,9 @@ export default function ProfileHeader({ user, isOwnProfile = false }) {
             </div>
 
             <div className="relative px-4 pb-6">
-
                 {/* Avatar */}
-                <div className="absolute -top-16 lg:-top-18 left-3">
-                    <div className="relative w-32 h-32 lg:w-35 lg:h-35 rounded-full border-4 border-white dark:border-[#161616] overflow-hidden bg-white dark:bg-[#222] shadow-lg">
+                <div className="absolute -top-10 sm:-top-16 lg:-top-18 left-3">
+                    <div className="relative h-25 w-25 sm:w-32 sm:h-32 lg:w-35 lg:h-35 rounded-full border-4 border-white dark:border-[#161616] overflow-hidden bg-white dark:bg-[#222] shadow-lg">
                         {profilePicture ? (
                             <img
                                 src={profilePicture}
@@ -102,6 +86,9 @@ export default function ProfileHeader({ user, isOwnProfile = false }) {
 
                 {/* Right action buttons */}
                 <div className="flex justify-end gap-3 pt-4">
+
+                    {!isOwnProfile && <FollowActionButton targetUserId={user?._id} size="md" />}
+
                     {isOwnProfile && <Link
                         to={`/main/u/profile/${user?.username}?tab=settings#profile_settings`}
                         className="flex items-center gap-2 px-3 p-2 w-10 h-10 sm:w-auto sm:h-auto rounded-full sm:rounded-lg bg-orange-500 dark:bg-[#07C5B9] text-white font-semibold hover:opacity-90 transition"
@@ -111,13 +98,8 @@ export default function ProfileHeader({ user, isOwnProfile = false }) {
                     </Link>}
                     <button
                         onClick={handleShareProfile}
-                        disabled={sharing}
                         className="border border-gray-200 dark:border-[#3d3d3d] w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 dark:bg-[#202020] hover:opacity-80 disabled:cursor-not-allowed">
-                        {sharing ? (
-                            <Loader2 size={18} className="animate-spin" />
-                        ) : (
-                            <Share2 size={18} />
-                        )}
+                        <Share2 size={18} />
                     </button>
                 </div>
 

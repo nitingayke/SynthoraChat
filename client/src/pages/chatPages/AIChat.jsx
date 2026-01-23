@@ -4,6 +4,7 @@ import ChatWindow from "../../components/main/aiChat/ChatWindow";
 import AIChatContext from "../../context/AIChatContext";
 import { useParams } from "react-router-dom";
 import AuthContext from "../../context/AuthContext";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 
 
 export default function AIChat() {
@@ -11,6 +12,8 @@ export default function AIChat() {
     const { threadId } = useParams();
     const { setSelectedChat } = useContext(AIChatContext);
     const { loginUser } = useContext(AuthContext);
+
+    useDocumentTitle("AI Chat")
 
     useEffect(() => {
         if (!loginUser?.aiInteractions || !threadId) return;

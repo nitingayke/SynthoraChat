@@ -138,20 +138,19 @@ export default function QuestionMedia({ media }) {
                     )}
 
                     {media[activeMedia]?.type === "document" && (
-                        <div className="bg-white dark:bg-[#161616] rounded-lg w-full max-w-6xl h-[85vh] overflow-hidden shadow-lg">
-                            <DocViewer
+                        <div className="relative bg-white dark:bg-[#161616] rounded-lg w-full max-w-6xl h-[85vh] overflow-hidden shadow-lg">
+                            {/* <DocViewer
                                 documents={[
-                                    { uri: media[activeMedia]?.url }
+                                    {
+                                        uri: media[activeMedia]?.url,
+                                        fileType: "pdf",
+                                        fileName: "Document.pdf",
+                                    },
                                 ]}
                                 pluginRenderers={DocViewerRenderers}
-                                config={{
-                                    header: {
-                                        disableHeader: false,
-                                        disableFileName: false,
-                                    },
-                                }}
                                 style={{ height: "100%" }}
-                            />
+                            /> */}
+                            <iframe src={`https://docs.google.com/gview?url=${encodeURIComponent(media[activeMedia]?.url)}&embedded=true`} className="w-full h-full" title="Document Viewer" />
                         </div>
                     )}
                 </div>

@@ -5,6 +5,7 @@ import User from "../models/User.js";
 import { mapMediaType } from "../utils/mediaTypeMapper.js";
 import { cleanupCloudinaryFiles } from "../services/cleanupCloudinary.js";
 import Answer from "../models/Answer.js";
+import { addUserActivity } from "../services/activity.service.js";
 
 export const getAllQuestions = async (req, res) => {
   const page = Number.parseInt(req.query.page) || 1;
@@ -48,6 +49,16 @@ export const createQuestion = async (req, res) => {
     topics = JSON.parse(req.body.topics);
   }
 
+  const TOPIC_LIMIT = 10;
+
+  if (topics.length > TOPIC_LIMIT) {
+    await cleanupCloudinaryFiles(files);
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: `Maximum ${TOPIC_LIMIT} topics allowed`,
+    });
+  }
+
   if (!title?.trim() || !content?.trim()) {
     await cleanupCloudinaryFiles(files);
     return res.status(httpStatus.BAD_REQUEST).json({
@@ -83,8 +94,15 @@ export const createQuestion = async (req, res) => {
 
     await User.updateOne(
       { _id: userId },
-      { $push: { questions: question._id } }
+      { $push: { questions: question._id } },
     );
+
+    await addUserActivity({
+      userId,
+      title: "Question Posted",
+      text: `You asked: ${title.trim()}`,
+      link: `/main/questions/${question?._id}`,
+    });
 
     const populatedQuestion = {
       ...question.toObject(),
@@ -112,6 +130,115 @@ export const createQuestion = async (req, res) => {
       success: false,
       message: "Failed to create question",
     });
+  }
+};
+
+export const updateQuestion = async (req, res) => {
+  const { questionId } = req.params;
+  const userId = req.user.id;
+  const files = req.files || [];
+
+  let { title, content } = req.body;
+  let topics = [];
+
+  try {
+    if (req.body.topics) {
+      topics = JSON.parse(req.body.topics);
+    }
+  } catch {
+    await cleanupCloudinaryFiles(files);
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "Invalid topics format",
+    });
+  }
+
+  if (!title?.trim() || !content?.trim()) {
+    await cleanupCloudinaryFiles(files);
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "Title and content are required",
+    });
+  }
+
+  if (topics.length > 10) {
+    await cleanupCloudinaryFiles(files);
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "Maximum 10 topics allowed",
+    });
+  }
+
+  if (files.length > 6) {
+    await cleanupCloudinaryFiles(files);
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "Maximum 6 media files allowed",
+    });
+  }
+
+  const question = await Question.findById(questionId);
+  if (!question) {
+    await cleanupCloudinaryFiles(files);
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: "Question not found",
+    });
+  }
+
+  if (question.author.toString() !== userId) {
+    await cleanupCloudinaryFiles(files);
+    return res.status(httpStatus.FORBIDDEN).json({
+      success: false,
+      message: "You are not allowed to edit this question",
+    });
+  }
+
+  const oldMedia = question.media || [];
+
+  const newMedia = files.map((file) => ({
+    type: mapMediaType(file),
+    url: file.path,
+    filename: file.filename,
+  }));
+
+  question.title = title.trim();
+  question.content = content.trim();
+  question.topics = topics;
+  question.media = newMedia;
+
+  try {
+    await question.save();
+
+    await addUserActivity({
+      userId,
+      title: "Question Updated",
+      text: `Updated your question: ${question.title}`,
+      link: `/main/questions/${question._id}`,
+    });
+
+    if (oldMedia.length) {
+      await cleanupCloudinaryFiles(oldMedia);
+    }
+
+    req.io.to(`question:${questionId}`).emit("question:update", {
+      questionId,
+      updates: {
+        title: question.title,
+        content: question.content,
+        topics: question.topics,
+        media: question.media,
+        contentUpdatedAt: question.contentUpdatedAt,
+      },
+    });
+
+    return res.status(httpStatus.OK).json({
+      success: true,
+      message: "Question updated successfully",
+    });
+  } catch (err) {
+    await cleanupCloudinaryFiles(newMedia);
+    throw err;
   }
 };
 
@@ -189,8 +316,8 @@ export const getQuestionById = async (req, res) => {
 
 export const getAnswersByQuestionId = async (req, res) => {
   const { questionId } = req.params;
-  const skip = parseInt(req.query.skip) || 0;
-  const limit = parseInt(req.query.limit) || 10;
+  const skip = Number.parseInt(req.query.skip) || 0;
+  const limit = Number.parseInt(req.query.limit) || 10;
 
   const questionExists = await Question.exists({ _id: questionId });
   if (!questionExists) {
@@ -227,7 +354,7 @@ export const getAnswersByQuestionId = async (req, res) => {
   const formattedAnswers = answers.map((answer) => ({
     ...answer,
     comments: [...(answer.comments || [])].sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
     ),
   }));
 
@@ -300,19 +427,28 @@ export const toggleUpvoteQuestion = async (req, res) => {
     question.upvotes.pull(userId);
 
     updates.push(
-      User.updateOne({ _id: question.author }, { $inc: { upvotesCount: -1 } })
+      User.updateOne({ _id: question.author }, { $inc: { upvotesCount: -1 } }),
     );
   } else {
     question.upvotes.push(userId);
 
     updates.push(
-      User.updateOne({ _id: question.author }, { $inc: { upvotesCount: 1 } })
+      User.updateOne({ _id: question.author }, { $inc: { upvotesCount: 1 } }),
     );
   }
 
   updates.push(question.save());
 
   await Promise.all(updates);
+
+  if (!alreadyUpvoted) {
+    await addUserActivity({
+      userId,
+      title: "Upvoted a Question",
+      text: "You upvoted a question",
+      link: `/main/questions/${questionId}`,
+    });
+  }
 
   req.io.to(`question:${questionId}`).emit("question:upvote", {
     questionId,
@@ -344,7 +480,7 @@ export const toggleSaveQuestion = async (req, res) => {
     await Promise.all([
       User.updateOne(
         { _id: userId },
-        { $pull: { savedQuestions: { question: questionId } } }
+        { $pull: { savedQuestions: { question: questionId } } },
       ),
       Question.updateOne({ _id: questionId }, { $pull: { saves: userId } }),
     ]);
@@ -357,11 +493,20 @@ export const toggleSaveQuestion = async (req, res) => {
           $addToSet: {
             savedQuestions: { question: questionId, savedAt: new Date() },
           },
-        }
+        },
       ),
       Question.updateOne({ _id: questionId }, { $addToSet: { saves: userId } }),
     ]);
     saved = true;
+  }
+
+  if (saved) {
+    await addUserActivity({
+      userId,
+      title: "Saved a Question",
+      text: "You saved a question",
+      link: `/main/questions/${questionId}`,
+    });
   }
 
   req.io.to(`question:${questionId}`).emit("question:save", {

@@ -12,7 +12,7 @@ const PAGE_SIZE = 15;
 
 export default function UserAnswers({ userId, isOwnProfile }) {
 
-    const { searchQuery } = useContext(UIStateContext);
+    const { debouncedSearchQuery } = useContext(UIStateContext);
 
     const [answers, setAnswers] = useState([]);
     const [page, setPage] = useState(1);
@@ -60,8 +60,8 @@ export default function UserAnswers({ userId, isOwnProfile }) {
     }, [userId, loadAnswers]);
 
     const searchedAnswers = useMemo(() => {
-        return filterAnswersByQuery(answers, searchQuery);
-    }, [answers, searchQuery]);
+        return filterAnswersByQuery(answers, debouncedSearchQuery);
+    }, [answers, debouncedSearchQuery]);
 
 
     return (
@@ -77,10 +77,6 @@ export default function UserAnswers({ userId, isOwnProfile }) {
                             : "Public answers shared by this user"}
                     </p>
                 </div>
-
-                <button className="text-sm text-gray-500 dark:text-gray-400">
-                    Filter
-                </button>
             </div>
 
             {searchedAnswers.length > 0 ? (
@@ -91,7 +87,7 @@ export default function UserAnswers({ userId, isOwnProfile }) {
                 </div>
             ) : !loading ? (
                 <div className="py-12 text-center text-gray-500 dark:text-gray-400 border-t border-gray-300 dark:border-[#202020]">
-                    {searchQuery
+                    {debouncedSearchQuery
                         ? "No answers match your search."
                         : "No answers available yet."}
                 </div>

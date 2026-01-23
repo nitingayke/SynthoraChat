@@ -12,7 +12,7 @@ const PAGE_SIZE = 15;
 
 export default function UserQuestions({ userId, isOwnProfile = false }) {
 
-    const { searchQuery } = useContext(UIStateContext);
+    const { debouncedSearchQuery } = useContext(UIStateContext);
 
     const [questions, setQuestions] = useState([]);
     const [page, setPage] = useState(1);
@@ -60,8 +60,8 @@ export default function UserQuestions({ userId, isOwnProfile = false }) {
     }, [userId, loadQuestions]);
 
     const filteredQuestions = useMemo(() => {
-        return filterQuestionsByQuery(questions, searchQuery);
-    }, [questions, searchQuery]);
+        return filterQuestionsByQuery(questions, debouncedSearchQuery);
+    }, [questions, debouncedSearchQuery]);
 
 
     return (
@@ -77,7 +77,6 @@ export default function UserQuestions({ userId, isOwnProfile = false }) {
                             : "Public questions asked by this user"}
                     </p>
                 </div>
-                <button>Filter</button>
             </div>
 
             {filteredQuestions?.length === 0 && !loading ? (
@@ -86,7 +85,7 @@ export default function UserQuestions({ userId, isOwnProfile = false }) {
                         No questions found
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {searchQuery ? "Try changing your search keywords." : "User hasn't asked any public questions."}
+                        {debouncedSearchQuery ? "Try changing your search keywords." : "User hasn't asked any public questions."}
                     </p>
                 </div>
             ) : (

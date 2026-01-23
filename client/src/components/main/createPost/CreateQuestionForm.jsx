@@ -6,12 +6,13 @@ import PostContext from "../../../context/PostContext";
 import EmojiPickerDialog from "../../common/EmojiPickerDialog";
 import { createQuestionService } from "../../../services/question.service"
 import { getMediaType } from "../../../utils/helper";
+import { getVideoDuration } from "../../../utils/videoDuration";
 
 export default function CreateQuestionForm() {
 
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
-    const { title, setTitle, content, setContent, topics, setTopics, media, setMedia, setAllowComments, allowComments, TITLE_LIMIT, CONTENT_LIMIT, TOPIC_LIMIT } = useContext(PostContext);
+    const { title, setTitle, content, setContent, topics, setTopics, media, setMedia, setAllowComments, allowComments, TITLE_LIMIT, CONTENT_LIMIT, TOPIC_LIMIT, MEDIA_LIMIT } = useContext(PostContext);
 
     const [topicInput, setTopicInput] = useState("");
     const [duplicateTopic, setDuplicateTopic] = useState("");
@@ -32,8 +33,30 @@ export default function CreateQuestionForm() {
         localStorage.setItem("draft_topics", JSON.stringify(topics));
     }, [topics]);
 
-    const handleMediaUpload = (e) => {
+    const handleMediaUpload = async (e) => {
         const files = Array.from(e.target.files);
+
+        for (const file of files) {
+            const type = getMediaType(file);
+
+            if (type === "video") {
+                try {
+                    const duration = await getVideoDuration(file);
+                    if (duration > 240) {
+                        enqueueSnackbar("Video duration must be 4 minutes or less", { variant: "error" });
+                        return;
+                    }
+                } catch {
+                    enqueueSnackbar("Failed to read video metadata", { variant: "error" });
+                    return;
+                }
+            }
+        }
+
+        if (media.length + files.length > MEDIA_LIMIT) {
+            enqueueSnackbar(`Maximum ${MEDIA_LIMIT} media files allowed`, { variant: "warning" });
+            return;
+        }
 
         const newMedia = files.map((file) => ({
             type: getMediaType(file),
@@ -193,7 +216,7 @@ export default function CreateQuestionForm() {
                             value={topicInput}
                             onChange={(e) => setTopicInput(e.target.value)}
                             onKeyDown={(e) => {
-                                if(e.key === "Enter") {
+                                if (e.key === "Enter") {
                                     e.preventDefault();
                                     addTopic();
                                 }
@@ -247,31 +270,48 @@ export default function CreateQuestionForm() {
             </div>
 
             <div className="mt-5">
-                <label className="font-semibold text-lg dark:text-white">Upload Media</label>
+                <div className="flex justify-between items-center">
+                    <label className="font-semibold text-lg dark:text-white">Upload Media</label>
+                    {media.length > 0 && (
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                            {media.length}/{MEDIA_LIMIT}
+                        </span>
+                    )}
+                </div>
 
                 <div className={`grid grid-cols-2 sm:grid-cols-4 gap-4 mt-1 ${submitting && "hidden"}`}>
                     {[
                         { label: "Image", icon: <Image size={18} />, accept: "image/*" },
                         { label: "Video", icon: <Video size={18} />, accept: "video/*" },
-                        { label: "Audio", icon: <FileAudio size={18} />, accept: "audio/*"},
+                        { label: "Audio", icon: <FileAudio size={18} />, accept: "audio/*" },
                         { label: "Document", icon: <File size={18} />, accept: "*" }
                     ].map((item) => (
                         <label
                             key={item.label}
-                            className="cursor-pointer p-4 rounded-lg bg-white dark:bg-neutral-900 flex flex-col items-center justify-center gap-2 text-sm dark:text-white hover:bg-gray-200 dark:hover:bg-neutral-800 transition"
+                            className={`cursor-pointer p-4 rounded-lg flex flex-col items-center justify-center gap-2 text-sm dark:text-white hover:bg-gray-200 dark:hover:bg-neutral-800 transition ${media.length >= MEDIA_LIMIT ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-[#0a0a0a]' : 'bg-white dark:bg-neutral-900'}`}
                         >
                             {item.icon}
                             {item.label}
+                            {media.length >= MEDIA_LIMIT && (
+                                <span className="text-xs text-red-500">(Max reached)</span>
+                            )}
                             <input
                                 type="file"
                                 accept={item.accept}
                                 className="hidden"
                                 multiple
                                 onChange={handleMediaUpload}
+                                disabled={media.length >= MEDIA_LIMIT || submitting}
                             />
                         </label>
                     ))}
                 </div>
+
+                {media.length > 0 && (
+                    <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        Media: {media.length}/{MEDIA_LIMIT} files
+                    </div>
+                )}
 
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 my-4">
                     {media.map((m, i) => (

@@ -3,13 +3,15 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 import { upload } from "../config/cloudinary.js";
 import wrapAsync from "../utils/wrapAsync.js";
 import { addAnswerComment, createAnswer, deleteAnswer, deleteAnswerComment, editAnswer, toggleLikeAnswer, toggleUpvoteAnswer, toggleUpvoteComment } from "../controllers/answerController.js";
+import { validateVideoDuration } from "../middleware/validateVideoDuration.js";
 
 const router = express.Router();
 
 router.post(
   "/new",
   authMiddleware,
-  upload.array("media", 6),
+  upload.array("media", 4),
+  validateVideoDuration,
   wrapAsync(createAnswer)
 );
 

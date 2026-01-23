@@ -31,10 +31,10 @@ export default function ProfileItems({ user }) {
         { key: "overview", label: "Overview", icon: User },
 
         {
-            key: "activity",
-            label: "Activity",
+            key: "insights",
+            label: "Insights",
             icon: Activity,
-            count: (user?.upvotesCount || 0) + (user?.helpfulAnswers || 0),
+            onlyOwner: true,
         },
 
         {
@@ -110,7 +110,7 @@ export default function ProfileItems({ user }) {
                             </div>
 
                             {/* Right: Count */}
-                            {item.count > 0 && (
+                            {item?.count > 0 && (
                                 <span
                                     className={`text-xs px-2 py-0.5 rounded-full
                   ${isActive

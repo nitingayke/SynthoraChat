@@ -14,6 +14,7 @@ import EmojiPickerDialog from "../../common/EmojiPickerDialog";
 import { getMediaType } from "../../../utils/helper";
 import { createAnswerService } from "../../../services/answer.service";
 import { useSnackbar } from "notistack";
+import { getVideoDuration } from "../../../utils/videoDuration";
 
 export default function QuestionAnswerForm({
     questionId,
@@ -29,8 +30,30 @@ export default function QuestionAnswerForm({
     const [openEmoji, setOpenEmoji] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-    const handleMediaUpload = (e) => {
+    const handleMediaUpload = async (e) => {
         const files = Array.from(e.target.files);
+
+        for (const file of files) {
+            const type = getMediaType(file);
+
+            if (type === "video") {
+                try {
+                    const duration = await getVideoDuration(file);
+                    if (duration > 240) {
+                        enqueueSnackbar("Video duration must be 4 minutes or less", { variant: "error" });
+                        return;
+                    }
+                } catch {
+                    enqueueSnackbar("Failed to read video metadata", { variant: "error" });
+                    return;
+                }
+            }
+        }
+
+        if (media.length + files.length > 4) {
+            enqueueSnackbar(`Maximum ${4} media files allowed`, { variant: "warning" });
+            return;
+        }
 
         const newMedia = files.map((file) => ({
             type: getMediaType(file),
@@ -144,16 +167,20 @@ export default function QuestionAnswerForm({
                         ].map((item) => (
                             <label
                                 key={item.label}
-                                className="cursor-pointer p-3 rounded-lg bg-gray-100 dark:bg-neutral-900 flex flex-col items-center gap-2 text-sm dark:text-white hover:bg-gray-200 dark:hover:bg-neutral-800 border border-gray-300 dark:border-[#252525]"
+                                className={`cursor-pointer p-3 rounded-lg flex flex-col items-center gap-2 text-sm dark:text-white hover:bg-gray-200 dark:hover:bg-neutral-800 border ${media.length >= 4 ? 'opacity-50 cursor-not-allowed bg-gray-50 dark:bg-[#0a0a0a] border-gray-200 dark:border-[#1a1a1a]' : 'bg-gray-100 dark:bg-neutral-900 border-gray-300 dark:border-[#252525]'}`}
                             >
                                 {item.icon}
                                 {item.label}
+                                {media.length >= 4 && (
+                                    <span className="text-xs text-red-500">(Max reached)</span>
+                                )}
                                 <input
                                     type="file"
                                     accept={item.accept}
                                     multiple
                                     className="hidden"
                                     onChange={handleMediaUpload}
+                                    disabled={media.length >= 4 || submitting}
                                 />
                             </label>
                         ))}
@@ -193,7 +220,7 @@ export default function QuestionAnswerForm({
                     <button
                         onClick={handleSubmitAnswer}
                         disabled={submitting || !content.trim()}
-                        className="flex-1 flex items-center justify-center gap-2 bg-orange-500 dark:bg-[#07C5B9] text-white font-semibold py-2 rounded-lg disabled:opacity-50"
+                        className="flex-1 flex items-center justify-center gap-2 bg-orange-500 dark:bg-[#07C5B9] text-white font-semibold py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {submitting ? <Loader2 className="animate-spin" /> : <Send size={18} />}
                         Post Answer
@@ -202,7 +229,7 @@ export default function QuestionAnswerForm({
                     <button
                         onClick={handleCancel}
                         disabled={submitting}
-                        className="px-4 py-2 rounded-lg border border-gray-300 dark:border-[#333] dark:text-white disabled:opacity-50 bg-gray-100 dark:bg-[#161616]"
+                        className="px-4 py-2 rounded-lg border border-gray-300 dark:border-[#333] dark:text-white disabled:opacity-50 bg-gray-100 dark:bg-[#161616] disabled:cursor-not-allowed"
                     >
                         Cancel
                     </button>

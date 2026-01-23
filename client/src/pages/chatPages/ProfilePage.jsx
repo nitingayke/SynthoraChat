@@ -2,12 +2,12 @@ import LoginRequired from "../../components/common/LoginRequired";
 import ProfileHeader from "../../components/main/profile/ProfileHeader";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import ProfileItems from "../../components/main/profile/ProfileItems";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import AuthContext from "../../context/AuthContext";
 import { fetchUserProfile } from "../../services/user.service.js"
 
 import UserOverview from "../../components/main/profile/UserOverview";
-import UserActivity from "../../components/main/profile/UserActivity"
+import UserInsights from "../../components/main/profile/UserInsights.jsx"
 import UserQuestions from "../../components/main/profile/UserQuestions";
 import UserAnswers from "../../components/main/profile/UserAnswers";
 import SavedQuestions from "../../components/main/profile/SavedQuestions";
@@ -15,6 +15,20 @@ import Notifications from "../../components/main/profile/Notifications";
 import ProfileSettings from "../../components/main/profile/ProfileSettings";
 import UserFollowers from "../../components/main/profile/UserFollowers";
 import UserFollowing from "../../components/main/profile/UserFollowing";
+import useDocumentTitle from "../../hooks/useDocumentTitle.js";
+
+const TAB_TITLES = {
+    overview: "Overview",
+    insights: "Insights",
+    questions: "Questions",
+    answers: "Answers",
+    "saved-questions": "Saved Questions",
+    notifications: "Notifications",
+    followers: "Followers",
+    following: "Following",
+    settings: "Settings",
+};
+
 
 export default function ProfilePage() {
 
@@ -25,7 +39,7 @@ export default function ProfilePage() {
     const { loginUser } = useContext(AuthContext);
 
     const [profileUser, setProfileUser] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadProfile = async () => {
@@ -43,7 +57,22 @@ export default function ProfilePage() {
         loadProfile();
     }, [username]);
 
+    const reversedFollowers = useMemo(() => {
+        if (!profileUser?.followers) return [];
+        return [...profileUser.followers].reverse();
+    }, [profileUser?.followers]);
+
+    const reversedFollowing = useMemo(() => {
+        if (!profileUser?.following) return [];
+        return [...profileUser.following].reverse();
+    }, [profileUser?.following]);
+
+
     const isOwnProfile = loginUser && profileUser && loginUser?._id === profileUser?._id;
+
+    const tabTitle = TAB_TITLES[activeTab] || "Profile";
+    const displayName = isOwnProfile ? "Your Profile" : profileUser?.username || "Profile";
+    useDocumentTitle(`${displayName} • ${tabTitle}`);
 
     if (loading) {
         return (
@@ -71,7 +100,7 @@ export default function ProfilePage() {
         )
     }
 
-    if ((["saved-questions", "notifications", "settings"].includes(activeTab)) && !isOwnProfile) {
+    if ((["saved-questions", "notifications", "settings", "insights"].includes(activeTab)) && !isOwnProfile) {
         return loginUser?.username ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
                 <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Access Restricted</h2>
@@ -91,8 +120,8 @@ export default function ProfilePage() {
             case "overview":
                 return <UserOverview user={profileUser} />;
 
-            case "activity":
-                return <UserActivity user={profileUser} />
+            case "insights":
+                return <UserInsights user={profileUser} />
 
             case "questions":
                 return <UserQuestions userId={profileUser?._id} isOwnProfile={isOwnProfile} />
@@ -107,10 +136,10 @@ export default function ProfilePage() {
                 return <Notifications notifications={profileUser?.notifications || []} />;
 
             case "followers":
-                return <UserFollowers followers={profileUser?.followers || []} isOwnProfile={isOwnProfile} />;
+                return <UserFollowers followers={reversedFollowers} />;
 
             case "following":
-                return <UserFollowing following={profileUser?.following || []} isOwnProfile={isOwnProfile} />;
+                return <UserFollowing following={reversedFollowing} />;
 
             case "settings":
                 return <ProfileSettings user={profileUser} />;

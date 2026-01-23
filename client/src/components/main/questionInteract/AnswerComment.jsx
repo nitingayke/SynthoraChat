@@ -8,6 +8,7 @@ import { ArrowBigUp, Loader2, Trash2 } from "lucide-react";
 import { timeAgo } from "../../../utils/date";
 import UIStateContext from "../../../context/UIStateContext";
 import { deleteCommentService, toggleUpvoteCommentService } from "../../../services/answer.service";
+import FollowActionButton from "../common/FollowActionButton";
 
 export default function AnswerComment({ answerId, comments }) {
 
@@ -81,14 +82,17 @@ export default function AnswerComment({ answerId, comments }) {
                             />
 
                             <div>
-                                <Link
-                                    to={`/main/u/profile/${comment?.author?.username}`}
-                                    className="font-semibold text-sm text-gray-900 dark:text-gray-100 hover:text-[#07C5B9]"
-                                >
-                                    {comment?.author?.profile?.firstName
-                                        ? `${comment.author.profile.firstName} ${comment.author.profile.lastName}`
-                                        : comment?.author?.username || "User"}
-                                </Link>
+                                <div className="flex items-center gap-2">
+                                    <Link
+                                        to={`/main/u/profile/${comment?.author?.username}`}
+                                        className="font-semibold text-sm text-gray-900 dark:text-gray-100 hover:text-[#07C5B9]"
+                                    >
+                                        {comment?.author?.profile?.firstName
+                                            ? `${comment.author.profile.firstName} ${comment.author.profile.lastName}`
+                                            : comment?.author?.username || "User"}
+                                    </Link>
+                                    <FollowActionButton targetUserId={comment?.author?._id} size="xs" />
+                                </div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400">
                                     {timeAgo(comment.createdAt)}
                                 </div>

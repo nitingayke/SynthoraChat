@@ -12,8 +12,11 @@ import { generateOtp } from "../utils/helper"
 import { sendEmailService } from "../services/email.service";
 import { Link, useNavigate } from "react-router-dom";
 import UIStateContext from "../context/UIStateContext";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 export default function UserVerification() {
+
+  useDocumentTitle("Verify Email");
 
   const navigate = useNavigate();
   const { loginUser, setLoginUser } = useContext(AuthContext);
@@ -63,8 +66,7 @@ export default function UserVerification() {
 
         setTimer(60);
       }
-    } catch (error) {
-      console.log(error);
+    } catch {
       enqueueSnackbar("Failed to send OTP", { variant: "error" });
     }
   }, [enqueueSnackbar, loginUser]);

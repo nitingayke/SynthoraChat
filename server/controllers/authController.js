@@ -4,6 +4,7 @@ import { generateToken } from "../utils/token.js";
 import User from "../models/User.js";
 import { googleAuth } from "../services/googleAuth.service.js";
 import mongoose from "mongoose";
+import { addUserActivity } from "../services/activity.service.js";
 
 export const userSignup = async (req, res) => {
   let { username, email, password } = req.body;
@@ -46,6 +47,12 @@ export const userSignup = async (req, res) => {
     username,
     email,
     password: hashedPassword,
+  });
+
+  await addUserActivity({
+    userId: user._id,
+    title: "Welcome to Synthora 🎉",
+    text: "Your account was created successfully.",
   });
 
   const token = generateToken({
@@ -177,6 +184,12 @@ export const verifyUser = async (req, res) => {
 
   user.isVerified = true;
   await user.save();
+
+  await addUserActivity({
+    userId: user._id,
+    title: "Account verified",
+    text: "Your account has been successfully verified.",
+  });
 
   return res.status(httpStatus.OK).json({
     success: true,

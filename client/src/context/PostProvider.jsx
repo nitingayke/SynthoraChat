@@ -12,10 +12,10 @@ export function PostProvider({ children }) {
     const [allowComments, setAllowComments] = useState(true);
 
 
-    const TITLE_LIMIT = 120;
+    const TITLE_LIMIT = 300;
     const CONTENT_LIMIT = 7000;
     const TOPIC_LIMIT = 10;
-    const MEDIA_LIMIT = 7;
+    const MEDIA_LIMIT = 6;
 
     const values = useMemo(() => ({
         title,

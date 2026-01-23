@@ -63,7 +63,7 @@ export default function AILearningAssistant() {
                 },
             ],
         };
-    }, []);
+    }, [analytics?.ai?.dailyUsage]);
 
 
     const chartOptions = {

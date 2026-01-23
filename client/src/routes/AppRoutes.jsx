@@ -18,7 +18,6 @@ import CreatePostPage from "../pages/chatPages/CreatePostPage";
 import ProfilePage from "../pages/chatPages/ProfilePage";
 import AIChat from "../pages/chatPages/AIChat";
 import QuestionInteract from "../pages/chatPages/QuestionInteract";
-import Temp from "../pages/chatPages/Temp";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import ScreenLoader from "../components/loader/ScreenLoader";
@@ -57,7 +56,6 @@ export default function AppRoutes() {
 
                     <Route path="u/profile/:username" element={<ProfilePage />} />
                     
-                    <Route path="temp" element={<Temp />} />
                     <Route path="*" element={<NotFound />} />
                 </Route>
 

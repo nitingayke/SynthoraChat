@@ -11,6 +11,7 @@ import QuestionFilterToggle from "../../components/main/common/QuestionFilterTog
 
 import { getQuestionById } from "../../services/question.service";
 import SocketContext from "../../context/SocketContext";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 
 export default function QuestionInteract() {
 
@@ -23,6 +24,8 @@ export default function QuestionInteract() {
     const [currentQuestion, setCurrentQuestion] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    useDocumentTitle(currentQuestion?.title ? `${currentQuestion.title}` : "Question");
 
     useEffect(() => {
         if (!questionId) return;
@@ -55,6 +58,28 @@ export default function QuestionInteract() {
         };
     }, [socket, questionId]);
 
+    useEffect(() => {
+        if (!socket || !questionId) return;
+
+        const handleQuestionUpdate = ({ questionId: updatedId, updates }) => {
+            if (updatedId !== questionId) return;
+
+            setCurrentQuestion(prev => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    ...updates,
+                };
+            });
+        };
+
+        socket.on("question:update", handleQuestionUpdate);
+
+        return () => {
+            socket.off("question:update", handleQuestionUpdate);
+        };
+    }, [questionId, socket]);
+
     if (loading) {
         return (
             <div className="flex flex-1 items-center justify-center">
@@ -77,8 +102,8 @@ export default function QuestionInteract() {
         <>
             <QuestionFilterToggle />
 
-            <div className="w-full max-w-5xl mx-auto flex flex-col-reverse md:flex-row py-4 gap-4">
-                <div id="related-questions" className="h-fit w-full md:w-[35%]">
+            <div className="w-full max-w-6xl mx-auto flex flex-col-reverse md:flex-row py-4 gap-4">
+                <div id="related-questions" className="h-fit w-full md:w-90">
                     <div className="md:hidden mb-2">
                         <a
                             href="#related-questions"
@@ -101,7 +126,7 @@ export default function QuestionInteract() {
                     <FilterQuestionList />
                 </div>
                 <div className="flex-1 space-y-3 rounded-lg border p-3 sm:p-4 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition h-fit">
-                    <QuestionDetail question={currentQuestion} /> 
+                    <QuestionDetail question={currentQuestion} />
 
                     <AnswerList question={currentQuestion} />
                 </div>

@@ -13,29 +13,28 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: {
-    folder: "SynthoraChat",
-    allowed_formats: [
-      "jpg",
-      "jpeg",
-      "png",
-      "gif",
-      "bmp",
-      "tiff",
-      "svg",
-      "ico",
-      "webp",
-      "mp4",
-      "mov",
-      "avi",
-      "webm",
-      "mkv",
-      "flv",
-      "wmv",
-      "mpeg",
-      "3gp",
-    ],
-    resource_type: "auto",
+  params: (req, file) => {
+    const isDocument = file.mimetype === "application/pdf";
+
+    return {
+      folder: "SynthoraChat",
+      resource_type: isDocument ? "raw" : "auto",
+      allowed_formats: [
+        "jpg",
+        "jpeg",
+        "png",
+        "gif",
+        "webp",
+        "mp4",
+        "mov",
+        "avi",
+        "webm",
+        "mp3",
+        "wav",
+        "ogg",
+        "pdf",
+      ],
+    };
   },
 });
 

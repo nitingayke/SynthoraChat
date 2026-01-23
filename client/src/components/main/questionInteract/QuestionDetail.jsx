@@ -6,6 +6,8 @@ import {
   Loader2,
   ThumbsUp,
   ArrowBigUp,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -26,6 +28,8 @@ import { formatCount } from "../../../utils/formatCount";
 import { slugify } from "../../../utils/helper";
 import SocketContext from "../../../context/SocketContext";
 import UIStateContext from "../../../context/UIStateContext";
+import EditQuestionDialog from "./EditQuestionDialog";
+import FollowActionButton from "../common/FollowActionButton";
 
 export default function QuestionDetail({ question }) {
 
@@ -44,6 +48,8 @@ export default function QuestionDetail({ question }) {
     save: false,
   });
   const [answerSummary, setAnswerSummary] = useState(null);
+
+  const [editOpen, setEditOpen] = useState(false);
 
   const {
     _id,
@@ -111,6 +117,12 @@ export default function QuestionDetail({ question }) {
   }, [socket, handleQuestionLike, handleQuestionUpvote, handleQuestionSave]);
 
   const userId = loginUser?._id;
+  const isOwner = loginUser?._id === author?._id && loginUser?.username === author?.username;
+  const isEdited =
+    question?.contentUpdatedAt &&
+    new Date(question.contentUpdatedAt).getTime() >
+    new Date(question.createdAt).getTime();
+
 
   const handleLike = async () => {
 
@@ -169,108 +181,130 @@ export default function QuestionDetail({ question }) {
   const isUpvoted = upvotesArr.includes(userId);
   const isSaved = savesArr.includes(userId);
 
+  const commCls = "p-2 rounded-md bg-gray-100 dark:bg-[#212121] text-gray-800 dark:text-white hover:bg-gray-200/80 dark:hover:bg-[#272727]";
+
   return (
-    <article>
+    <>
+      <article>
 
-      {/* HEADER */}
-      <header>
-        <h1 className="text-lg sm:text-xl font-semibold text-black dark:text-white">
-          {title}
-        </h1>
+        {/* HEADER */}
+        <header className="relative">
+          <h1 className="text-lg sm:text-xl font-semibold text-black dark:text-white">
+            {title}
+          </h1>
 
-        <p className="mt-2 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-          {content}
-        </p>
+          <p className="mt-2 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+            {content}
+          </p>
 
-        <MediaDialog media={media} />
+          <MediaDialog media={media} />
 
-        {/* TOPICS */}
-        <div className="flex flex-wrap gap-2 mt-3">
-          {topics.map(t => (
-            <Link
-              key={t}
-              to={`/main?topic=${slugify(t)}`}
-              className="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-500 dark:bg-[#07C5B9]/10 dark:text-[#07C5B9] font-medium"
-            >
-              {t}
-            </Link>
-          ))}
-        </div>
-      </header>
-
-      {/* ACTIONS */}
-      <div className="relative flex flex-nowrap items-center justify-between sm:justify-start gap-2 lg:gap-4 mt-5 py-2 border-y border-gray-200 dark:border-[#2a2a2a] overflow-x-auto scrollbar-hide">
-
-        <ActionButton
-          active={isLiked}
-          loading={loading.like}
-          onClick={handleLike}
-          count={formatCount(likesArr.length)}
-          Icon={ThumbsUp}
-          activeClass="text-red-500 bg-red-500/10 border-red-500/50"
-        />
-
-        <ActionButton
-          active={isUpvoted}
-          loading={loading.upvote}
-          onClick={handleUpvote}
-          count={formatCount(upvotesArr.length)}
-          Icon={ArrowBigUp}
-          activeClass="text-green-500 bg-green-500/10 border-green-500/50"
-        />
-
-        <ActionButton
-          active={isSaved}
-          loading={loading.save}
-          onClick={handleSave}
-          count={formatCount(savesArr.length)}
-          Icon={Bookmark}
-          activeClass="text-yellow-500 bg-yellow-500/10 border-yellow-500/50"
-        />
-
-        <button
-          onClick={handleShare}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#202020] border border-gray-300/60 dark:border-[#303030] hover:bg-gray-200/60 hover:dark:bg-[#252525]"
-        >
-          <Share2 size={18} />
-          <span className="hidden sm:block">{formatCount(shares)}</span>
-        </button>
-
-        <CommentActions question={question} setAnswerSummary={setAnswerSummary} />
-      </div>
-
-      <footer className="mt-4 ">
-        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
-              <Eye size={14} />
-              {formatCount(views)}
-            </span>
-            <span>{answers.length} Answers</span>
+          <div className="flex flex-wrap gap-2 mt-3">
+            {topics.map(t => (
+              <Link
+                key={t}
+                to={`/main?topic=${slugify(t)}`}
+                className="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-500 dark:bg-[#07C5B9]/10 dark:text-[#07C5B9] font-medium"
+              >
+                {t}
+              </Link>
+            ))}
           </div>
 
-          {author?.profile?.firstName && (
-            <Link
-              to={`/main/u/profile/${author?.username}`}
-              className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition underline underline-offset-2"
-            >
-              By {author.profile.firstName} {author?.profile?.lastName}
-            </Link>
-          )}
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-600 dark:text-gray-400">{isEdited && "(edited)"}</p>
+            {
+              isOwner && <div className="flex items-center gap-2">
+                <button
+                  className={commCls}
+                  onClick={() => setEditOpen(true)}
+                ><Pencil size={16} /></button>
+                <button className={`${commCls} hover:text-red-500`}><Trash2 size={16} /></button>
+              </div>
+            }
+          </div>
+        </header>
+
+        {/* ACTIONS */}
+        <div className="relative flex flex-nowrap items-center justify-between sm:justify-start gap-2 lg:gap-4 mt-2 py-2 border-y border-gray-200 dark:border-[#2a2a2a] overflow-x-auto scrollbar-hide">
+
+          <ActionButton
+            active={isLiked}
+            loading={loading.like}
+            onClick={handleLike}
+            count={formatCount(likesArr.length)}
+            Icon={ThumbsUp}
+            activeClass="text-red-500 bg-red-500/10 border-red-500/50"
+          />
+
+          <ActionButton
+            active={isUpvoted}
+            loading={loading.upvote}
+            onClick={handleUpvote}
+            count={formatCount(upvotesArr.length)}
+            Icon={ArrowBigUp}
+            activeClass="text-green-500 bg-green-500/10 border-green-500/50"
+          />
+
+          <ActionButton
+            active={isSaved}
+            loading={loading.save}
+            onClick={handleSave}
+            count={formatCount(savesArr.length)}
+            Icon={Bookmark}
+            activeClass="text-yellow-500 bg-yellow-500/10 border-yellow-500/50"
+          />
+
+          <button
+            onClick={handleShare}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-[#202020] border border-gray-300/60 dark:border-[#303030] hover:bg-gray-200/60 hover:dark:bg-[#252525]"
+          >
+            <Share2 size={18} />
+            <span className="hidden sm:block">{formatCount(shares)}</span>
+          </button>
+
+          <CommentActions question={question} setAnswerSummary={setAnswerSummary} />
         </div>
 
-        {
-          answerSummary && <div className="mt-4 rounded-xl border border-orange-300/40 dark:border-[#07C5B9]/30 bg-orange-500/10 dark:bg-[#07C5B9]/5 p-3 sm:p-5 shadow-sm">
-            <h2 className="font-semibold text-orange-500 dark:text-[#07C5B9] flex items-center gap-2">
-              AI Summary
-            </h2>
-            <p className="text-sm pt-1 whitespace-pre-wrap">
-              {answerSummary}
-            </p>
+        <footer className="mt-4">
+          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1">
+                <Eye size={14} />
+                {formatCount(views)}
+              </span>
+              <span>{answers.length} Answers</span>
+            </div>
+
+            <div className="gap-2 flex items-center">
+              <FollowActionButton targetUserId={_id} size="xs" />
+
+              {author?.profile?.firstName && (
+                <Link
+                  to={`/main/u/profile/${author?.username}`}
+                  className="hover:text-orange-500 dark:hover:text-[#07C5B9] transition underline underline-offset-2"
+                >
+                  By {author.profile.firstName} {author?.profile?.lastName}
+                </Link>
+              )}
+            </div>
           </div>
-        }
-      </footer>
-    </article>
+
+          {
+            answerSummary && <div className="mt-4 rounded-xl border border-orange-300/40 dark:border-[#07C5B9]/30 bg-orange-500/10 dark:bg-[#07C5B9]/5 p-3 sm:p-5 shadow-sm">
+              <h2 className="font-semibold text-orange-500 dark:text-[#07C5B9] flex items-center gap-2">
+                AI Summary
+              </h2>
+              <p className="text-sm pt-1 whitespace-pre-wrap">
+                {answerSummary}
+              </p>
+            </div>
+          }
+        </footer>
+      </article>
+
+      <EditQuestionDialog question={question} open={editOpen} handleClose={setEditOpen} />
+    </>
   );
 }
 

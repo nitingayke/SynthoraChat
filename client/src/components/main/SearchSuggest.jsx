@@ -1,17 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Search, Hash } from "lucide-react";
 import { useContext, useMemo } from "react";
 import UIStateContext from "../../context/UIStateContext";
 import { filterSuggestions } from "../../utils/search";
 import QuestionContext from "../../context/QuestionContext";
-import useDebounce from "../../hooks/useDebounce";
+
+const SEARCH_DISABLED_ROUTES = [
+    "/main/u/profile"
+];
 
 export default function SearchSuggest() {
 
+    const location = useLocation();
     const { questions, newQuestions, filterOptions } = useContext(QuestionContext);
-    const { searchQuery } = useContext(UIStateContext);
-
-    const debouncedSearchQuery = useDebounce(searchQuery, 300);
+    const { debouncedSearchQuery } = useContext(UIStateContext);
 
     const allSuggestions = useMemo(() => {
 
@@ -50,6 +52,9 @@ export default function SearchSuggest() {
         () => filterSuggestions(allSuggestions, debouncedSearchQuery),
         [debouncedSearchQuery, allSuggestions]
     );
+
+    const isSearchDisabled = SEARCH_DISABLED_ROUTES.some(route => location.pathname.startsWith(route));
+    if (isSearchDisabled) return null;
 
     if (!debouncedSearchQuery || debouncedSearchQuery.length < 2 || filteredSuggestions.length === 0) return null;
 

@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const IMPORTANT_ANSWER_FIELDS = ["content", "media"];
+
 const answerSchema = new mongoose.Schema(
   {
     questionId: {
@@ -34,6 +36,11 @@ const answerSchema = new mongoose.Schema(
         },
       },
     ],
+    contentUpdatedAt: {
+      type: Date,
+      default: null,
+    },
+
     upvotes: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -53,7 +60,7 @@ const answerSchema = new mongoose.Schema(
           auto: true,
           default: () => new mongoose.Types.ObjectId(),
         },
-        author: { 
+        author: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
           required: true,
@@ -104,7 +111,54 @@ const answerSchema = new mongoose.Schema(
       default: "published",
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  },
 );
+
+answerSchema.pre("save", function (next) {
+  if (this.isNew) return next();
+
+  const modified = this.modifiedPaths();
+
+  const isContentEdit = IMPORTANT_ANSWER_FIELDS.some(field =>
+    modified.includes(field)
+  );
+
+  if (isContentEdit) {
+    this.contentUpdatedAt = new Date();
+  }
+
+  next();
+});
+
+answerSchema.pre(
+  ["findOneAndUpdate", "updateOne", "updateMany"],
+  function (next) {
+    const update = this.getUpdate() || {};
+
+    const updatedFields = new Set([
+      ...Object.keys(update.$set || {}),
+      ...Object.keys(update).filter(k => !k.startsWith("$")),
+    ]);
+
+    const isContentEdit = IMPORTANT_ANSWER_FIELDS.some(field =>
+      updatedFields.has(field)
+    );
+
+    if (isContentEdit) {
+      this.setUpdate({
+        ...update,
+        $set: {
+          ...(update.$set || {}),
+          contentUpdatedAt: new Date(),
+        },
+      });
+    }
+
+    next();
+  }
+);
+
 
 export default mongoose.model("Answer", answerSchema);

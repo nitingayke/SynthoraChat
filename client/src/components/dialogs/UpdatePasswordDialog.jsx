@@ -105,6 +105,31 @@ export default function UpdatePasswordDialog() {
     }
   };
 
+  const handleOtpKeyDown = (e, index) => {
+    if (loading) return;
+
+    if (e.key === "Backspace") {
+      e.preventDefault();
+      const newOtp = [...otp];
+
+      if (newOtp[index]) {
+        newOtp[index] = "";
+        setOtp(newOtp);
+      } else if (index > 0) {
+        newOtp[index - 1] = "";
+        setOtp(newOtp);
+        inputsRef.current[index - 1]?.focus();
+      }
+    }
+
+    if (e.key === "ArrowLeft" && index > 0) {
+      inputsRef.current[index - 1]?.focus();
+    }
+    if (e.key === "ArrowRight" && index < 5) {
+      inputsRef.current[index + 1]?.focus();
+    }
+  };
+
   const verifyOtp = () => {
     const finalOtp = otp.join("");
 
@@ -192,6 +217,7 @@ export default function UpdatePasswordDialog() {
                   ref={(el) => (inputsRef.current[i] = el)}
                   value={digit}
                   onChange={(e) => handleOtpChange(e.target.value, i)}
+                  onKeyDown={(e) => handleOtpKeyDown(e, i)}
                   disabled={loading}
                   maxLength={1}
                   className="w-10 h-10 text-center text-lg font-bold rounded-lg bg-gray-100 dark:bg-[#191919] focus:ring-2 outline-none focus:ring-orange-500 dark:focus:ring-[#07C5B9] dark:text-white"

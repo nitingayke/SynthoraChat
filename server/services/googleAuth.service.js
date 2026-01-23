@@ -1,6 +1,7 @@
 import { OAuth2Client } from "google-auth-library";
 import User from "../models/User.js";
 import { generateToken } from "../utils/token.js";
+import { addUserActivity } from "./activity.service.js";
 
 const google_client_id = process.env.GOOGLE_CLIENT_ID;
 
@@ -62,6 +63,13 @@ export const googleAuth = async (idToken) => {
         profilePicture: picture || "",
       },
       isVerified: true,
+    });
+
+    await addUserActivity({
+      userId: user._id,
+      title: "Welcome to Synthora 🎉",
+      text: "Your account was created using Google.",
+      link: `/main/u/profile/${user.username}`,
     });
   }
 

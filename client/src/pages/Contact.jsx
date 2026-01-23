@@ -3,8 +3,12 @@ import React from "react";
 import { motion } from "framer-motion";
 import ContactForm from "../components/contact/ContactForm";
 import ContactInfo from "../components/contact/ContactInfo";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 export default function Contact() {
+
+    useDocumentTitle("Contact");
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#0f0f0f]">
             <div className="max-w-6xl mx-auto px-4 py-14">

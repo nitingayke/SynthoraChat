@@ -7,8 +7,11 @@ import PopularTopics from '../../components/main/explore/PopularTopics';
 import AIFeatures from '../../components/main/explore/AIFeatures';
 import QuickActions from '../../components/main/explore/QuickActions';
 import CommunitySpotlight from '../../components/main/explore/CommunitySpotlight';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 
 export default function ExplorePage() {
+
+    useDocumentTitle("Explore");
 
     return (
         <div className="max-w-7xl mx-auto py-5 md:py-15">

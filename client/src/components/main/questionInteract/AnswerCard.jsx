@@ -23,6 +23,7 @@ import {
 import { formatCount } from "../../../utils/formatCount";
 import { shareContent } from "../../../services/share.service";
 import { timeAgo } from "../../../utils/date";
+import FollowActionButton from "../common/FollowActionButton";
 
 export default function AnswerCard({ answer, allowComments }) {
 
@@ -66,10 +67,10 @@ export default function AnswerCard({ answer, allowComments }) {
       : author?.username || "Unknown User";
 
   const isEdited =
-    answer?.updatedAt &&
-    answer?.createdAt &&
-    new Date(answer.updatedAt).getTime() >
-    new Date(answer.createdAt).getTime();
+    answer?.contentUpdatedAt &&
+    new Date(answer.contentUpdatedAt) >
+    new Date(answer.createdAt);
+
 
 
   const isLiked = userId ? likes.includes(userId) : false;
@@ -209,12 +210,15 @@ export default function AnswerCard({ answer, allowComments }) {
         />
 
         <div className="flex-1">
-          <Link
-            to={`/main/profile/${author?.username}`}
-            className="font-semibold text-sm text-gray-900 dark:text-gray-100 hover:text-[#07C5B9]"
-          >
-            {fullName}
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to={`/main/u/profile/${author?.username}`}
+              className="font-semibold text-sm text-gray-900 dark:text-gray-100 hover:text-[#07C5B9]"
+            >
+              {fullName}
+            </Link>
+            <FollowActionButton targetUserId={author?._id} size="xs" />
+          </div>
 
           <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
             <span>{timeAgo(answer?.createdAt)}</span>

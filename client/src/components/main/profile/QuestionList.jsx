@@ -3,10 +3,8 @@ import { Link } from "react-router-dom";
 import {
     MessageCircle,
     ThumbsUp,
-    Heart,
     Bookmark,
     Eye,
-    Share2,
     Clock,
     Tag,
     ArrowBigUp,
@@ -14,6 +12,7 @@ import {
 import Avatar from '@mui/material/Avatar';
 import { timeAgo } from "../../../utils/date";
 import ExpandableText from "../common/ExpandableText";
+import { slugify } from "../../../utils/helper";
 
 export default function QuestionList({ questions, userQuestion }) {
 
@@ -48,7 +47,7 @@ export default function QuestionList({ questions, userQuestion }) {
                         key={_id}
                         className="group rounded-lg border border-gray-200 dark:border-[#2a2a2a] bg-white dark:bg-[#191919] p-4 space-y-4"
                     >
-                        <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
                             <div className="flex items-center gap-3">
                                 {!userQuestion && <Link to={`/profile/${author?.username}`}>
                                     <Avatar
@@ -71,15 +70,6 @@ export default function QuestionList({ questions, userQuestion }) {
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                                <button className="hover:text-orange-500 dark:hover:text-[#07C5B9] p-1.5 rounded-lg bg-gray-100 dark:bg-[#202020]">
-                                    <Bookmark size={18} />
-                                </button>
-                                <button className="hover:text-orange-500 dark:hover:text-[#07C5B9] p-1.5 rounded-lg bg-gray-100 dark:bg-[#202020]">
-                                    <Share2 size={18} />
-                                </button>
-                            </div>
                         </div>
 
                         <div className="space-y-2">
@@ -93,13 +83,14 @@ export default function QuestionList({ questions, userQuestion }) {
                         {topics.length > 0 && (
                             <div className="flex flex-wrap gap-2">
                                 {topics.map((topic, idx) => (
-                                    <span
+                                    <Link
                                         key={idx * 0.25487}
+                                        to={`/main?topic=${slugify(topic)}`}
                                         className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-orange-100 text-orange-500 dark:bg-[#07C5B9]/10 dark:text-[#07C5B9]"
                                     >
                                         <Tag size={12} />
                                         {topic}
-                                    </span>
+                                    </Link>
                                 ))}
                             </div>
                         )}

@@ -10,7 +10,7 @@ export default function QuestionMedia({ media, questionId }) {
 
                 <button className="absolute top-2 right-3 text-sm px-3 py-0.5 rounded-2xl bg-white dark:bg-[#161616] z-30">{media.length}</button>
 
-                {media?.slice(0, 1)?.map((item, index) => (
+                {media?.slice(0, 3)?.map((item, index) => (
                     <Link
                         key={index * 0.2548}
                         to={`/main/questions/${questionId}`}
@@ -47,15 +47,12 @@ export default function QuestionMedia({ media, questionId }) {
                         )}
 
                         {item.type === "document" && (
-                            <a
-                                href={item.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex flex-col items-center justify-center gap-1 text-sm text-gray-700 dark:text-gray-300"
+                            <div
+                                className="flex flex-col items-center justify-center gap-1 text-sm text-gray-700 dark:text-gray-300 w-full h-full"
                             >
                                 <FileText size={40} />
                                 <span>Document</span>
-                            </a>
+                            </div>
                         )}
                     </Link>
                 ))}

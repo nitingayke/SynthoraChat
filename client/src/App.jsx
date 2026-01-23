@@ -14,7 +14,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <SnackbarProvider maxSnack={1}>
+      <SnackbarProvider maxSnack={3}>
         <ThemeProvider>
           <SocketProvider>
             <AnalyticsProvider>

@@ -4,35 +4,33 @@ import { UserFollowStats } from "./UserFollowStats";
 import UIStateContext from "../../../context/UIStateContext";
 import { matchUserSearch } from "../../../utils/search";
 import PropTypes from "prop-types";
+import { computeFollowStats } from "../../../utils/followStats";
 
 const PAGE_SIZE = 15;
 
-export default function UserFollowing({ following = [], isOwnProfile = false}) {
+export default function UserFollowing({ following = [] }) {
 
-    const { searchQuery } = useContext(UIStateContext);
+    const { debouncedSearchQuery } = useContext(UIStateContext);
 
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-    
+
 
     const filteredFollowing = useMemo(() => {
 
-        if (!searchQuery) return following;
+        if (!debouncedSearchQuery) return following;
 
         return following.filter(({ user }) =>
-            matchUserSearch(user, searchQuery)
+            matchUserSearch(user, debouncedSearchQuery)
         );
-    }, [following, searchQuery]);
+    }, [following, debouncedSearchQuery]);
 
     const visibleFollowing = useMemo(() => {
-            return filteredFollowing.slice(0, visibleCount);
-        }, [filteredFollowing, visibleCount]);
+        return filteredFollowing.slice(0, visibleCount);
+    }, [filteredFollowing, visibleCount]);
 
-    const stats = {
-        total: following?.length,
-        monthly: 8,
-        growth: 8,
-        activeRate: 76,
-    };
+    const stats = useMemo(() => {
+        return computeFollowStats(following);
+    }, [following]);
 
     return (
         <div className="space-y-4 mt-4 md:mt-0">
@@ -46,11 +44,12 @@ export default function UserFollowing({ following = [], isOwnProfile = false}) {
                             You are not following anyone yet.
                         </div>
                     ) : (
-                        visibleFollowing?.map(({ user }) => (
+                        visibleFollowing?.map(({ user, followedAt }) => (
                             <UserCard
                                 key={user?._id}
                                 user={user}
-                                isOwnProfile={isOwnProfile}
+                                followedAt={followedAt}
+                                mode="following"
                             />
                         ))
                     )
@@ -70,6 +69,5 @@ export default function UserFollowing({ following = [], isOwnProfile = false}) {
 
 UserFollowing.propTypes = {
     following: PropTypes.array.isRequired,
-    isOwnProfile: PropTypes.bool.isRequired,
 };
 

@@ -9,6 +9,7 @@ import {
     Brain,
 } from "lucide-react";
 import { timeAgo } from "../../../utils/date";
+import ExpandableText from "../common/ExpandableText";
 
 export default function AnswerCard({ answer }) {
     const {
@@ -41,9 +42,7 @@ export default function AnswerCard({ answer }) {
             </div>
 
             {/* Answer Content */}
-            <p className="text-gray-800 dark:text-gray-200 text-sm leading-relaxed line-clamp-4">
-                {content}
-            </p>
+            <ExpandableText text={content} lines={6} />
 
             {/* Stats */}
             <div className="flex flex-wrap items-center gap-5 pt-3 border-t border-gray-100 dark:border-[#2a2a2a] text-sm text-gray-600 dark:text-gray-400">

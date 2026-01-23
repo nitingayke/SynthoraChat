@@ -1,3 +1,4 @@
+import { useContext, useMemo, useState } from "react";
 import {
     MapPin,
     Globe,
@@ -25,18 +26,16 @@ import {
 import QuickActions from "./QuickActions"
 import PropTypes from "prop-types";
 import { formatDate, timeAgo } from "../../../utils/date"
-import { useContext } from "react";
 import AuthContext from "../../../context/AuthContext";
+import { Link } from "react-router-dom";
 
+const ACTIVITIES_PER_PAGE = 7;
 
 export default function UserOverview({ user }) {
 
     const { loginUser } = useContext(AuthContext);
 
-    const isOwnProfile = loginUser && user && loginUser._id === user._id;
-
-
-    if (!user) return null;
+    const [visibleCount, setVisibleCount] = useState(ACTIVITIES_PER_PAGE);
 
     const {
         profile = {},
@@ -47,46 +46,33 @@ export default function UserOverview({ user }) {
         following = [],
         questions = [],
         answers = [],
+        activities = [],
         upvotesCount = 0,
         helpfulAnswers = 0,
         lastActive,
         createdAt,
-    } = user;
+    } = user || {};
+
+    const isOwnProfile = loginUser && user && loginUser._id === user._id;
+
+    const visibleActivities = useMemo(() => {
+        return activities
+            ?.slice()
+            .reverse()
+            .slice(0, visibleCount);
+    }, [activities, visibleCount]);
+
+    const hasMoreActivities = visibleCount < activities.length;
+
+    if (!user) return null;
 
     const stats = [
-        { label: "Questions", value: questions?.length, icon: FileText, color: "text-blue-600 dark:text-blue-400", link: "/user/questions" },
-        { label: "Answers", value: answers?.length, icon: MessageSquare, color: "text-green-600 dark:text-green-400", link: "/user/answers" },
-        { label: "Upvotes", value: upvotesCount, icon: ThumbsUp, color: "text-orange-600 dark:text-orange-400", link: "/user/upvotes" },
-        { label: "Helpful", value: helpfulAnswers, icon: Award, color: "text-purple-600 dark:text-purple-400", link: "/user/helpful" },
-        { label: "Followers", value: followers?.length, icon: Users, color: "text-cyan-600 dark:text-cyan-400", link: "/user/followers" },
-        { label: "Following", value: following?.length, icon: UserCheck, color: "text-pink-600 dark:text-pink-400", link: "/user/following" },
-    ];
-
-    const recentActivity = [
-        {
-            type: "Answered",
-            description: "Answered a question in 'React Hooks'",
-            date: new Date(Date.now() - 3600000), // 1 hour ago
-            link: "/answer/123",
-        },
-        {
-            type: "Question Asked",
-            description: "Asked: 'How to optimize a MongoDB query in Node.js?'",
-            date: new Date(Date.now() - 172800000), // 2 days ago
-            link: "/question/456",
-        },
-        {
-            type: "New Follower",
-            description: "Started following you.",
-            date: new Date(Date.now() - 604800000), // 7 days ago
-            link: "/user/new-follower-id",
-        },
-        {
-            type: "Upvoted",
-            description: "Upvoted an answer about 'Tailwind CSS'",
-            date: new Date(Date.now() - 1209600000), // 14 days ago
-            link: "/answer/789",
-        },
+        { label: "Questions", value: questions?.length, icon: FileText, color: "text-blue-600 dark:text-blue-400", link: "/main/u/profile/nitingayke9209?tab=questions" },
+        { label: "Answers", value: answers?.length, icon: MessageSquare, color: "text-green-600 dark:text-green-400", link: "/main/u/profile/nitingayke9209?tab=answers" },
+        { label: "Upvotes", value: upvotesCount, icon: ThumbsUp, color: "text-orange-600 dark:text-orange-400" },
+        { label: "Helpful", value: helpfulAnswers, icon: Award, color: "text-purple-600 dark:text-purple-400" },
+        { label: "Followers", value: followers?.length, icon: Users, color: "text-cyan-600 dark:text-cyan-400", link: "/main/u/profile/nitingayke9209?tab=followers" },
+        { label: "Following", value: following?.length, icon: UserCheck, color: "text-pink-600 dark:text-pink-400", link: "/main/u/profile/nitingayke9209?tab=following" },
     ];
 
     const ChipList = ({ items = [] }) => {
@@ -130,9 +116,9 @@ export default function UserOverview({ user }) {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-2">
                 {stats.map((s, i) => (
-                    <a
+                    <Link
                         key={i * 0.12478}
-                        href={s?.link}
+                        to={s?.link || ""}
                         className="p-3 rounded-lg border border-gray-200 dark:border-[#2a2a2a] bg-white dark:bg-[#191919] hover:border-orange-300 dark:hover:border-[#07C5B9] transition block"
                     >
                         <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
@@ -144,7 +130,7 @@ export default function UserOverview({ user }) {
                         <div className="text-xl font-bold mt-1 text-gray-900 dark:text-white">
                             {s.value}
                         </div>
-                    </a>
+                    </Link>
                 ))}
             </div>
 
@@ -164,7 +150,6 @@ export default function UserOverview({ user }) {
                                 {profile.bio || "No bio added yet."}
                             </p>
 
-                            {/* REFACTORED: InfoRow 1 (Location) */}
                             <div className="flex items-start gap-3">
                                 <MapPin size={16} className="text-gray-500 dark:text-gray-400" />
                                 <div>
@@ -219,32 +204,51 @@ export default function UserOverview({ user }) {
                             </header>
 
                             <div className="p-4 space-y-3">
-                                {recentActivity.length > 0 ? (
+                                {visibleActivities.length > 0 ? (
                                     <div className="space-y-3">
-                                        {recentActivity.map((activity, index) => (
-                                            <a
-                                                key={index * 0.25478}
-                                                href={activity.link}
-                                                className="group flex items-center gap-3 py-2 sm:px-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#262626] transition"
-                                            >
-                                                <div className="flex-1 min-w-0">
-                                                    <p
-                                                        className="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-orange-500 dark:group-hover:text-[#07C5B9] transition"
-                                                    >
-                                                        {activity.description}
-                                                    </p>
+                                        {visibleActivities.map((activity, index) => {
+                                            const hasLink = !!activity?.link;
 
-                                                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                                                        {activity.type} • {timeAgo(activity.date)}
-                                                    </p>
-                                                </div>
+                                            return (
+                                                <Link
+                                                    key={index * 0.25478}
+                                                    to={hasLink ? activity.link : "#"}
+                                                    className={`group flex items-center gap-3 py-2 sm:px-2 rounded-lg transition ${!hasLink ? "pointer-events-none cursor-default" : "hover:bg-gray-100 dark:hover:bg-[#262626]"}`}
+                                                >
+                                                    <div className="flex-1 min-w-0">
+                                                        <p
+                                                            className={`text-sm font-medium truncate transition ${!hasLink
+                                                                ? "text-gray-400 dark:text-gray-500"
+                                                                : "text-gray-900 dark:text-white group-hover:text-orange-500 dark:group-hover:text-[#07C5B9]"
+                                                                }`}
+                                                        >
+                                                            {activity.text}
+                                                        </p>
 
-                                                <CornerUpRight
-                                                    size={16}
-                                                    className="text-gray-400 dark:text-gray-500 group-hover:text-orange-500 dark:group-hover:text-[#07C5B9] flex-shrink-0 transition"
-                                                />
-                                            </a>
-                                        ))}
+                                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                                            {activity.title} • {timeAgo(activity.createdAt)}
+                                                        </p>
+                                                    </div>
+
+                                                    {hasLink && <CornerUpRight
+                                                        size={16}
+                                                        className={`flex-shrink-0 transition text-gray-400 dark:text-gray-500 group-hover:text-orange-500 dark:group-hover:text-[#07C5B9]`}
+                                                    />}
+                                                </Link>
+                                            );
+                                        })}
+
+                                        {hasMoreActivities && (
+                                            <div className="flex justify-center pt-2">
+                                                <button
+                                                    onClick={() => setVisibleCount(v => v + ACTIVITIES_PER_PAGE)}
+                                                    className="text-sm px-4 py-1.5 rounded-lg border border-gray-300 dark:border-[#2a2a2a] hover:border-orange-400 dark:hover:border-[#07C5B9] transition"
+                                                >
+                                                    Load more
+                                                </button>
+                                            </div>
+                                        )}
+
                                     </div>
                                 ) : (
                                     <p className="text-sm text-gray-500 dark:text-gray-400">

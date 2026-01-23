@@ -4,6 +4,7 @@ import Question from "../models/Question.js";
 import User from "../models/User.js";
 import { cleanupCloudinaryFiles } from "../services/cleanupCloudinary.js";
 import { mapMediaType } from "../utils/mediaTypeMapper.js";
+import { addUserActivity } from "../services/activity.service.js";
 
 export const createAnswer = async (req, res) => {
   const { questionId, content } = req.body;
@@ -52,22 +53,32 @@ export const createAnswer = async (req, res) => {
 
     await Question.updateOne(
       { _id: questionId },
-      { $push: { answers: answer._id } }
+      { $push: { answers: answer._id } },
     );
 
     await User.updateOne({ _id: userId }, { $push: { answers: answer._id } });
 
-    const populatedAnswer = {
-      ...answer.toObject(),
-      author: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        profile: user.profile,
-      },
-    };
+    await addUserActivity({
+      userId,
+      title: "Answered a Question",
+      text: "You posted a new answer",
+      link: `/main/questions/${questionId}`,
+    });
 
-    req.io.emit("answer:new", {
+    const populatedAnswer = await Answer.findById(answer._id)
+      .populate({
+        path: "author",
+        select:
+          "_id username profile.firstName profile.lastName profile.profilePicture",
+      })
+      .populate({
+        path: "comments.author",
+        select:
+          "_id username profile.firstName profile.lastName profile.profilePicture",
+      })
+      .lean();
+
+    req.io.to(`question:${questionId}`).emit("answer:new", {
       questionId,
       answer: populatedAnswer,
     });
@@ -119,10 +130,17 @@ export const editAnswer = async (req, res) => {
   answer.content = content.trim();
   await answer.save();
 
+  await addUserActivity({
+    userId,
+    title: "Answer Updated",
+    text: "You edited your answer",
+    link: `/main/questions/${answer.questionId}`,
+  });
+
   req.io.to(`question:${answer.questionId.toString()}`).emit("answer:edit", {
     answerId,
     content: answer.content,
-    updatedAt: answer.updatedAt,
+    contentUpdatedAt: answer.contentUpdatedAt,
   });
 
   return res.status(httpStatus.OK).json({
@@ -136,7 +154,7 @@ export const deleteAnswer = async (req, res) => {
   const { answerId } = req.params;
 
   const answer = await Answer.findById(answerId).select(
-    "author questionId comments media likes upvotes"
+    "author questionId comments media likes upvotes",
   );
 
   if (!answer) {
@@ -157,7 +175,7 @@ export const deleteAnswer = async (req, res) => {
     return res.status(httpStatus.BAD_REQUEST).json({
       success: false,
       message:
-        "You can’t delete this answer because it already has comments. Deleting it would remove others’ contributions.",
+        "You can't delete this answer because it already has comments. Deleting it would remove others’ contributions.",
     });
   }
 
@@ -171,7 +189,7 @@ export const deleteAnswer = async (req, res) => {
   await Promise.all([
     Question.updateOne(
       { _id: answer.questionId },
-      { $pull: { answers: answer._id } }
+      { $pull: { answers: answer._id } },
     ),
 
     User.updateOne(
@@ -182,7 +200,7 @@ export const deleteAnswer = async (req, res) => {
           helpfulAnswers: -helpfulAnswersRollback,
           upvotesCount: -upvotesRollback,
         },
-      }
+      },
     ),
 
     Answer.deleteOne({ _id: answerId }),
@@ -205,7 +223,7 @@ export const toggleLikeAnswer = async (req, res) => {
   const { answerId } = req.params;
 
   const answer = await Answer.findById(answerId).select(
-    "questionId likes author"
+    "questionId likes author",
   );
 
   if (!answer) {
@@ -215,20 +233,20 @@ export const toggleLikeAnswer = async (req, res) => {
     });
   }
 
-  const alreadyLiked = answer.likes.some((id) => id.equals(userId));
+  const alreadyLiked = answer.likes.some((id) => id?.equals(userId));
   const updates = [];
 
   if (alreadyLiked) {
     answer.likes.pull(userId);
 
     updates.push(
-      User.updateOne({ _id: answer.author }, { $inc: { helpfulAnswers: -1 } })
+      User.updateOne({ _id: answer.author }, { $inc: { helpfulAnswers: -1 } }),
     );
   } else {
     answer.likes.push(userId);
 
     updates.push(
-      User.updateOne({ _id: answer.author }, { $inc: { helpfulAnswers: 1 } })
+      User.updateOne({ _id: answer.author }, { $inc: { helpfulAnswers: 1 } }),
     );
   }
 
@@ -256,7 +274,7 @@ export const toggleUpvoteAnswer = async (req, res) => {
   const { answerId } = req.params;
 
   const answer = await Answer.findById(answerId).select(
-    "questionId upvotes author"
+    "questionId upvotes author",
   );
   if (!answer) {
     return res.status(httpStatus.NOT_FOUND).json({
@@ -265,25 +283,34 @@ export const toggleUpvoteAnswer = async (req, res) => {
     });
   }
 
-  const alreadyUpvoted = answer.upvotes.some((id) => id.equals(userId));
+  const alreadyUpvoted = answer.upvotes.some((id) => id?.equals(userId));
   const updates = [];
 
   if (alreadyUpvoted) {
     answer.upvotes.pull(userId);
 
     updates.push(
-      User.updateOne({ _id: answer.author }, { $inc: { upvotesCount: -1 } })
+      User.updateOne({ _id: answer.author }, { $inc: { upvotesCount: -1 } }),
     );
   } else {
     answer.upvotes.push(userId);
 
     updates.push(
-      User.updateOne({ _id: answer.author }, { $inc: { upvotesCount: 1 } })
+      User.updateOne({ _id: answer.author }, { $inc: { upvotesCount: 1 } }),
     );
   }
 
   updates.push(answer.save());
   await Promise.all(updates);
+
+  if (!alreadyUpvoted) {
+    await addUserActivity({
+      userId,
+      title: "Upvoted an Answer",
+      text: "You upvoted an answer",
+      link: `/main/questions/${answer.questionId}`,
+    });
+  }
 
   req.io.to(`question:${answer.questionId.toString()}`).emit("answer:upvote", {
     answerId,
@@ -327,6 +354,13 @@ export const addAnswerComment = async (req, res) => {
   });
 
   await answer.save();
+
+  await addUserActivity({
+    userId,
+    title: "Commented on an Answer",
+    text: "You added a comment",
+    link: `/main/questions/${answer.questionId}`,
+  });
 
   await answer.populate({
     path: "comments.author",
@@ -379,13 +413,13 @@ export const toggleUpvoteComment = async (req, res) => {
     comment.upvotes.pull(userId);
 
     updates.push(
-      User.updateOne({ _id: comment.author }, { $inc: { upvotesCount: -1 } })
+      User.updateOne({ _id: comment.author }, { $inc: { upvotesCount: -1 } }),
     );
   } else {
     comment.upvotes.push(userId);
 
     updates.push(
-      User.updateOne({ _id: comment.author }, { $inc: { upvotesCount: 1 } })
+      User.updateOne({ _id: comment.author }, { $inc: { upvotesCount: 1 } }),
     );
   }
 
@@ -414,7 +448,7 @@ export const deleteAnswerComment = async (req, res) => {
   const { answerId, commentId } = req.params;
 
   const answer = await Answer.findById(answerId).select(
-    "questionId author comments"
+    "questionId author comments",
   );
 
   if (!answer) {
@@ -447,8 +481,8 @@ export const deleteAnswerComment = async (req, res) => {
     updates.push(
       User.updateOne(
         { _id: comment.author },
-        { $inc: { upvotesCount: -upvotesCount } }
-      )
+        { $inc: { upvotesCount: -upvotesCount } },
+      ),
     );
   }
 

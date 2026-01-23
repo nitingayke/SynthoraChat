@@ -1,7 +1,12 @@
 import httpStatus from "http-status";
 import User from "../models/User.js";
 import { authorizeUser } from "../utils/authorizeUser.js";
-import { updateUserEmail, updateUserPassword, updateUserProfile } from "../services/user.service.js";
+import {
+  updateUserEmail,
+  updateUserPassword,
+  updateUserProfile,
+} from "../services/user.service.js";
+import { addUserActivity } from "../services/activity.service.js";
 
 export const editProfile = async (req, res) => {
   const { userId, editData } = req.body;
@@ -32,6 +37,12 @@ export const editProfile = async (req, res) => {
 
   const updatedUser = await updateUserProfile(userId, updateData);
 
+  await addUserActivity({
+    userId,
+    title: "Profile Updated",
+    text: "You updated your profile",
+  });
+
   return res.status(httpStatus.OK).json({
     success: true,
     message: "Profile updated successfully",
@@ -59,7 +70,13 @@ export const updateEmail = async (req, res) => {
     });
   }
 
-  await updateUserEmail(userId, newEmail)
+  await updateUserEmail(userId, newEmail);
+
+  await addUserActivity({
+    userId,
+    title: "Email Updated",
+    text: `You updated your email to ${newEmail}`,
+  });
 
   return res.status(httpStatus.OK).json({
     success: true,
@@ -80,6 +97,12 @@ export const updatePassword = async (req, res) => {
   }
 
   await updateUserPassword(userId, newPassword);
+
+  await addUserActivity({
+    userId,
+    title: "Password Updated",
+    text: "You updated your account password",
+  });
 
   return res.status(httpStatus.OK).json({
     success: true,

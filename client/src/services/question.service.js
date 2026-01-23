@@ -32,6 +32,21 @@ export const createQuestionService = async (formData) => {
 };
 
 /**
+ * Update question
+ * @param {string} questionId
+ * @param {FormData} formData
+ */
+export const updateQuestionService = async (questionId, formData) => {
+  const response = await api.put(`/q/${questionId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
+};
+
+/**
  * Get all topics (paginated)
  */
 export const getAllTopics = async () => {

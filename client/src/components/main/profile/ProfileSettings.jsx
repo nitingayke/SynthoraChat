@@ -10,7 +10,6 @@ import {
   X,
   Loader2,
 } from "lucide-react";
-import AuthContext from "../../../context/AuthContext";
 import PropTypes from "prop-types";
 import UpdateEmailDialog from "../../dialogs/UpdateEmailDialog";
 import UIStateContext from "../../../context/UIStateContext";

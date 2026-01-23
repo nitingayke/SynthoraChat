@@ -1,8 +1,11 @@
 import { ArrowLeft } from "lucide-react";
 import LoginComponent from "../components/common/LoginComponent";
 import { useNavigate } from "react-router-dom";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 export default function Login() {
+
+  useDocumentTitle("Login")
 
   const navigate = useNavigate();
 

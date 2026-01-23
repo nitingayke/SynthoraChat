@@ -5,8 +5,11 @@ import { ArrowLeft, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useSnackbar } from "notistack";
 import { signupService } from "../services/auth.service";
 import GoogleLoginButton from "../components/auth/GoogleLoginButton";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 export default function Signup() {
+
+    useDocumentTitle("Signup");
 
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();

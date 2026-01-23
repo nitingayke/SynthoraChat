@@ -59,4 +59,22 @@ export const fetchSavedQuestions = async (userId, page = 1, limit = 10) => {
   return res.data;
 };
 
+/**
+ * Follow user
+ * @param {string} userId
+ */
+export const followUser = async (userId) => {
+  const res = await api.post(`/u/follow/${userId}`);
+  return res.data;
+};
+
+/**
+ * UnFollow user
+ * @param {string} userId
+ */
+export const unfollowUser = async (userId) => {
+  const res = await api.delete(`/u/unfollow/${userId}`);
+  return res.data;
+};
+
 

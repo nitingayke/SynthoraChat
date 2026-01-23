@@ -65,6 +65,17 @@ export default function AnswerList({ question }) {
     fetchAnswers(0, true);
   }, [question?._id]); // DO NOT add fetchAnswers here
 
+  const handleAnswerNew = ({ questionId, answer }) => {
+    if (questionId !== question?._id) return;
+
+    setAnswers(prev => {
+      const exists = prev.some(a => a._id === answer._id);
+      if (exists) return prev;
+
+      return [answer, ...prev]
+    })
+  }
+
   const handleAnswerLike = ({ answerId, userId, liked }) => {
     setAnswers((prev) =>
       prev.map((answer) => {
@@ -93,7 +104,7 @@ export default function AnswerList({ question }) {
     );
   };
 
-  const handleAnswerEdit = ({ answerId, content, updatedAt }) => {
+  const handleAnswerEdit = ({ answerId, content, contentUpdatedAt }) => {
     setAnswers((prev) =>
       prev.map((answer) => {
         if (answer._id !== answerId) return answer;
@@ -101,7 +112,7 @@ export default function AnswerList({ question }) {
         return {
           ...answer,
           content,
-          updatedAt
+          contentUpdatedAt
         };
       })
     );
@@ -162,6 +173,8 @@ export default function AnswerList({ question }) {
   useEffect(() => {
     if (!socket) return;
 
+    socket.on("answer:new", handleAnswerNew);
+
     socket.on("answer:like", handleAnswerLike);
     socket.on("answer:upvote", handleAnswerUpvote);
     socket.on("answer:edit", handleAnswerEdit);
@@ -172,6 +185,8 @@ export default function AnswerList({ question }) {
     socket.on("comment:deleted", handleDeleteComment);
 
     return () => {
+      socket.off("answer:new", handleAnswerNew);
+
       socket.off("answer:like", handleAnswerLike);
       socket.off("answer:upvote", handleAnswerUpvote);
       socket.off("answer:edit", handleAnswerEdit);

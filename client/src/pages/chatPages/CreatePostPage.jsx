@@ -5,17 +5,20 @@ import { AlertTriangle, CheckCircle, ChevronRight, ClipboardCheck, ImageIcon, Li
 import { useContext } from "react";
 import PostContext from "../../context/PostContext";
 import MediaProgress from "../../components/main/createPost/MediaProgress";
+import useDocumentTitle from "../../hooks/useDocumentTitle";
 
 const POST_RULES = {
   TITLE_MIN: 10,
-  TITLE_MAX: 120,
+  TITLE_MAX: 300,
   CONTENT_MIN: 50,
-  MAX_MEDIA: 7,
+  MAX_MEDIA: 6,
   MIN_TOPICS: 1,
 };
 
 
 export default function CreatePostPage() {
+
+  useDocumentTitle("Create Question");
 
   const { title, content, topics, media } = useContext(PostContext);
 

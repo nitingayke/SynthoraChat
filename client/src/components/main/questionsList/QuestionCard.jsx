@@ -6,6 +6,7 @@ import QuestionMedia from './QuestionMedia';
 import QuestionStats from './QuestionStats';
 import Avatar from '@mui/material/Avatar';
 import { slugify } from '../../../utils/helper';
+import FollowActionButton from '../common/FollowActionButton';
 
 export default function QuestionCard({ question }) {
 
@@ -13,24 +14,31 @@ export default function QuestionCard({ question }) {
         <div className="bg-white dark:bg-[#161616] rounded-xl border border-gray-200 dark:border-gray-800/50 p-4 hover:shadow-lg transition-all duration-300">
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                    <Avatar
-                        src={question.author?.profile?.profilePicture}
-                        alt={question.author?.username}
-                        className="!h-8 !w-8"
-                    />
-                    <Link to={`/main/u/profile/${question?.author?.username}`} className='group'>
+                    <Link to={`/main/u/profile/${question?.author?.username}`} >
+                        <Avatar
+                            src={question.author?.profile?.profilePicture}
+                            alt={question.author?.username}
+                            className="!h-8 !w-8"
+                        />
+                    </Link>
+                    <div>
                         <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-orange-500 group-hover:dark:text-[#07C5B9]">
-                                {question.author?.profile?.firstName} {question.author?.profile?.lastName}
-                            </span>
-                            {question.author?.isVerified && (
-                                <span className="text-orange-500 dark:text-[#07C5B9] text-xs" title='user verified'>✓</span>
-                            )}
+                            <Link to={`/main/u/profile/${question?.author?.username}`} className='flex items-center gap-2 group' >
+                                <span className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-orange-500 group-hover:dark:text-[#07C5B9]">
+                                    {question.author?.profile?.firstName} {question.author?.profile?.lastName}
+                                </span>
+                                {question.author?.isVerified && (
+                                    <span className="text-orange-500 dark:text-[#07C5B9] text-xs" title='user verified'>✓</span>
+                                )}
+                            </Link>
+                            <FollowActionButton targetUserId={question?.author?._id} size='xs' />
                         </div>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                            @{question?.author?.username}
+                            <Link to={`/main/u/profile/${question?.author?.username}`} >
+                                @{question?.author?.username}
+                            </Link>
                         </p>
-                    </Link>
+                    </div>
                 </div>
 
                 <div className="text-xs text-gray-400 dark:text-gray-500">

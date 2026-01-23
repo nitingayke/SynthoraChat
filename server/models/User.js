@@ -190,6 +190,31 @@ const userSchema = new mongoose.Schema(
         timestamp: { type: Date, default: Date.now },
       },
     ],
+
+    activities: [
+      {
+        title: {
+          type: String,
+          required: true,
+        },
+
+        text: {
+          type: String,
+          required: true,
+        },
+
+        link: {
+          type: String,
+          default: "",
+        },
+
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+
     upvotesCount: {
       type: Number,
       default: 0,
@@ -210,12 +235,12 @@ const userSchema = new mongoose.Schema(
     },
     isBlocked: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 userSchema.index({ lastActive: 1 });
@@ -231,6 +256,5 @@ userSchema.pre("validate", function (next) {
 
   next();
 });
-
 
 export default mongoose.model("User", userSchema);
