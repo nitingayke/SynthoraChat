@@ -8,14 +8,14 @@ import { filterQuestionsByQuery } from "../../../utils/questionUtils";
 import { fetchUserQuestions } from "../../../services/user.service";
 import { enqueueSnackbar } from "notistack";
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
 
 export default function UserQuestions({ userId, isOwnProfile = false }) {
 
     const { debouncedSearchQuery } = useContext(UIStateContext);
 
     const [questions, setQuestions] = useState([]);
-    const [page, setPage] = useState(1);
+    const [cursor, setCursor] = useState(null);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
 
@@ -27,14 +27,19 @@ export default function UserQuestions({ userId, isOwnProfile = false }) {
         try {
             setLoading(true);
 
-            const res = await fetchUserQuestions(userId, page, PAGE_SIZE);
+            const res = await fetchUserQuestions(userId, cursor, PAGE_SIZE);
 
             if (res.success) {
                 const newQuestions = res?.data?.questions ?? [];
 
-                setQuestions((prev) => [...prev, ...newQuestions]);
-                setHasMore(res?.pagination?.hasMore ?? false);
-                setPage((prev) => prev + 1);
+                setQuestions(prev => {
+                    const map = new Map(prev.map(q => [q._id, q]));
+                    newQuestions.forEach(q => map.set(q._id, q));
+                    return Array.from(map.values());
+                });
+
+                setHasMore(res.pagination.hasMore);
+                setCursor(res.pagination.nextCursor);
             }
         } catch (error) {
             enqueueSnackbar(
@@ -44,12 +49,13 @@ export default function UserQuestions({ userId, isOwnProfile = false }) {
         } finally {
             setLoading(false);
         }
-    }, [hasMore, loading, page, userId]);
+    }, [hasMore, loading, userId, cursor]);
 
     useEffect(() => {
         setQuestions([]);
-        setPage(1);
+        setCursor(null);
         setHasMore(true);
+        isInitialFetch.current = false;
     }, [userId]);
 
     useEffect(() => {

@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import Question from "../models/Question.js";
 import Answer from "../models/Answer.js";
 import AIChat from "../models/AIChat.js";
+import { ACTIVE_USERS } from "../sockets/index.js";
 
 export const getAppAnalyticsService = async (days = 30) => {
   const now = new Date();
@@ -10,30 +11,35 @@ export const getAppAnalyticsService = async (days = 30) => {
   pastDate.setDate(now.getDate() - days + 1);
 
   /* -------------------- TOTAL COUNTS -------------------- */
-  const [totalUsers, totalQuestions, totalAnswers, totalAiChats, helpfulAnswersAgg] =
-    await Promise.all([
-      User.countDocuments(),
-      Question.countDocuments(),
-      Answer.countDocuments(),
-      AIChat.countDocuments(),
+  const [
+    totalUsers,
+    totalQuestions,
+    totalAnswers,
+    totalAiChats,
+    helpfulAnswersAgg,
+  ] = await Promise.all([
+    User.countDocuments(),
+    Question.countDocuments(),
+    Answer.countDocuments(),
+    AIChat.countDocuments(),
 
-      User.aggregate([
-        {
-          $group: {
-            _id: null,
-            totalHelpfulAnswers: { $sum: "$helpfulAnswers" },
-          },
+    User.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalHelpfulAnswers: { $sum: "$helpfulAnswers" },
         },
-      ]),
-    ]);
+      },
+    ]),
+  ]);
 
   const totalHelpfulAnswers =
     helpfulAnswersAgg.length > 0 ? helpfulAnswersAgg[0].totalHelpfulAnswers : 0;
 
   /* -------------------- ACTIVE USERS -------------------- */
-  const activeUsers = await User.countDocuments({
-    lastActive: { $gte: pastDate },
-  });
+  const activeUsers = Array.from(ACTIVE_USERS.values()).filter(
+    (user) => user.lastSeen >= pastDate.getTime(),
+  ).length;
 
   /* -------------------- USERS JOINED PER DAY -------------------- */
   const usersPerDay = await User.aggregate([

@@ -133,7 +133,7 @@ export default function ProfilePage() {
                 return <SavedQuestions userId={profileUser?._id} isOwnProfile={isOwnProfile} />;
 
             case "notifications":
-                return <Notifications notifications={profileUser?.notifications || []} />;
+                return <Notifications />;
 
             case "followers":
                 return <UserFollowers followers={reversedFollowers} />;

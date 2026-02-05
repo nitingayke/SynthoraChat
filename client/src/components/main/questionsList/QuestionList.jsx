@@ -3,15 +3,26 @@ import PropTypes from 'prop-types';
 import QuestionCard from './QuestionCard';
 import QuestionContext from '../../../context/QuestionContext';
 import QuestionFilterToggle from "../common/QuestionFilterToggle";
-// import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowUp } from 'lucide-react';
 
 export default function QuestionList() {
 
-    // const [searchParams] = useSearchParams();
-    // const filter = searchParams.get("filter");
-    // const topic = searchParams.get("topic");
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    const { questions } = useContext(QuestionContext);
+    const [searchParams] = useSearchParams();
+    const filter = searchParams.get("filter");
+    const topic = searchParams.get("topic");
+
+    const { questions, setQuestions, newQuestions, setNewQuestions, setPage } = useContext(QuestionContext);
+
+    const handleLoadNewQuestions = () => {
+        navigate(location.pathname, { replace: true });
+        setQuestions(prev => [...newQuestions, ...prev]);
+        setNewQuestions([]);
+        setPage(1)
+    }
 
     if (!questions || questions.length === 0) {
         return (
@@ -35,6 +46,18 @@ export default function QuestionList() {
                     <QuestionCard key={question?._id} question={question} />
                 ))}
             </div>
+
+            {
+                newQuestions.length > 3 && (
+                    <button
+                        onClick={handleLoadNewQuestions}
+                        className="absolute top-15 z-50 flex items-center justify-center gap-1 bg-white text-orange-600 dark:bg-[#161616] dark:text-[#07C5B9] px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition shadow shadow-gray-500/40 dark:shadow-white/10"
+                    >
+                        <ArrowUp size={18} />
+                        <span>New Questions</span>
+                    </button>
+                )
+            }
         </>
     )
 };

@@ -8,14 +8,14 @@ import { filterAnswersByQuery } from "../../../utils/answerUtils"
 import { fetchUserAnswers } from "../../../services/user.service";
 import { enqueueSnackbar } from "notistack";
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 5;
 
 export default function UserAnswers({ userId, isOwnProfile }) {
 
     const { debouncedSearchQuery } = useContext(UIStateContext);
 
     const [answers, setAnswers] = useState([]);
-    const [page, setPage] = useState(1);
+    const [cursor, setCursor] = useState(null);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
 
@@ -27,15 +27,19 @@ export default function UserAnswers({ userId, isOwnProfile }) {
         try {
             setLoading(true);
 
-            const res = await fetchUserAnswers(userId, page, PAGE_SIZE);
+            const res = await fetchUserAnswers(userId, cursor, PAGE_SIZE);
 
             if (res?.success) {
-                setAnswers((prev) => [
-                    ...prev,
-                    ...(res?.data?.answers ?? []),
-                ]);
+                const newAnswers = res?.data?.answers ?? [];
+
+                setAnswers(prev => {
+                    const map = new Map(prev.map(a => [a._id, a]));
+                    newAnswers.forEach(a => map.set(a._id, a));
+                    return Array.from(map.values());
+                });
+
                 setHasMore(res?.pagination?.hasMore ?? false);
-                setPage((prev) => prev + 1);
+                setCursor(res?.pagination?.nextCursor ?? null);
             }
         } catch (error) {
             enqueueSnackbar(
@@ -45,16 +49,17 @@ export default function UserAnswers({ userId, isOwnProfile }) {
         } finally {
             setLoading(false);
         }
-    }, [hasMore, loading, page, userId]);
+    }, [hasMore, loading, cursor, userId]);
 
     useEffect(() => {
         setAnswers([]);
-        setPage(1);
+        setCursor(null);
         setHasMore(true);
+        isInitialFetch.current = false;
     }, [userId]);
 
     useEffect(() => {
-        if(isInitialFetch.current) return;
+        if (isInitialFetch.current) return;
         isInitialFetch.current = true;
         loadAnswers();
     }, [userId, loadAnswers]);

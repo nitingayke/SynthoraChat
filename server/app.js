@@ -4,6 +4,7 @@ import cors from "cors";
 import http from "node:http";
 
 import { connectDatabase } from "./config/database.js";
+import { initActiveUsers } from "./sockets/initActiveUsers.js";
 
 import { initSocket } from "./sockets/index.js";
 
@@ -24,14 +25,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
-    cors({
-        origin: "http://localhost:5173",
-        methods: "*",
-        credentials: true
-    })
+  cors({
+    origin: "http://localhost:5173",
+    methods: "*",
+    credentials: true,
+  }),
 );
-
-connectDatabase(MONGODB_URL);
 
 const server = http.createServer(app);
 const io = initSocket(server);
@@ -53,7 +52,6 @@ app.use("/profile", profileEditRoute);
 
 app.use("/app", appAnalytics);
 
-
 app.use((err, req, res, next) => {
   return res.status(err.status || 500).json({
     success: false,
@@ -61,12 +59,15 @@ app.use((err, req, res, next) => {
   });
 });
 
-
 const startServer = async () => {
-    server.listen(port, () => {
-        console.log(`Server is running on port ${port}`);
-    });
+  await connectDatabase(MONGODB_URL);
+
+  // 2. Initialize lastSeen, online map (ONE TIME)
+  await initActiveUsers();
+
+  server.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 };
 
 startServer();
-

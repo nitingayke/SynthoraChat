@@ -56,110 +56,127 @@ export const getUserProfile = async (req, res) => {
 
 export const getUserQuestions = async (req, res) => {
   const { userId } = req.params;
-  const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
+  const cursor = req.query.cursor;
 
-  const [questions, total] = await Promise.all([
-    Question.find({ author: userId })
-      .select(
-        "title content topics allowComments answers likes upvotes saves views status createdAt",
-      )
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean(),
+  const query = {
+    author: userId,
+    ...(cursor && { _id: { $lt: new mongoose.Types.ObjectId(cursor) } }),
+  };
 
-    Question.countDocuments({ author: userId }),
-  ]);
+  const questions = await Question.find(query)
+    .select(
+      "title content topics allowComments answers likes upvotes saves views status createdAt",
+    )
+    .sort({ _id: -1 })
+    .limit(limit + 1)
+    .lean(); //skip hydrating the results into heavy Mongoose Document instances and returns plain JavaScript objects
 
-  return res.status(httpStatus.OK).json({
+  const hasMore = questions.length > limit;
+  if (hasMore) questions.pop();
+
+  return res.status(200).json({
     success: true,
     data: {
       questions,
     },
     pagination: {
-      page,
-      limit,
-      total,
-      hasMore: skip + questions.length < total,
+      hasMore,
+      nextCursor:
+        questions.length > 0 ? questions[questions.length - 1]._id : null,
     },
   });
 };
 
 export const getUserAnswers = async (req, res) => {
   const { userId } = req.params;
-  const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
+  const cursor = req.query.cursor;
 
-  const [answers, total] = await Promise.all([
-    Answer.find({ author: userId })
-      .select(
-        "questionId content upvotes likes comments aiAccuracy views status createdAt",
-      )
-      .populate({
-        path: "questionId",
-        select: "title",
-      })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean(),
+  const query = {
+    author: userId,
+    ...(cursor && { _id: { $lt: new mongoose.Types.ObjectId(cursor) } }),
+  };
 
-    Answer.countDocuments({ author: userId }),
-  ]);
+  const answers = await Answer.find(query)
+    .select(
+      "questionId content upvotes likes comments aiAccuracy views status createdAt",
+    )
+    .populate({
+      path: "questionId",
+      select: "title",
+    })
+    .sort({ _id: -1 })
+    .limit(limit + 1)
+    .lean();
 
-  return res.status(httpStatus.OK).json({
+  const hasMore = answers.length > limit;
+  if (hasMore) answers.pop();
+
+  return res.status(200).json({
     success: true,
     data: {
       answers,
     },
     pagination: {
-      page,
-      limit,
-      total,
-      hasMore: skip + answers.length < total,
+      hasMore,
+      nextCursor: answers.length > 0 ? answers.at(-1)._id : null,
     },
   });
 };
 
 export const getSavedQuestions = async (req, res) => {
   const { userId } = req.params;
-  const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
+  const cursor = req.query.cursor;
 
-  const user = await User.findById(userId)
-    .select("savedQuestions")
-    .populate({
-      path: "savedQuestions.question",
+  const user = await User.findById(userId).select("savedQuestions").lean();
+
+  if (!user) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  let saved = user.savedQuestions || [];
+
+  saved.sort((a, b) => new Date(b.savedAt) - new Date(a.savedAt));
+
+  if (cursor) {
+    const cursorDate = new Date(cursor);
+    saved = saved.filter((sq) => new Date(sq.savedAt) < cursorDate);
+  }
+
+  let slice = saved.slice(0, limit + 1);
+
+  const populated = await User.populate(slice, {
+    path: "question",
+    model: "Question",
+    select:
+      "title content topics allowComments answers likes upvotes saves views status createdAt author",
+    populate: {
+      path: "author",
       select:
-        "title content topics allowComments answers likes upvotes saves views status createdAt author",
-      populate: {
-        path: "author",
-        select:
-          "username profile.profilePicture profile.firstName profile.lastName",
-      },
-      options: {
-        skip,
-        limit,
-      },
-    })
-    .lean();
+        "username profile.profilePicture profile.firstName profile.lastName",
+    },
+  });
 
-  const total = user?.savedQuestions?.length || 0;
+  const cleaned = populated.filter((sq) => sq.question);
+
+  const hasMore = cleaned.length > limit;
+  if(hasMore) cleaned.pop();
+
+  const nextCursor = cleaned.length > 0 ? cleaned.at(-1).savedAt : null;
 
   return res.status(httpStatus.OK).json({
     success: true,
     data: {
-      questions: user.savedQuestions,
+      questions: cleaned,
     },
     pagination: {
-      page,
-      limit,
-      total,
-      hasMore: skip + user.savedQuestions.length < total,
+      hasMore,
+      nextCursor
     },
   });
 };
@@ -208,9 +225,10 @@ export const followUser = async (req, res) => {
   currentUser.following.push({ user: targetUserId });
   targetUser.followers.push({ user: currentUserId });
 
-  await addNotification(targetUserId, {
+  await addNotification(req, targetUserId, {
     title: "New Follower",
     description: `${currentUser.username} started following you`,
+    link: `/main/u/profile/${currentUser.username}`,
   });
 
   await addUserActivity({
@@ -296,5 +314,18 @@ export const unfollowUser = async (req, res) => {
   return res.status(httpStatus.OK).json({
     success: true,
     message: "Unfollowed successfully",
+  });
+};
+
+export const markAllNotificationsRead = async (req, res) => {
+  const userId = req.user.id;
+
+  await User.findByIdAndUpdate(userId, {
+    lastNotificationReadAt: new Date(),
+  });
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    message: "All notifications marked as read",
   });
 };

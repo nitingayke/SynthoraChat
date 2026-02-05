@@ -86,7 +86,7 @@ const questionSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["active", "closed", "deleted"],
+      enum: ["active", "closed"],
       default: "active",
     },
   },

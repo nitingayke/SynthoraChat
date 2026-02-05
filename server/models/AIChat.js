@@ -23,7 +23,7 @@ const aiChatSessionSchema = new mongoose.Schema(
         "fact_check",
         "answer_generation",
       ],
-      default: "general_chat",
+      index: true
     },
 
     messages: [
@@ -54,7 +54,5 @@ const aiChatSessionSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-aiChatSessionSchema.index({ createdAt: 1 });
 
 export default mongoose.model("AIChat", aiChatSessionSchema);

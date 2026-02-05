@@ -173,11 +173,32 @@ const userSchema = new mongoose.Schema(
 
     notifications: [
       {
-        title: { type: String },
-        description: { type: String },
-        date: { type: Date, default: Date.now },
+        entityId: {
+          type: mongoose.Schema.Types.ObjectId,
+        },
+        title: {
+          type: String,
+          required: true,
+        },
+        description: {
+          type: String,
+          required: true,
+        },
+        link: {
+          type: String,
+          default: "",
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        },
       },
     ],
+
+    lastNotificationReadAt: {
+      type: Date,
+      default: null,
+    },
 
     aiChatSessions: [
       {
@@ -228,11 +249,6 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    // Timestamps
-    lastActive: {
-      type: Date,
-      default: Date.now,
-    },
     isBlocked: {
       type: Boolean,
       default: false,
@@ -243,7 +259,7 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-userSchema.index({ lastActive: 1 });
+userSchema.index({ "savedQuestions.question": 1 });
 
 userSchema.pre("validate", function (next) {
   if (this.authProvider === "local" && !this.password) {

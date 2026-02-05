@@ -89,3 +89,12 @@ export const toggleSaveQuestion = async (questionId) => {
   const res = await api.post(`/q/${questionId}/saves`);
   return res.data;
 };
+
+/**
+ * delete question
+ * @param {string} questionId
+ */
+export const deleteQuestion = async (questionId) => {
+  const res = await api.delete(`/q/${questionId}`);
+  return res.data;
+};

@@ -27,7 +27,7 @@ import FollowActionButton from "../common/FollowActionButton";
 
 export default function AnswerCard({ answer, allowComments }) {
 
-  const { loginUser } = useContext(AuthContext);
+  const { loginUser, isOnline } = useContext(AuthContext);
   const { isAuthorize } = useContext(UIStateContext);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -72,9 +72,10 @@ export default function AnswerCard({ answer, allowComments }) {
     new Date(answer.createdAt);
 
 
-
   const isLiked = userId ? likes.includes(userId) : false;
   const isUpvoted = userId ? upvotes.includes(userId) : false;
+
+  const authorOnline = isOnline(author?._id);
 
   const handleLikeAnswer = async () => {
 
@@ -203,11 +204,19 @@ export default function AnswerCard({ answer, allowComments }) {
     <div className="rounded-xl border p-3 sm:p-4 bg-gray-100 dark:bg-[#111] border-gray-200 dark:border-[#222] shadow-sm">
 
       <div className="flex items-start gap-4">
-        <Avatar
-          alt={fullName}
-          src={author?.profile?.profilePicture || ""}
-          sx={{ width: 45, height: 45 }}
-        />
+        <Link to={`/main/u/profile/${author?.username}`}>
+          <div
+            title={authorOnline ? "User is online" : "User is offline"}
+            className={`relative rounded-full p-[2px] ${authorOnline ? "bg-green-500" : "bg-transparent"}`}
+          >
+            <Avatar
+              alt={fullName}
+              src={author?.profile?.profilePicture || ""}
+              sx={{ width: 45, height: 45 }}
+              className="bg-white dark:bg-[#111] border-2 border-transparent"
+            />
+          </div>
+        </Link>
 
         <div className="flex-1">
           <div className="flex items-center gap-2">

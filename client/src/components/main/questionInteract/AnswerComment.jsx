@@ -4,7 +4,7 @@ import { useSnackbar } from "notistack";
 import AuthContext from "../../../context/AuthContext";
 import Avatar from "@mui/material/Avatar";
 import { Link } from "react-router-dom";
-import { ArrowBigUp, Loader2, Trash2 } from "lucide-react";
+import { ArrowBigUp, ChevronDown, Loader2, Trash2 } from "lucide-react";
 import { timeAgo } from "../../../utils/date";
 import UIStateContext from "../../../context/UIStateContext";
 import { deleteCommentService, toggleUpvoteCommentService } from "../../../services/answer.service";
@@ -13,7 +13,7 @@ import FollowActionButton from "../common/FollowActionButton";
 export default function AnswerComment({ answerId, comments }) {
 
     const { enqueueSnackbar } = useSnackbar();
-    const { loginUser } = useContext(AuthContext);
+    const { loginUser, isOnline } = useContext(AuthContext);
     const { isAuthorize } = useContext(UIStateContext);
 
     const [deletingCommentId, setDeletingCommentId] = useState(null);
@@ -71,15 +71,24 @@ export default function AnswerComment({ answerId, comments }) {
 
             {comments.slice(0, visibleComments).map((comment, index) => {
                 const hasUpvoted = comment?.upvotes?.includes(loginUser?._id);
+                const authorOnline = isOnline(comment?.author?._id);
 
                 return (
                     <div key={index * 0.12457}>
 
                         <div className="relative gap-3 flex items-center">
-                            <Avatar
-                                sx={{ width: 35, height: 35 }}
-                                src={comment?.author?.profile?.profilePicture || ""}
-                            />
+                            <Link to={`/main/u/profile/${comment?.author?.username}`}>
+                                <div
+                                    title={authorOnline ? "User is online" : "User is offline"}
+                                    className={`relative rounded-full p-[1.8px] ${authorOnline ? "bg-green-500" : "bg-transparent"}`}
+                                >
+                                    <Avatar
+                                        sx={{ width: 35, height: 35 }}
+                                        src={comment?.author?.profile?.profilePicture || ""}
+                                        className="border-2 border-transparent bg-white dark:bg-[#111]"
+                                    />
+                                </div>
+                            </Link>
 
                             <div>
                                 <div className="flex items-center gap-2">
@@ -143,9 +152,10 @@ export default function AnswerComment({ answerId, comments }) {
                 <div className="flex justify-center">
                     <button
                         onClick={loadMore}
-                        className="text-sm text-[#07C5B9] hover:underline mt-2"
+                        className="flex items-center gap-1 text-sm mt-2 border rounded-lg px-2 py-1.5 bg-white dark:bg-[#191919] border-gray-300 dark:border-[#252525] hover:opacity-80 shadow mb-1"
                     >
-                        Load more comments...
+                       <ChevronDown size={18} /> 
+                       <span>Load More</span>
                     </button>
                 </div>
             )}

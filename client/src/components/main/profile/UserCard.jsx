@@ -7,7 +7,7 @@ import {
     Briefcase,
     Calendar,
     UserPlus,
-    Star,
+    Clock,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
@@ -18,7 +18,7 @@ import FollowActionButton from "../common/FollowActionButton";
 
 export default function UserCard({ user, mode, followedAt }) {
 
-    const { loginUser } = useContext(AuthContext);
+    const { loginUser, isOnline, lastSeen } = useContext(AuthContext);
 
     const isSelf = loginUser?._id === user?._id;
     const fullName = `${user?.profile?.firstName ?? ""} ${user?.profile?.lastName ?? ""}`;
@@ -99,9 +99,16 @@ export default function UserCard({ user, mode, followedAt }) {
                         <span className="hidden sm:flex">following</span>
                     </div>
                     <div className="flex items-center gap-1 px-2 py-1 rounded bg-gray-100 dark:bg-[#2a2a2a]">
-                        <Star size={12} />
-                        <span className="hidden sm:flex md:hidden lg:flex ">Last active:</span>
-                        {timeAgo(user?.lastActive)}
+                        <Clock size={12} />
+                        {
+                            isOnline(user?._id) ? (
+                                <span className="text-green-500">● Online</span>
+                            ) : (
+                                <span>
+                                    Last seen: {timeAgo(lastSeen(user._id))}
+                                </span>
+                            )
+                        }
                     </div>
                 </div>
 

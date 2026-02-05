@@ -1,7 +1,7 @@
 import express from "express";
 import {
   createQuestion,
-  getAllQuestions,
+  getQuestions,
   getAllTopics,
   getAnswersByQuestionId,
   getQuestionById,
@@ -9,6 +9,7 @@ import {
   toggleSaveQuestion,
   toggleUpvoteQuestion,
   updateQuestion,
+  deleteQuestion,
 } from "../controllers/questionController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { validateVideoDuration } from "../middleware/validateVideoDuration.js";
@@ -17,7 +18,7 @@ import { upload } from "../config/cloudinary.js";
 
 const router = express.Router();
 
-router.get("/", wrapAsync(getAllQuestions));
+router.get("/", wrapAsync(getQuestions));
 
 router.get("/topics", wrapAsync(getAllTopics));
 
@@ -58,5 +59,7 @@ router.post(
   authMiddleware,
   wrapAsync(toggleSaveQuestion),
 );
+
+router.delete("/:questionId", authMiddleware, wrapAsync(deleteQuestion));
 
 export default router;

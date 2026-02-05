@@ -1,7 +1,8 @@
 export function timeAgo(date) {
   if (!date) return "";
 
-  const seconds = Math.floor((Date.now() - new Date(date)) / 1000);
+  const ts = typeof date === "number" ? date : new Date(date).getTime();
+  const seconds = Math.floor((Date.now() - ts) / 1000);
 
   const intervals = [
     { label: "year", seconds: 31536000 },

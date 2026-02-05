@@ -180,7 +180,7 @@ export default function Signup() {
                     <hr className="flex-grow border-gray-300 dark:border-gray-700" />
                 </div>
 
-                {!loading && <GoogleLoginButton />}
+                {!loading && <div className="w-fit mx-auto"><GoogleLoginButton /></div>}
 
                 {/* Login Link */}
                 <p className="mt-5 text-center text-gray-700 dark:text-gray-300">

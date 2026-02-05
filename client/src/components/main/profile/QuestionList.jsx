@@ -13,6 +13,7 @@ import Avatar from '@mui/material/Avatar';
 import { timeAgo } from "../../../utils/date";
 import ExpandableText from "../common/ExpandableText";
 import { slugify } from "../../../utils/helper";
+import FollowActionButton from "../common/FollowActionButton";
 
 export default function QuestionList({ questions, userQuestion }) {
 
@@ -40,6 +41,7 @@ export default function QuestionList({ questions, userQuestion }) {
                     saves = [],
                     views = 0,
                     createdAt,
+                    savedAt,
                 } = question;
 
                 return (
@@ -49,7 +51,7 @@ export default function QuestionList({ questions, userQuestion }) {
                     >
                         <div className="flex items-center gap-3">
                             <div className="flex items-center gap-3">
-                                {!userQuestion && <Link to={`/profile/${author?.username}`}>
+                                {!userQuestion && <Link to={`/main/u/profile/${author?.username}`}>
                                     <Avatar
                                         alt={author?.profile?.firstName}
                                         src={author?.profile?.profilePicture}
@@ -57,16 +59,19 @@ export default function QuestionList({ questions, userQuestion }) {
                                 </Link>}
 
                                 <div>
-                                    {!userQuestion && <Link
-                                        to={`/profile/${author?.username}`}
-                                        className="font-medium text-gray-900 dark:text-white hover:text-orange-500 dark:hover:text-[#07C5B9]"
-                                    >
-                                        {author?.profile?.firstName} {author?.profile?.lastName}
-                                    </Link>}
+                                    <div className="flex items-center gap-2">
+                                        {!userQuestion && <Link
+                                            to={`/main/u/profile/${author?.username}`}
+                                            className="font-medium text-gray-900 dark:text-white hover:text-orange-500 dark:hover:text-[#07C5B9]"
+                                        >
+                                            {author?.profile?.firstName} {author?.profile?.lastName}
+                                        </Link>}
+                                        <FollowActionButton targetUserId={author?._id} size="xs" />
+                                    </div>  
 
                                     <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
                                         <Clock size={12} />
-                                        {createdAt ? timeAgo(createdAt) : "---"}
+                                        {timeAgo(savedAt || createdAt)}
                                     </div>
                                 </div>
                             </div>
@@ -164,5 +169,5 @@ QuestionList.propTypes = {
             }),
         })
     ).isRequired,
-    userQuestion: PropTypes.bool
+    userQuestion: PropTypes.bool,
 };

@@ -10,7 +10,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
 
 import AuthContext from "../../../context/AuthContext";
@@ -21,6 +21,7 @@ import {
   toggleLikeQuestion,
   toggleUpvoteQuestion,
   toggleSaveQuestion,
+  deleteQuestion,
 } from "../../../services/question.service";
 
 import { shareContent } from "../../../services/share.service";
@@ -30,9 +31,11 @@ import SocketContext from "../../../context/SocketContext";
 import UIStateContext from "../../../context/UIStateContext";
 import EditQuestionDialog from "./EditQuestionDialog";
 import FollowActionButton from "../common/FollowActionButton";
+import ExpandableText from "../common/ExpandableText";
 
 export default function QuestionDetail({ question }) {
 
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
   const { loginUser } = useContext(AuthContext);
@@ -46,6 +49,7 @@ export default function QuestionDetail({ question }) {
     like: false,
     upvote: false,
     save: false,
+    delete: false
   });
   const [answerSummary, setAnswerSummary] = useState(null);
 
@@ -175,6 +179,41 @@ export default function QuestionDetail({ question }) {
     });
   };
 
+  const handleQuestionDelete = async () => {
+
+    if (!isAuthorize() || loading.delete) return;
+
+    if (!_id) {
+      enqueueSnackbar("Question not found", { variant: "error" });
+      return;
+    }
+
+    if (question?.author?._id !== loginUser?._id) {
+      enqueueSnackbar("You are not authorize to delete this question.", { variant: "error" });
+      return;
+    }
+
+    if (question?.answers?.length > 0) {
+      enqueueSnackbar("You cannot delete a question that already has answers.", { variant: "warning" });
+      return;
+    }
+
+    const confirmed = window.confirm("Are you sure you want to delete this question? This action cannot be undone.");
+
+    if (!confirmed) return;
+
+    try {
+      setLoading(p => ({ ...p, delete: true }));
+      await deleteQuestion(_id);
+      enqueueSnackbar("Question deleted successfully", { variant: "success" });
+      navigate("/main");
+    } catch (err) {
+      enqueueSnackbar(err?.response?.data?.message || "Failed to delete question", { variant: "error" });
+    } finally {
+      setLoading(p => ({ ...p, delete: false }));
+    }
+  }
+
   if (!question) return null;
 
   const isLiked = likesArr.includes(userId);
@@ -193,9 +232,7 @@ export default function QuestionDetail({ question }) {
             {title}
           </h1>
 
-          <p className="mt-2 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-            {content}
-          </p>
+          <ExpandableText text={content} lines={30} />
 
           <MediaDialog media={media} />
 
@@ -219,7 +256,14 @@ export default function QuestionDetail({ question }) {
                   className={commCls}
                   onClick={() => setEditOpen(true)}
                 ><Pencil size={16} /></button>
-                <button className={`${commCls} hover:text-red-500`}><Trash2 size={16} /></button>
+                <button
+                  onClick={handleQuestionDelete}
+                  title={loading.delete ? "Deleting Question" : "Delete Question"}
+                  className={`${commCls} hover:text-red-500 disabled:cursor-not-allowed`}
+                  disabled={loading.delete}
+                >
+                  {loading.delete ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                </button>
               </div>
             }
           </div>
@@ -277,7 +321,7 @@ export default function QuestionDetail({ question }) {
             </div>
 
             <div className="gap-2 flex items-center">
-              <FollowActionButton targetUserId={_id} size="xs" />
+              <FollowActionButton targetUserId={author?._id} size="xs" />
 
               {author?.profile?.firstName && (
                 <Link

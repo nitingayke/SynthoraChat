@@ -84,8 +84,6 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
                                         }`}
                                 >
                                     <div className="flex items-center gap-2">
-                                        {item.link.startsWith("filter") && <SlidersHorizontal size={16} />}
-                                        {item.link.startsWith("topic") && <Tags size={16} />}
                                         {item.label}
                                     </div>
 

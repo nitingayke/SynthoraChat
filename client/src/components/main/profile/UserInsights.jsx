@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useContext } from "react";
 import PropTypes from "prop-types";
 import {
   Activity,
@@ -14,9 +14,13 @@ import {
 } from "lucide-react";
 import { Line } from "react-chartjs-2";
 import { buildLast30DaysSeries } from "../../../utils/analytics";
+import { timeAgo } from "../../../utils/date";
 import { formatCount } from "../../../utils/formatCount";
+import AuthContext from "../../../context/AuthContext";
 
 export default function UserInsights({ user }) {
+
+  const { isOnline, lastSeen } = useContext(AuthContext);
 
   const [tab, setTab] = useState("saved");
 
@@ -147,8 +151,14 @@ export default function UserInsights({ user }) {
 
         <div className="flex gap-4 mt-2 text-xs text-gray-500">
           <span className="flex items-center gap-1">
-            <Clock size={14} />
-            Last active: {new Date(user?.lastActive).toLocaleDateString()}
+            <Clock size={14} className={isOnline(user?._id) ? "text-green-500" : ""} />
+            {isOnline(user?._id) ? (
+              <span className="text-green-500 font-medium">Online now</span>
+            ) : (
+              <span>
+                Last active: {timeAgo(lastSeen(user?._id))}
+              </span>
+            )}
           </span>
           <span className="flex items-center gap-1">
             <Calendar size={14} />

@@ -37,6 +37,12 @@ export default function Navbar() {
     }
 
     const notifications = loginUser?.notifications || [];
+    const lastReadAt = loginUser?.lastNotificationReadAt;
+
+    const unreadNotifications = notifications.filter((n) => {
+        if(!lastReadAt) return true;
+        return new Date(n?.date) > new Date(lastReadAt);
+    });
 
     const renderMainNavLinks = (isMobile) => {
 
@@ -137,10 +143,10 @@ export default function Navbar() {
                             className="related hidden sm:flex p-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#252525] transition relative"
                         >
                             <Bell className="w-5 h-5" />
-                            {(notifications?.length > 0) && (
+                            {(unreadNotifications?.length > 0) && (
                                 <span className=" absolute top-0 right-0 bg-orange-500 dark:bg-[#07C5B9] text-white text-[12px] px-1 font-semibold flex items-center justify-center rounded-full">
-                                    {Math.min(notifications?.length, 9)}
-                                    {notifications?.length > 9 && "+"}
+                                    {Math.min(unreadNotifications?.length, 9)}
+                                    {unreadNotifications?.length > 9 && "+"}
                                 </span>
                             )}
                         </Link>}

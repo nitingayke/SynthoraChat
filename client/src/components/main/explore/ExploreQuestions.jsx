@@ -13,6 +13,7 @@ import {
 import FilterTabs from './FilterTabs';
 import AnalyticsContext from '../../../context/AnalyticsContext';
 import QuestionContext from '../../../context/QuestionContext';
+import { slugify } from '../../../utils/helper';
 
 const ITEMS_PER_LOAD = 7;
 
@@ -134,12 +135,13 @@ export default function ExploreQuestions() {
                                     {/* TOPICS */}
                                     <div className="flex flex-wrap gap-2 mb-3">
                                         {(question.topics || []).map((topic, idx) => (
-                                            <span
+                                            <Link
                                                 key={idx * 0.2145}
+                                                to={`/main?topic=${slugify(topic)}`}
                                                 className="px-3 py-1 text-xs rounded-full bg-orange-100 dark:bg-[#07C5B9]/20 text-orange-500 dark:text-[#07C5B9] border border-orange-200 dark:border-[#07C5B9]/30"
                                             >
                                                 {topic}
-                                            </span>
+                                            </Link>
                                         ))}
                                     </div>
 

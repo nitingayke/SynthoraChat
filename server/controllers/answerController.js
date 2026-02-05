@@ -5,6 +5,7 @@ import User from "../models/User.js";
 import { cleanupCloudinaryFiles } from "../services/cleanupCloudinary.js";
 import { mapMediaType } from "../utils/mediaTypeMapper.js";
 import { addUserActivity } from "../services/activity.service.js";
+import { addNotification } from "../services/notification.service.js";
 
 export const createAnswer = async (req, res) => {
   const { questionId, content } = req.body;
@@ -64,6 +65,14 @@ export const createAnswer = async (req, res) => {
       text: "You posted a new answer",
       link: `/main/questions/${questionId}`,
     });
+
+    if (question.author.toString() !== userId) {
+      await addNotification(req, question.author.toString(), {
+        title: "New Answer",
+        description: `${user.username} answered your question`,
+        link: `/main/questions/${questionId}`,
+      });
+    }
 
     const populatedAnswer = await Answer.findById(answer._id)
       .populate({
@@ -276,6 +285,7 @@ export const toggleUpvoteAnswer = async (req, res) => {
   const answer = await Answer.findById(answerId).select(
     "questionId upvotes author",
   );
+  
   if (!answer) {
     return res.status(httpStatus.NOT_FOUND).json({
       success: false,
@@ -310,6 +320,14 @@ export const toggleUpvoteAnswer = async (req, res) => {
       text: "You upvoted an answer",
       link: `/main/questions/${answer.questionId}`,
     });
+
+    if (answer.author.toString() !== userId) {
+      await addNotification(req, answer.author.toString(), {
+        title: "Answer Upvoted",
+        description: `${req.user.username} upvoted your answer`,
+        link: `/main/questions/${answer.questionId.toString()}`,
+      });
+    }
   }
 
   req.io.to(`question:${answer.questionId.toString()}`).emit("answer:upvote", {
@@ -339,7 +357,7 @@ export const addAnswerComment = async (req, res) => {
     });
   }
 
-  const answer = await Answer.findById(answerId).select("comments questionId");
+  const answer = await Answer.findById(answerId).select("author comments questionId");
 
   if (!answer) {
     return res.status(httpStatus.NOT_FOUND).json({
@@ -361,6 +379,14 @@ export const addAnswerComment = async (req, res) => {
     text: "You added a comment",
     link: `/main/questions/${answer.questionId}`,
   });
+
+  if (answer.author.toString() !== userId) {
+    await addNotification(req, answer.author.toString(), {
+      title: "New Comment",
+      description: `${req.user.username} commented on your answer`,
+      link: `/main/questions/${answer.questionId.toString()}`,
+    });
+  }
 
   await answer.populate({
     path: "comments.author",

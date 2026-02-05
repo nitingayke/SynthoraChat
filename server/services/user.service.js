@@ -13,13 +13,13 @@ export const findUserWithProfile = async (query) => {
     .populate({
       path: "followers.user",
       select:
-        "username profile credentials topicsOfInterest followers following lastActive createdAt isVerified",
+        "username profile credentials topicsOfInterest followers following createdAt isVerified",
       model: "User",
     })
     .populate({
       path: "following.user",
       select:
-        "username profile credentials topicsOfInterest followers following lastActive createdAt isVerified",
+        "username profile credentials topicsOfInterest followers following createdAt isVerified",
       model: "User",
     });
 };

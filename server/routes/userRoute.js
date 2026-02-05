@@ -1,6 +1,6 @@
 import express from "express";
 import wrapAsync from "../utils/wrapAsync.js";
-import { followUser, getCurrentUser, getSavedQuestions, getUserAnswers, getUserProfile, getUserQuestions, unfollowUser } from "../controllers/userController.js"
+import { followUser, getCurrentUser, getSavedQuestions, getUserAnswers, getUserProfile, getUserQuestions, markAllNotificationsRead, unfollowUser } from "../controllers/userController.js"
 import { authMiddleware } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -18,5 +18,7 @@ router.get("/profile/:userId/saved-questions", wrapAsync(getSavedQuestions));
 router.post("/follow/:userId", authMiddleware, wrapAsync(followUser));
 
 router.delete("/unfollow/:userId", authMiddleware, wrapAsync(unfollowUser));
+
+router.post("/notifications/mark-all-read", authMiddleware, wrapAsync(markAllNotificationsRead));
 
 export default router;

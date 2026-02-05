@@ -99,7 +99,7 @@ export default function FollowActionButton({
 
     const followStyle = size === "xs"
         ? "bg-orange-500/10 text-orange-500 dark:bg-[#07C5B9]/20 dark:text-[#07C5B9]"
-        : "bg-orange-500 dark:bg-[#07C5B9]";
+        : "bg-orange-500 dark:bg-[#07C5B9] text-white";
 
     const style = isFollowing
         ? unfollowStyle

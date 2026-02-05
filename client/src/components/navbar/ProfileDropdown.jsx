@@ -4,7 +4,6 @@ import { useState, useRef, useEffect, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   User,
-  Brain,
   FileEdit,
   Bookmark,
   Settings,

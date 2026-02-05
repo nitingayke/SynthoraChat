@@ -24,7 +24,7 @@ export default function LoginDialog() {
                     sx: {
                         backgroundColor: "transparent",
                         boxShadow: 24,
-                        borderRadius: 1,
+                        borderRadius: 3,
                     },
                 },
             }}

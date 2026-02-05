@@ -6,8 +6,9 @@ import { mapMediaType } from "../utils/mediaTypeMapper.js";
 import { cleanupCloudinaryFiles } from "../services/cleanupCloudinary.js";
 import Answer from "../models/Answer.js";
 import { addUserActivity } from "../services/activity.service.js";
+import { addNotification } from "../services/notification.service.js";
 
-export const getAllQuestions = async (req, res) => {
+export const getQuestions = async (req, res) => {
   const page = Number.parseInt(req.query.page) || 1;
   const limit = Number.parseInt(req.query.limit) || 20;
   const skip = (page - 1) * limit;
@@ -519,5 +520,87 @@ export const toggleSaveQuestion = async (req, res) => {
     success: true,
     message: saved ? "Question saved" : "Question unsaved",
     data: { saved },
+  });
+};
+
+export const deleteQuestion = async (req, res) => {
+  const userId = req.user?.id;
+  const { questionId } = req.params;
+
+  if(!questionId) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "QuestionId not found!",
+    });
+  }
+
+  const question = await Question.findById(questionId).select(
+    "author title answers media upvotes saves",
+  );
+
+  if (!question) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: "Question not found",
+    });
+  }
+
+  if (!question.author.equals(userId)) {
+    return res.status(httpStatus.FORBIDDEN).json({
+      success: false,
+      message: "You can only delete your own question",
+    });
+  }
+
+  if (question.answers.length > 0) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "You can't delete this question because it already has answers.",
+    });
+  }
+
+  const upvotesRollback = question.upvotes?.length || 0;
+  const savedUserIds = question.saves.map((id) => id.toString());
+  const title = question.title;
+
+  if (question.media.length > 0) {
+    await cleanupCloudinaryFiles(question.media);
+  }
+
+  await Promise.all([
+    User.updateOne(
+      { _id: userId },
+      {
+        $pull: { questions: questionId },
+        $inc: { upvotesCount: -upvotesRollback },
+      },
+    ),
+
+    User.updateMany(
+      { "savedQuestions.question": questionId },
+      { $pull: { savedQuestions: { question: questionId } } },
+    ),
+
+    Question.deleteOne({ _id: questionId }),
+  ]);
+
+  for (const savedUserId of savedUserIds) {
+    if (savedUserId === userId.toString()) continue;
+
+    await addNotification(req, savedUserId, {
+      title: `Question Removed: ${title}`,
+      description: "A question you saved was deleted by its author.",
+      link: "",
+    });
+  }
+
+  req.io.to(`question:${questionId}`).emit("question:delete", {
+    questionId,
+  });
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    message: "Question deleted successfully",
+    data: { questionId },
   });
 };

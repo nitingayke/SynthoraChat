@@ -58,9 +58,16 @@ export default function Footer() {
         <div>
           <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">Contact</h3>
           <p className="flex items-center gap-2 text-sm mb-2">
-            <Mail className="w-5 h-5text-orange-500 dark:text-[#07C5B9]" />
-            support@synthorachat.com
+            <Mail className="w-5 h-5 text-orange-500 dark:text-[#07C5B9]" />
+
+            <a
+              href="mailto:support@synthorachat.com"
+              className="hover:underline text-gray-700 dark:text-gray-300"
+            >
+              support@synthorachat.com
+            </a>
           </p>
+
           <a
             href="https://discord.gg"
             className="inline-block mt-4 bg-orange-500 dark:bg-[#07C5B9] text-white py-2 px-4 rounded hover:opacity-90 transition"
@@ -70,7 +77,7 @@ export default function Footer() {
 
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-2 mt-6 text-sm bg-gray-200 dark:bg-gray-800 px-4 py-2 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+            className="flex items-center gap-2 mt-6 text-sm bg-gray-200 dark:bg-[#202020] px-4 py-2 rounded-full hover:bg-gray-300 dark:hover:bg-[#252525] transition"
           >
             {theme === "dark" ? (
               <>

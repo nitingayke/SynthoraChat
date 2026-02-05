@@ -1,23 +1,24 @@
 import { useContext, useState, useMemo, useEffect, useCallback, useRef } from "react";
 import PropTypes from "prop-types";
+import { enqueueSnackbar } from "notistack";
 
 import UIStateContext from "../../../context/UIStateContext";
 
 import QuestionList from "./QuestionList";
 import { filterQuestionsByQuery } from "../../../utils/questionUtils";
 import { fetchSavedQuestions } from "../../../services/user.service";
-import { enqueueSnackbar } from "notistack";
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
 
 export default function SavedQuestions({ userId, isOwnProfile = false }) {
 
     const { debouncedSearchQuery } = useContext(UIStateContext);
 
     const [questions, setQuestions] = useState([]);
-    const [page, setPage] = useState(1);
+    const [cursor, setCursor] = useState(null);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [initialLoading, setInitialLoading] = useState(true);
 
     const isInitialFetch = useRef(false);
 
@@ -27,15 +28,22 @@ export default function SavedQuestions({ userId, isOwnProfile = false }) {
         try {
             setLoading(true);
 
-            const res = await fetchSavedQuestions(userId, page, PAGE_SIZE);
+            const res = await fetchSavedQuestions(userId, cursor, PAGE_SIZE);
 
             if (res?.success) {
-                const newQuestions =
-                    res?.data?.questions?.map((sq) => sq.question) ?? [];
-                
-                setQuestions((prev) => [...prev, ...newQuestions]);
-                setHasMore(res?.pagination?.hasMore ?? false);
-                setPage((prev) => prev + 1);
+                const newQuestions = res.data.questions.map(sq => ({
+                    ...sq.question,
+                    savedAt: sq.savedAt,
+                }));
+
+                setQuestions(prev => {
+                    const map = new Map(prev.map(q => [q?._id, q]));
+                    newQuestions.forEach(q => map.set(q?._id, q));
+                    return Array.from(map.values());
+                });
+
+                setHasMore(res.pagination.hasMore);
+                setCursor(res.pagination.nextCursor);
             }
         } catch (error) {
             enqueueSnackbar(
@@ -44,19 +52,20 @@ export default function SavedQuestions({ userId, isOwnProfile = false }) {
             );
         } finally {
             setLoading(false);
+            setInitialLoading(false);
         }
-    }, [userId, page, loading, hasMore]);
+    }, [userId, cursor, loading, hasMore]);
 
     useEffect(() => {
         setQuestions([]);
-        setPage(1);
+        setCursor(null);
         setHasMore(true);
-    }, []);
-
+        setInitialLoading(true);
+        isInitialFetch.current = false;
+    }, [userId]);
 
     useEffect(() => {
-        if(isInitialFetch.current) return;
-
+        if (isInitialFetch.current) return;
         isInitialFetch.current = true;
         loadSavedQuestions();
     }, [loadSavedQuestions]);
@@ -78,7 +87,13 @@ export default function SavedQuestions({ userId, isOwnProfile = false }) {
                 </div>
             </div>
 
-            {filteredQuestions.length === 0 && !loading ? (
+            {initialLoading && (
+                <div className="py-16 text-center text-gray-500">
+                    Loading saved questions...
+                </div>
+            )}
+
+            {!initialLoading && filteredQuestions.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-16 text-center border-t border-gray-300 dark:border-[#202020]">
                     <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
                         No saved questions
@@ -91,7 +106,9 @@ export default function SavedQuestions({ userId, isOwnProfile = false }) {
                                 : "This user has no public saved questions."}
                     </p>
                 </div>
-            ) : (
+            )}
+
+            {filteredQuestions.length > 0 && (
                 <>
                     <QuestionList questions={filteredQuestions} />
 

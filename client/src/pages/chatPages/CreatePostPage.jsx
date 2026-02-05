@@ -15,7 +15,6 @@ const POST_RULES = {
   MIN_TOPICS: 1,
 };
 
-
 export default function CreatePostPage() {
 
   useDocumentTitle("Create Question");

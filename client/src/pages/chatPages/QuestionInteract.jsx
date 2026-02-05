@@ -8,6 +8,7 @@ import QuestionDetail from "../../components/main/questionInteract/QuestionDetai
 import AnswerList from "../../components/main/questionInteract/AnswerList";
 import FeatureScreenLoader from "../../components/loader/FeatureScreenLoader";
 import QuestionFilterToggle from "../../components/main/common/QuestionFilterToggle";
+import EmptyState from "../../components/main/common/EmptyState";
 
 import { getQuestionById } from "../../services/question.service";
 import SocketContext from "../../context/SocketContext";
@@ -73,30 +74,26 @@ export default function QuestionInteract() {
             });
         };
 
+        const handleQuestionDelete = ({ questionId: deletedId }) => {
+            if (deletedId !== questionId) return;
+
+            setCurrentQuestion(null);
+            setError("This question was deleted by the author.");
+
+            enqueueSnackbar(
+                "This question was deleted by the author.",
+                { variant: "info" }
+            );
+        }
+
         socket.on("question:update", handleQuestionUpdate);
+        socket.on("question:delete", handleQuestionDelete);
 
         return () => {
             socket.off("question:update", handleQuestionUpdate);
+            socket.off("question:delete", handleQuestionDelete);
         };
-    }, [questionId, socket]);
-
-    if (loading) {
-        return (
-            <div className="flex flex-1 items-center justify-center">
-                <FeatureScreenLoader />
-            </div>
-        )
-    }
-
-    if (questionId && !currentQuestion) {
-        return (
-            <div className="w-full max-w-5xl mx-auto py-12">
-                <div className="text-center text-gray-600 dark:text-gray-300">
-                    {error}
-                </div>
-            </div>
-        );
-    }
+    }, [questionId, socket, enqueueSnackbar]);
 
     return (
         <>
@@ -126,9 +123,28 @@ export default function QuestionInteract() {
                     <FilterQuestionList />
                 </div>
                 <div className="flex-1 space-y-3 rounded-lg border p-3 sm:p-4 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition h-fit">
-                    <QuestionDetail question={currentQuestion} />
 
-                    <AnswerList question={currentQuestion} />
+                    {loading && (
+                        <div className="flex flex-1 items-center justify-center">
+                            <FeatureScreenLoader />
+                        </div>
+                    )}
+
+                    {
+                        (!loading && questionId && !currentQuestion) && (
+                            <EmptyState
+                                title="Question not found"
+                                description={error || "This question may have been deleted or does not exist."}
+                            />
+                        )
+                    }
+
+                    {!loading && currentQuestion && (
+                        <>
+                            <QuestionDetail question={currentQuestion} />
+                            <AnswerList question={currentQuestion} />
+                        </>
+                    )}
                 </div>
             </div>
         </>

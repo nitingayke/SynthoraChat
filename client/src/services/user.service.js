@@ -20,12 +20,15 @@ export const fetchUserProfile = async (identifier) => {
 /**
  * Get user's questions
  * @param {string} userId
- * @param {number} page
+ * @param {number} cursor
  * @param {number} limit
  */
-export const fetchUserQuestions = async (userId, page = 1, limit = 10) => {
+export const fetchUserQuestions = async (userId, cursor, limit = 10) => {
   const res = await api.get(`/u/profile/${userId}/questions`, {
-    params: { page, limit },
+    params: {
+      limit,
+      cursor,
+    },
   });
 
   return res.data;
@@ -34,12 +37,15 @@ export const fetchUserQuestions = async (userId, page = 1, limit = 10) => {
 /**
  * Get user's answers
  * @param {string} userId
- * @param {number} page
+ * @param {string|null} cursor
  * @param {number} limit
  */
-export const fetchUserAnswers = async (userId, page = 1, limit = 10) => {
+export const fetchUserAnswers = async (userId, cursor, limit = 10) => {
   const res = await api.get(`/u/profile/${userId}/answers`, {
-    params: { page, limit },
+    params: {
+      limit,
+      cursor,
+    },
   });
 
   return res.data;
@@ -48,12 +54,15 @@ export const fetchUserAnswers = async (userId, page = 1, limit = 10) => {
 /**
  * Get user's saved questions
  * @param {string} userId
- * @param {number} page
+ * @param {string} cursor // date
  * @param {number} limit
  */
-export const fetchSavedQuestions = async (userId, page = 1, limit = 10) => {
+export const fetchSavedQuestions = async (userId, cursor, limit = 10) => {
   const res = await api.get(`/u/profile/${userId}/saved-questions`, {
-    params: { page, limit },
+    params: {
+      limit,
+      cursor, // savedAt cursor
+    },
   });
 
   return res.data;
@@ -77,4 +86,7 @@ export const unfollowUser = async (userId) => {
   return res.data;
 };
 
-
+export const markAllNotificationReadService = async () => {
+  const res = await api.post(`/u/notifications/mark-all-read`);
+  return res.data;
+};

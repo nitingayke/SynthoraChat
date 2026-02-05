@@ -111,7 +111,7 @@ export default function LoginComponent() {
         <hr className="flex-grow border-gray-300 dark:border-gray-700" />
       </div>
 
-      {!loading && <GoogleLoginButton />}
+      {!loading && <div className="w-fit mx-auto"><GoogleLoginButton /></div>}
 
       <p className="text-center text-sm mt-5 text-gray-700 dark:text-gray-400">
         Don't have an account?{" "}

@@ -34,12 +34,7 @@ export default function ChatSidebar() {
     ];
 
     return (
-        <aside className="hidden md:flex h-[calc(100vh-65px)] flex-col w-72 bg-white dark:bg-[#161616] p-4">
-
-            <button onClick={handleNewChat} className="flex items-center gap-3 bg-orange-500 dark:bg-[#07C5B9] text-white py-2 px-3 rounded-md mb-4">
-                <PlusCircle className="w-5 h-5" /> New Chat
-            </button>
-
+        <aside className="hidden md:flex h-[calc(100vh-65px)] flex-col w-72 bg-white dark:bg-[#161616] p-3">
             <div className="flex-1 overflow-y-auto space-y-1 scrollbar-hide">
                 {dummyHistory.map((item) => (
                     <Link
@@ -55,6 +50,9 @@ export default function ChatSidebar() {
                     </Link>
                 ))}
             </div>
+            <button onClick={handleNewChat} className="flex items-center gap-3 bg-orange-500 dark:bg-[#07C5B9] text-white py-2 px-3 rounded-md mt-3">
+                <PlusCircle className="w-5 h-5" /> New Chat
+            </button>
         </aside>
     )
 }

@@ -33,7 +33,7 @@ const ACTIVITIES_PER_PAGE = 7;
 
 export default function UserOverview({ user }) {
 
-    const { loginUser } = useContext(AuthContext);
+    const { loginUser, isOnline, lastSeen } = useContext(AuthContext);
 
     const [visibleCount, setVisibleCount] = useState(ACTIVITIES_PER_PAGE);
 
@@ -49,7 +49,6 @@ export default function UserOverview({ user }) {
         activities = [],
         upvotesCount = 0,
         helpfulAnswers = 0,
-        lastActive,
         createdAt,
     } = user || {};
 
@@ -108,9 +107,15 @@ export default function UserOverview({ user }) {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                    <Clock size={16} />
-                    {timeAgo(lastActive || createdAt)}
+                <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-gray-400">
+                    <Clock size={16} className={isOnline(user?._id) && "text-green-500"} />
+                    {isOnline(user?._id) ? (
+                        <span className="text-green-500 font-medium">Online now</span>
+                    ) : (
+                        <span>
+                            Last active: {timeAgo(lastSeen(user?._id))}
+                        </span>
+                    )}
                 </div>
             </div>
 

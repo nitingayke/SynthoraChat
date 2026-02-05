@@ -1,4 +1,4 @@
-import { Hash } from "lucide-react";
+import { ChevronDown, Hash } from "lucide-react";
 import PropTypes from "prop-types";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
@@ -65,7 +65,7 @@ export default function AnswerList({ question }) {
     fetchAnswers(0, true);
   }, [question?._id]); // DO NOT add fetchAnswers here
 
-  const handleAnswerNew = ({ questionId, answer }) => {
+  const handleAnswerNew = useCallback(({ questionId, answer }) => {
     if (questionId !== question?._id) return;
 
     setAnswers(prev => {
@@ -73,8 +73,13 @@ export default function AnswerList({ question }) {
       if (exists) return prev;
 
       return [answer, ...prev]
-    })
-  }
+    });
+
+    const username = answer?.author?.username || "null#";
+    if(username !== loginUser?.username) {
+      enqueueSnackbar(`${username} answered this question`, { variant: "info" });
+    }
+  }, [question?._id, enqueueSnackbar, loginUser?.username]); 
 
   const handleAnswerLike = ({ answerId, userId, liked }) => {
     setAnswers((prev) =>
@@ -123,22 +128,17 @@ export default function AnswerList({ question }) {
   }
 
   const handleAnswerNewComment = useCallback(({ answerId, comment }) => {
-
-    const isOwnComment = comment?.author?._id === loginUser?._id;
-
     setAnswers((prev) =>
       prev.map((answer) => {
         if (answer._id !== answerId) return answer;
 
         return {
           ...answer,
-          comments: isOwnComment
-            ? [comment, ...answer.comments]
-            : [...answer.comments, comment],
+          comments: [comment, ...answer.comments]
         };
       })
     );
-  }, [loginUser]);
+  }, []);
 
   const handleUpvoteComment = ({ answerId, commentId, userId, upvoted }) => {
     setAnswers((prev) =>
@@ -196,7 +196,7 @@ export default function AnswerList({ question }) {
       socket.off("comment:upvote", handleUpvoteComment);
       socket.off("comment:deleted", handleDeleteComment);
     }
-  }, [socket, handleAnswerNewComment]);
+  }, [socket, handleAnswerNewComment, handleAnswerNew]);
 
   if (!answers.length && !loading) {
     return (
@@ -232,9 +232,9 @@ export default function AnswerList({ question }) {
           <button
             disabled={loading}
             onClick={() => fetchAnswers(skip, false)}
-            className="text-sm rounded-md px-3 py-2 bg-gray-100 dark:bg-[#111] hover:bg-gray-200 dark:hover:bg-[#212121] disabled:opacity-60 border shadow-lg border-gray-300 dark:border-[#232323]"
+            className="flex items-center gap-1 text-sm rounded-md px-3 py-2 bg-gray-100 dark:bg-[#111] hover:opacity-80 disabled:opacity-60 border shadow-lg border-gray-300 dark:border-[#232323]"
           >
-            {loading ? "Loading..." : "Load More"}
+            <ChevronDown size={18} /> {loading ? "Loading..." : "Load More"}
           </button>
         </div>
       )}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import QuestionContent from './QuestionContent';
@@ -7,20 +7,31 @@ import QuestionStats from './QuestionStats';
 import Avatar from '@mui/material/Avatar';
 import { slugify } from '../../../utils/helper';
 import FollowActionButton from '../common/FollowActionButton';
+import AuthContext from '../../../context/AuthContext';
 
 export default function QuestionCard({ question }) {
+
+    const { isOnline } = useContext(AuthContext);
+
+    const authorOnline = isOnline(question?.author?._id);
 
     return (
         <div className="bg-white dark:bg-[#161616] rounded-xl border border-gray-200 dark:border-gray-800/50 p-4 hover:shadow-lg transition-all duration-300">
             <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                    <Link to={`/main/u/profile/${question?.author?.username}`} >
-                        <Avatar
-                            src={question.author?.profile?.profilePicture}
-                            alt={question.author?.username}
-                            className="!h-8 !w-8"
-                        />
+                    <Link to={`/main/u/profile/${question?.author?.username}`}>
+                        <div
+                            title={authorOnline ? "User is online" : "User is offline"}
+                            className={`relative rounded-full p-[2px] ${authorOnline ? "bg-green-500" : "bg-transparent" }`}
+                        >
+                            <Avatar
+                                src={question.author?.profile?.profilePicture}
+                                alt={question.author?.username}
+                                className="!h-9 !w-9 bg-white dark:bg-[#161616] border-3 border-transparent"
+                            />
+                        </div>
                     </Link>
+
                     <div>
                         <div className="flex items-center gap-2">
                             <Link to={`/main/u/profile/${question?.author?.username}`} className='flex items-center gap-2 group' >

@@ -27,7 +27,7 @@ export default function AIChat() {
     }, [loginUser, threadId, setSelectedChat]);
 
     return (
-        <section className="w-full max-w-6xl gap-2 md:gap-4 h-full mx-auto flex bg-gray">
+        <section className="w-full max-w-6xl gap-2 md:gap-4 h-full mx-auto flex bg-gray px-2">
             <ChatSidebar />
             <ChatWindow />
         </section>
