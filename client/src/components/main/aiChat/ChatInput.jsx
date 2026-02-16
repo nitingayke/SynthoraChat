@@ -1,11 +1,21 @@
 import React, { useEffect, useRef, useContext } from 'react';
-import { Send, Paperclip, Mic, Sparkles, Edit3, Lightbulb, StopCircle } from 'lucide-react';
+import { Send, Paperclip, Mic, StopCircle } from 'lucide-react';
 import AIChatContext from '../../../context/AIChatContext';
+import UIStateContext from '../../../context/UIStateContext';
+import { useNavigate, useParams } from 'react-router-dom';
+import { sendMessageToAI } from '../../../services/ai.service';
+import { useSnackbar } from 'notistack';
 
 export default function ChatInput() {
 
-    const { userPrompt, setUserPrompt, setSelectedChat, isAnswerLoading, setIsAnswerLoading } = useContext(AIChatContext);
+    const navigate = useNavigate();
+    const { threadId } = useParams();
+
+    const { isAuthorize } = useContext(UIStateContext);
+    const { userPrompt, setUserPrompt, setSelectedChat, isAnswerLoading, setIsAnswerLoading, setSessions } = useContext(AIChatContext);
     const textareaRef = useRef(null);
+
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -14,59 +24,71 @@ export default function ChatInput() {
         }
     }, [userPrompt]);
 
-    const handleUserQuestion = async (question) => {
-        setSelectedChat(prev => {
-            const newMessage = {
-                role: "user",
-                content: question,
-                timestamp: new Date().toISOString(),
-            };
-            return {
-                ...prev,
-                messages: [...(prev?.messages || []), newMessage],
-                updatedAt: new Date().toISOString(),
-            }
-        });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-        setIsAnswerLoading(true);
+        if (!isAuthorize() || isAnswerLoading) return;
 
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        const question = userPrompt.trim();
+        if (!question) return;
 
-        const dummyReply = {
-            role: "assistant",
-            content: "This is a dummy AI response generated after 10 seconds ⏳",
+        setUserPrompt("");
+
+        const newUserMessage = {
+            role: "user",
+            content: question,
             timestamp: new Date().toISOString(),
-            metadata: {
-                modelUsed: "GPT-Dummy",
-                tokens: 20,
-                responseTime: 10000,
-                confidenceScore: 0.50,
-            }
-        };
+        }
 
         setSelectedChat(prev => ({
             ...prev,
-            messages: [...prev.messages, dummyReply],
+            messages: [...(prev?.messages || []), newUserMessage],
             updatedAt: new Date().toISOString(),
         }));
 
-        setIsAnswerLoading(false);
-    };
+        setIsAnswerLoading(true);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+        try {
+            const res = await sendMessageToAI({
+                threadId: threadId || null,
+                message: question,
+                mode: "general_chat"
+            });
 
-        if (userPrompt.trim() && !isAnswerLoading) {
+            const { reply, metadata, threadId: returnedThreadId } = res.data;
 
-            const question = userPrompt.trim()
+            if (!threadId && returnedThreadId) {
+                const newSession = {
+                    _id: returnedThreadId,
+                    title: question.slice(0, 40),
+                    updatedAt: new Date().toISOString(),
+                };
 
-            setUserPrompt('');
+                setSessions(prev => [newSession, ...prev]);
 
-            if (textareaRef.current) {
-                textareaRef.current.style.height = 'auto';
+                navigate(`/main/ai-chat/${returnedThreadId}`);
+                return;
             }
 
-            handleUserQuestion(question);
+            const assistantMessage = {
+                role: "assistant",
+                content: reply,
+                timestamp: new Date().toISOString(),
+                metadata,
+            };
+
+            setSelectedChat(prev => ({
+                ...prev,
+                messages: [...(prev?.messages || []), assistantMessage],
+                updatedAt: new Date().toISOString(),
+            }));
+        } catch (error) {
+            enqueueSnackbar(
+                error?.response?.data?.message || "Something went wrong",
+                { variant: "error" }
+            );
+        } finally {
+            setIsAnswerLoading(false);
         }
     };
 
@@ -77,56 +99,8 @@ export default function ChatInput() {
         }
     };
 
-    const quickActions = [
-        {
-            icon: Sparkles,
-            label: "Explain",
-            prompt:
-                "Give a clear and concise explanation of this content, focusing only on the main concept without extra details."
-        },
-        {
-            icon: Paperclip,
-            label: "Examples",
-            prompt:
-                "Provide 2-3 short, practical examples that clearly illustrate this concept or topic."
-        },
-        {
-            icon: Send,
-            label: "Summarize",
-            prompt:
-                "Summarize this content into a brief paragraph highlighting only the key points."
-        },
-        {
-            icon: Edit3,
-            label: "Refine Post",
-            prompt:
-                "Rewrite this text to make it clearer, more structured, and easier to understand while keeping it short and professional."
-        },
-        {
-            icon: Lightbulb,
-            label: "Key Insights",
-            prompt:
-                "List the top insights or takeaways in bullet points, focusing on clarity and brevity."
-        }
-    ];
-
     return (
         <div className="bg-white dark:bg-[#191919] px-3 pt-3 pb-2 rounded-t-lg">
-
-            {(!isAnswerLoading) && (
-                <div className="flex gap-2 mb-2 overflow-x-auto scrollbar-hide">
-                    {quickActions.map((action, index) => (
-                        <button
-                            key={index * 0.12488}
-                            onClick={() => handleUserQuestion(action.prompt)}
-                            className="flex text-sm items-center gap-2 px-2.5 py-1.5 bg-gray-200/70 dark:bg-[#212121] hover:opacity-80 rounded-lg text-gray-700 dark:text-gray-300 transition-colors whitespace-nowrap"
-                        >
-                            <action.icon className="w-4 h-4" />
-                            {action.label}
-                        </button>
-                    ))}
-                </div>
-            )}
 
             <form onSubmit={handleSubmit} className="relative">
                 <div className={`relative border border-gray-500/50 rounded-lg transition-all duration-200`}>
@@ -141,8 +115,6 @@ export default function ChatInput() {
                         className="w-full text-sm px-4 py-3 pr-25 resize-none outline-none ring-0 focus:ring-0 focus:outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 max-h-32 scrollbar-hide"
                         style={{ minHeight: '48px' }}
                     />
-
-                    {/* Action Buttons */}
                     <div className="absolute right-2 bottom-2 flex items-center gap-1">
                         <button
                             type="button"
@@ -161,16 +133,16 @@ export default function ChatInput() {
                             <Mic className="w-4 h-4" />
                         </button>
                         {
-                            isAnswerLoading 
-                            ? <button title='Stop' className='p-1.5 hover:bg-gray-200 dark:hover:bg-[#212121] rounded-full'><StopCircle className="w-4 h-4" /></button> 
-                            : <button
-                                type="submit"
-                                disabled={!userPrompt.trim() || isAnswerLoading}
-                                className="p-1.5 disabled:text-gray-600 text-white bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 disabled:bg-gray-200/50 dark:disabled:dark:bg-[#212121] disabled:cursor-not-allowed rounded-lg transition-colors"
-                                title="Send message"
-                            >
-                                <Send className="w-4 h-4" />
-                            </button>
+                            isAnswerLoading
+                                ? <button title='Stop' className='p-1.5 hover:bg-gray-200 dark:hover:bg-[#212121] rounded-full'><StopCircle className="w-4 h-4" /></button>
+                                : <button
+                                    type="submit"
+                                    disabled={!userPrompt.trim() || isAnswerLoading}
+                                    className="p-1.5 disabled:text-gray-600 text-white bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 disabled:bg-gray-200/50 dark:disabled:dark:bg-[#212121] disabled:cursor-not-allowed rounded-lg transition-colors"
+                                    title="Send message"
+                                >
+                                    <Send className="w-4 h-4" />
+                                </button>
                         }
                     </div>
                 </div>

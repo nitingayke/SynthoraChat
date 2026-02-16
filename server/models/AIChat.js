@@ -10,7 +10,7 @@ const aiChatSessionSchema = new mongoose.Schema(
 
     title: {
       type: String,
-      default: "Untitled Chat",
+      default: "SynthoraChat AI",
       trim: true,
     },
 
@@ -23,7 +23,11 @@ const aiChatSessionSchema = new mongoose.Schema(
         "fact_check",
         "answer_generation",
       ],
-      index: true
+    },
+
+    totalTokensUsed: {
+      type: Number,
+      default: 0,
     },
 
     messages: [
@@ -44,15 +48,17 @@ const aiChatSessionSchema = new mongoose.Schema(
         },
         // AI response metadata
         metadata: {
-          modelUsed: { type: String, default: "GPT-5" },
-          tokens: { type: Number, default: 0 },
+          modelUsed: { type: String, default: "" },
+          promptTokens: { type: Number, default: 0 },
+          completionTokens: { type: Number, default: 0 },
+          totalTokens: { type: Number, default: 0 },
           responseTime: { type: Number, default: 0 },
-          confidenceScore: { type: Number, default: 0.9 }, // 0–1 scale
+          confidenceScore: { type: Number, default: 0.9 },
         },
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("AIChat", aiChatSessionSchema);

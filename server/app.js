@@ -13,6 +13,7 @@ import questionRoute from "./routes/questionRoute.js";
 import answerRoute from "./routes/answerRoute.js";
 import userRoute from "./routes/userRoute.js";
 import profileEditRoute from "./routes/profileEditRoute.js";
+import aiRoute from "./routes/aiRoute.js";
 import appAnalytics from "./routes/analyticsRoute.js";
 
 dotenv.config();
@@ -49,6 +50,8 @@ app.use("/q", questionRoute);
 app.use("/answer", answerRoute);
 
 app.use("/profile", profileEditRoute);
+
+app.use("/ai", aiRoute);
 
 app.use("/app", appAnalytics);
 

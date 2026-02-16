@@ -9,7 +9,8 @@ import {
 import { addUserActivity } from "../services/activity.service.js";
 
 export const editProfile = async (req, res) => {
-  const { userId, editData } = req.body;
+  const { editData } = req.body;
+  const userId = req.user.id;
 
   if (!authorizeUser(req, userId, res)) return;
 
@@ -51,7 +52,8 @@ export const editProfile = async (req, res) => {
 };
 
 export const updateEmail = async (req, res) => {
-  const { userId, newEmail } = req.body;
+  const { newEmail } = req.body;
+  const userId = req.user.id;
 
   if (!authorizeUser(req, userId, res)) return;
 
@@ -85,7 +87,8 @@ export const updateEmail = async (req, res) => {
 };
 
 export const updatePassword = async (req, res) => {
-  const { userId, newPassword } = req.body;
+  const { newPassword } = req.body;
+  const userId = req.user.id;
 
   if (!authorizeUser(req, userId, res)) return;
 

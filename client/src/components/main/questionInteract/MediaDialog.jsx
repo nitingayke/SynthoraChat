@@ -5,7 +5,7 @@ import Slide from "@mui/material/Slide";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 
 import ReactAudioPlayer from "react-audio-player";
-import DocViewer, { DocViewerRenderers } from "react-doc-viewer";
+import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -143,9 +143,8 @@ export default function QuestionMedia({ media }) {
                                 documents={[
                                     {
                                         uri: media[activeMedia]?.url,
-                                        fileType: "pdf",
-                                        fileName: "Document.pdf",
-                                    },
+                                        fileType: "pdf"
+                                    }
                                 ]}
                                 pluginRenderers={DocViewerRenderers}
                                 style={{ height: "100%" }}

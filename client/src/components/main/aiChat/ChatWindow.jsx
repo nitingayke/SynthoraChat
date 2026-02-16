@@ -1,71 +1,119 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Check, Copy, Volume2 } from "lucide-react";
+import PropTypes from "prop-types";
 import ChatInput from "./ChatInput";
 import AIChatContext from "../../../context/AIChatContext";
-import { Copy } from "lucide-react";
+import LoaderComponent from "../../loader/LoaderComponent";
+import { copyToClipboard } from "../../../utils/copyToClipboard";
+import MarkdownRenderer from "../../common/MarkdownRenderer";
 
-export default function ChatWindow() {
+export default function ChatWindow({ loading }) {
 
     const { selectedChat, isAnswerLoading } = useContext(AIChatContext);
     const chatScrollRef = useRef(null);
 
+    const [copiedCodeBlock, setCopiedCodeBlock] = useState(null);
+
     useEffect(() => {
-
-        if (!selectedChat?.messages?.length) return;
-
-        const lastMsg = selectedChat.messages[selectedChat.messages.length - 1];
-
-        if (lastMsg.role === "user" && chatScrollRef.current) {
+        if (chatScrollRef.current) {
             chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
         }
-    }, [selectedChat?.messages]);
+    }, [selectedChat?.messages, isAnswerLoading]);
+
+
+    const handleCopy = async (text, index) => {
+        const success = await copyToClipboard(text);
+
+        if (success) {
+            setCopiedCodeBlock(index);
+            setTimeout(() => setCopiedCodeBlock(null), 2000);
+        }
+    }
 
     return (
         <div className="flex flex-col flex-1 overflow-hidden pt-4 h-[calc(100vh-65px)]">
 
-            <div
-                ref={chatScrollRef}
-                className="flex-1 overflow-y-auto md:pe-1 custom-scrollbar space-y-3 mb-3 scroll-smooth pb-1">
-                {selectedChat?.messages?.length > 0 ? (
-                    selectedChat.messages.map((msg, index) => (
-                        <div
-                            key={index * 0.2458}
-                            className={`flex w-full ${msg?.role === "user" ? "justify-end" : "justify-start "
-                                }`}
-                        >
-                            <div
-                                className={`px-4 py-2 text-[#161616] dark:text-gray-100 ${msg?.role === "user" ? "rounded-br-none bg-white dark:bg-[#191919] rounded-2xl shadow-sm" : "rounded-bl-none"}`}
-                            >
-                                <p className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">{msg.content}</p>
+            {loading ? (
+                <div className="flex justify-center flex-1">
+                    <LoaderComponent />
+                </div>
+            ) : (
+                <>
+                    <div
+                        ref={chatScrollRef}
+                        className="flex-1 overflow-y-auto overflow-x-hidden md:pe-1 custom-scrollbar space-y-3 mb-3 scroll-smooth pb-1">
+                        {selectedChat?.messages?.length > 0 ? (
+                            selectedChat.messages.map((msg, index) => (
+                                <div
+                                    key={index * 0.2458}
+                                    className={`flex w-full ${msg?.role === "user" ? "justify-end" : "justify-start "
+                                        }`}
+                                >
+                                    <div
+                                        className={`px-2 sm:px-4 py-2 text-[#161616] dark:text-gray-100 max-w-[98%] w-fit min-w-0
+                                             ${msg?.role === "user" ? "rounded-br-none bg-white dark:bg-[#191919] rounded-2xl shadow-sm" : "rounded-bl-none"}`}
+                                    >
+                                        <div className="min-w-0 w-full">
+                                            {msg.role === "assistant" ? (
+                                                <MarkdownRenderer content={msg.content} />
+                                            ) : (
+                                                <p className="whitespace-pre-wrap break-words">
+                                                    {msg.content}
+                                                </p>
+                                            )}
+                                        </div>
 
-                                <div className="flex items-center justify-between mt-1">
-                                    <button className="opacity-60 hover:opacity-100">
-                                        <Copy size={16}/>
-                                    </button>
-                                    <span className="text-xs opacity-60">
-                                        {new Date(msg.timestamp).toLocaleTimeString([], {
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                        })}
-                                    </span>
+
+                                        <div className="flex items-center justify-between mt-1 gap-2">
+                                            <div className="flex gap-1">
+                                                <button
+                                                    onClick={() => handleCopy(msg?.content, index)}
+                                                    title={copiedCodeBlock === index ? "Copied" : "Copy"}
+                                                    className="p-2 rounded-md hover:cursor-pointer hover:bg-gray-200/50 dark:hover:bg-[#252525]"
+                                                >
+                                                    {copiedCodeBlock === index ? (
+                                                        <Check size={16} className="text-green-400" />
+                                                    ) : (
+                                                        <Copy size={16} />
+                                                    )}
+                                                </button>
+                                                <button className="p-2 rounded-md hover:cursor-pointer hover:bg-gray-200/50 dark:hover:bg-[#252525]">
+                                                    <Volume2 size={18} />
+                                                </button>
+                                            </div>
+                                            <span className="text-xs opacity-60">
+                                                {new Date(msg.timestamp).toLocaleTimeString([], {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                })}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
+                            ))
+                        ) : (
+                            <div className="flex flex-col items-center justify-center text-center h-full">
+                                <h1 className="text-3xl sm:text-4xl font-bold opacity-20">Welcome to SynthoraChat</h1>
+                                <p className="text-gray-500 dark:text-gray-400">I'm here to help!</p>
                             </div>
-                        </div>
-                    ))
-                ) : (
-                    <div className="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
-                        No messages yet. Start a new chat below 👇
-                    </div>
-                )}
+                        )}
 
-                {
-                    isAnswerLoading && <div className="text-[15px] flex px-2 space-x-2 pb-5">
-                        <div className="animate-spin rounded-full border-3 border-x-0 w-4 h-4"></div>
-                        <span>Loading...</span>
+                        {
+                            isAnswerLoading && <div className="text-[15px] flex px-2 space-x-2 pb-5">
+                                <div className="animate-spin rounded-full border-3 border-x-0 w-4 h-4"></div>
+                                <span>Loading...</span>
+                            </div>
+                        }
                     </div>
-                }
-            </div>
 
-            <ChatInput />
+                    <ChatInput />
+                </>
+            )
+            }
         </div>
     );
 }
+
+ChatWindow.propTypes = {
+    loading: PropTypes.bool,
+};

@@ -202,13 +202,8 @@ const userSchema = new mongoose.Schema(
 
     aiChatSessions: [
       {
-        sessionId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "AIChat",
-          required: true,
-        },
-        title: { type: String, default: "AI Chat" },
-        timestamp: { type: Date, default: Date.now },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "AIChat",
       },
     ],
 

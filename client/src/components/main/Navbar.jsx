@@ -91,8 +91,7 @@ export default function Navbar() {
     return (
         <>
             <nav
-                className="sticky top-0 left-0 w-full z-50 bg-white/70 hover:bg-white dark:bg-[#161616]/80 dark:hover:bg-[#161616] backdrop-blur-md shadow-md dark:shadow-gray-800 transition-all duration-300 ease-in-out hover:shadow-md hover:shadow-orange-400/50 dark:hover:shadow-[#07C5B9]/40
-            "
+                className="sticky top-0 left-0 w-full z-50 bg-white/70 hover:bg-white dark:bg-[#161616]/80 dark:hover:bg-[#161616] backdrop-blur-md shadow-md dark:shadow-gray-800 transition-all duration-300 ease-in-out hover:shadow-md hover:shadow-orange-400/50 dark:hover:shadow-[#07C5B9]/40"
             >
                 <div className="max-w-5xl mx-auto flex justify-between items-center px-4 lg:px-0 py-2 md:px-6">
                     <Link
