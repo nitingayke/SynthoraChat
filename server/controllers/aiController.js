@@ -141,6 +141,7 @@ export const aiChatController = async (req, res) => {
 
   let reply;
   let metadata;
+  let followUpQuestions;
 
   try {
     const response = await axios.post(
@@ -154,6 +155,7 @@ export const aiChatController = async (req, res) => {
     );
 
     reply = response.data.reply;
+    followUpQuestions = response.data.follow_up_questions;
     metadata = response.data.metadata;
 
     if (!reply) throw new Error("Invalid AI response");
@@ -189,6 +191,7 @@ export const aiChatController = async (req, res) => {
     data: {
       threadId: chat._id,
       reply,
+      followUpQuestions,
       metadata,
       totalTokensUsed: chat.totalTokensUsed,
     },

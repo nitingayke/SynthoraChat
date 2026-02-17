@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Check, Copy, Volume2 } from "lucide-react";
+import { Check, Copy, CornerDownRight, Volume2 } from "lucide-react";
 import PropTypes from "prop-types";
 import ChatInput from "./ChatInput";
 import AIChatContext from "../../../context/AIChatContext";
@@ -9,7 +9,7 @@ import MarkdownRenderer from "../../common/MarkdownRenderer";
 
 export default function ChatWindow({ loading }) {
 
-    const { selectedChat, isAnswerLoading } = useContext(AIChatContext);
+    const { selectedChat, isAnswerLoading, sendMessage } = useContext(AIChatContext);
     const chatScrollRef = useRef(null);
 
     const [copiedCodeBlock, setCopiedCodeBlock] = useState(null);
@@ -28,6 +28,12 @@ export default function ChatWindow({ loading }) {
             setCopiedCodeBlock(index);
             setTimeout(() => setCopiedCodeBlock(null), 2000);
         }
+    }
+
+    const handleFollowUpClick = (q) => {
+        const transformedMessage = `User selected follow-up: ${q}. Please respond accordingly.`;
+
+        sendMessage(transformedMessage, selectedChat?._id);
     }
 
     return (
@@ -63,7 +69,6 @@ export default function ChatWindow({ loading }) {
                                             )}
                                         </div>
 
-
                                         <div className="flex items-center justify-between mt-1 gap-2">
                                             <div className="flex gap-1">
                                                 <button
@@ -88,6 +93,25 @@ export default function ChatWindow({ loading }) {
                                                 })}
                                             </span>
                                         </div>
+
+                                        {
+                                            !isAnswerLoading && msg.role === "assistant" && msg.followUpQuestions?.length > 0 && (
+                                                <div className="mt-4 flex flex-wrap gap-2">
+                                                    {msg.followUpQuestions.map((q, i) => (
+                                                        <button
+                                                            key={i * 0.23548}
+                                                            onClick={() =>
+                                                                handleFollowUpClick(q)
+                                                            }
+                                                            className="flex items-center gap-2 px-3 py-1.5 text-xs bg-gray-100 dark:bg-[#252525] hover:bg-gray-200 dark:hover:bg-[#2f2f2f] rounded-full transition-all duration-150 border border-gray-200 dark:border-[#333]"
+                                                        >
+                                                            <CornerDownRight size={16} />
+                                                            <p className="flex items-start">{q}</p>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             ))

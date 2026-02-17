@@ -6,13 +6,14 @@ router = APIRouter()
 
 @router.post("/", response_model=ChatResponse)
 async def chat(data: ChatRequest):
-    reply, metadata = await handle_chat(
+    result, metadata = await handle_chat(
         thread_id=data.thread_id,
         messages=data.messages,
         mode=data.mode,
     )
 
     return ChatResponse(
-        reply=reply,
+        reply=result["reply"],
+        follow_up_questions=result["follow_up_questions"],
         metadata=metadata
     )

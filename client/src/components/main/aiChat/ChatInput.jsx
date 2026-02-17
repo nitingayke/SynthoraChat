@@ -2,20 +2,15 @@ import React, { useEffect, useRef, useContext } from 'react';
 import { Send, Paperclip, Mic, StopCircle } from 'lucide-react';
 import AIChatContext from '../../../context/AIChatContext';
 import UIStateContext from '../../../context/UIStateContext';
-import { useNavigate, useParams } from 'react-router-dom';
-import { sendMessageToAI } from '../../../services/ai.service';
-import { useSnackbar } from 'notistack';
+import { useParams } from 'react-router-dom';
 
 export default function ChatInput() {
 
-    const navigate = useNavigate();
     const { threadId } = useParams();
 
     const { isAuthorize } = useContext(UIStateContext);
-    const { userPrompt, setUserPrompt, setSelectedChat, isAnswerLoading, setIsAnswerLoading, setSessions } = useContext(AIChatContext);
+    const { userPrompt, setUserPrompt, isAnswerLoading, sendMessage } = useContext(AIChatContext);
     const textareaRef = useRef(null);
-
-    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         if (textareaRef.current) {
@@ -34,62 +29,7 @@ export default function ChatInput() {
 
         setUserPrompt("");
 
-        const newUserMessage = {
-            role: "user",
-            content: question,
-            timestamp: new Date().toISOString(),
-        }
-
-        setSelectedChat(prev => ({
-            ...prev,
-            messages: [...(prev?.messages || []), newUserMessage],
-            updatedAt: new Date().toISOString(),
-        }));
-
-        setIsAnswerLoading(true);
-
-        try {
-            const res = await sendMessageToAI({
-                threadId: threadId || null,
-                message: question,
-                mode: "general_chat"
-            });
-
-            const { reply, metadata, threadId: returnedThreadId } = res.data;
-
-            if (!threadId && returnedThreadId) {
-                const newSession = {
-                    _id: returnedThreadId,
-                    title: question.slice(0, 40),
-                    updatedAt: new Date().toISOString(),
-                };
-
-                setSessions(prev => [newSession, ...prev]);
-
-                navigate(`/main/ai-chat/${returnedThreadId}`);
-                return;
-            }
-
-            const assistantMessage = {
-                role: "assistant",
-                content: reply,
-                timestamp: new Date().toISOString(),
-                metadata,
-            };
-
-            setSelectedChat(prev => ({
-                ...prev,
-                messages: [...(prev?.messages || []), assistantMessage],
-                updatedAt: new Date().toISOString(),
-            }));
-        } catch (error) {
-            enqueueSnackbar(
-                error?.response?.data?.message || "Something went wrong",
-                { variant: "error" }
-            );
-        } finally {
-            setIsAnswerLoading(false);
-        }
+        await sendMessage(question, threadId);
     };
 
     const handleKeyDown = (e) => {

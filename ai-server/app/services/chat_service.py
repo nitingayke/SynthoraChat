@@ -4,12 +4,15 @@ import time
 async def handle_chat(thread_id: str, messages: list, mode: str):
     start_time = time.time()
 
-    reply = await generate_chat_response(messages, mode)
+    structured_response = await generate_chat_response(messages, mode)
+
+    reply = structured_response.reply
+    follow_ups = structured_response.follow_up_questions
 
     end_time = time.time()
 
-    usage = reply.usage_metadata if hasattr(reply, "usage_metadata") else {}
-    response_meta = reply.response_metadata if hasattr(reply, "response_metadata") else {}
+    usage = getattr(structured_response, "usage_metadata", {})
+    response_meta = getattr(structured_response, "response_metadata", {})
 
     metadata = {
         "thread_id": thread_id,
@@ -21,4 +24,7 @@ async def handle_chat(thread_id: str, messages: list, mode: str):
         "confidence_score": 0.95
     }
 
-    return reply.content, metadata
+    return {
+        "reply": reply,
+        "follow_up_questions": follow_ups
+    }, metadata

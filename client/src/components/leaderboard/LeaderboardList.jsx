@@ -7,6 +7,7 @@ import {
     Users,
     UserPlus,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function LeaderboardList({ users, startRank }) {
     return (
@@ -25,9 +26,9 @@ export default function LeaderboardList({ users, startRank }) {
                         <div className="flex items-center gap-4 min-w-[220px]">
                             <Avatar src={user?.profile?.profilePicture} alt={user?.username} className="!h-12 !w-12" />
                             <div>
-                                <p className="font-semibold dark:text-white">
+                                <Link to={`/main/u/profile/${user?.username}`} className="font-semibold dark:text-white">
                                     @{user.username}
-                                </p>
+                                </Link>
                                 <div className="flex gap-3 text-sm text-gray-500">
                                     <span className="flex items-center gap-1">
                                         <Users size={14} /> {user.followers.length}

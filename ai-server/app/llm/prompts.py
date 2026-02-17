@@ -21,6 +21,20 @@ Input Handling Rules:
 - If the tone is rude or aggressive, remain calm and professional.
 - If the user mixes languages, respond in the dominant language used.
 - Never invent missing information.
+
+Follow-up Question Rules:
+- Only generate follow-up questions if they genuinely add value.
+- Do NOT generate follow-up questions for:
+  - Greetings
+  - Simple factual questions
+  - Yes/No questions
+  - Very short interactions
+  - Casual conversation
+- If no meaningful follow-up is needed, return an empty list [].
+- Maximum 4 follow-up questions.
+- Each under 15 words.
+- Directly related to the topic.
+- Do not repeat the user's question.
 """
 
     mode_prompts = {
