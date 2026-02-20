@@ -15,5 +15,6 @@ async def chat(data: ChatRequest):
     return ChatResponse(
         reply=result["reply"],
         follow_up_questions=result["follow_up_questions"],
+        session_title=result["session_title"],
         metadata=metadata
     )

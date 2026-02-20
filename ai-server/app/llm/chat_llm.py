@@ -1,27 +1,68 @@
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
-from app.llm.factory import get_base_llm
-from app.llm.prompts import build_system_prompt
+from fastapi import HTTPException
+from google.api_core.exceptions import ResourceExhausted, GoogleAPIError
+from asyncio import TimeoutError
+from langchain_core.messages import HumanMessage, AIMessage
 from app.models.chat_model import AIResponseModel
+from app.agents.chat_agent import create_chat_agent
+from app.llm.factory import get_base_llm
 
-async def generate_chat_response(messages: list, mode: str):
-    llm = get_base_llm()
+async def generate_chat_response(messages: list, mode: str, generate_title: bool = False):
+    try:
+        agent_executor = create_chat_agent(mode, generate_title)
 
-    structured_llm = llm.with_structured_output(AIResponseModel)
+        user_input = messages[-1]["content"]
 
-    formatted_messages = []
+        chat_history = []
+        for msg in messages[:-1]:
+            if msg["role"] == "user":
+                chat_history.append(HumanMessage(content=msg["content"]))
+            elif msg["role"] == "assistant":
+                chat_history.append(AIMessage(content=msg["content"]))
 
-    system_prompt = build_system_prompt(mode)
-    formatted_messages.append(SystemMessage(content=system_prompt))
+        agent_result = await agent_executor.ainvoke({
+            "input": user_input,
+            "chat_history": chat_history
+        })
 
-    for msg in messages:
-        role = msg.get("role")
-        content = msg.get("content")
+        raw_output = agent_result["output"]
 
-        if role == "user":
-            formatted_messages.append(HumanMessage(content=content))
-        elif role == "assistant":
-            formatted_messages.append(AIMessage(content=content))
+        formatter_llm = get_base_llm(temperature=0)
 
-    response = await structured_llm.ainvoke(formatted_messages)
+        structured_llm = formatter_llm.with_structured_output(AIResponseModel)
 
-    return response
+        structured_response = await structured_llm.ainvoke([
+            {
+                "role": "system",
+                "content": "Convert the following response into structured format."
+            },
+            {
+                "role": "user",
+                "content": raw_output
+            }
+        ])
+
+        return structured_response
+    
+    except ResourceExhausted:
+        raise HTTPException(
+            status_code=429,
+            detail="AI quota exceeded. Please try again tomorrow."
+        )
+    
+    except TimeoutError:
+        raise HTTPException(
+            status_code=504,
+            detail="AI service timeout. Please try again"
+        )
+    
+    except GoogleAPIError as e:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Upstream AI provider error: {str(e)}"
+        )
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unexpected AI error: {str(e)}"
+        )

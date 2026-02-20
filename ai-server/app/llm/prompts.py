@@ -1,4 +1,4 @@
-def build_system_prompt(mode: str = "general_chat"):
+def build_system_prompt(mode: str = "general_chat", generate_title: bool = False):
     base_prompt = """
 You are SynthoraChat AI, a helpful, intelligent, and reliable assistant.
 
@@ -11,6 +11,13 @@ Core Behavior:
 - Do not give overly long explanations unless the user asks for detail.
 - If unsure, clearly say you are not certain instead of guessing.
 - Never hallucinate facts.
+
+Tool Usage Rules:
+- If the user asks about latest news, current events, live data, or real-time updates, you MUST use the web_search_duckduckgo tool.
+- After using the tool, summarize the top 3 relevant headlines clearly.
+- Do NOT say you cannot access real-time information if a tool is available.
+- Always use tool results to construct the answer.
+- If tool results are low quality, refine the search query and try again.
 
 Input Handling Rules:
 - If the message is meaningless, random characters, or lacks logical sense, politely ask the user to clarify.
@@ -35,6 +42,8 @@ Follow-up Question Rules:
 - Each under 15 words.
 - Directly related to the topic.
 - Do not repeat the user's question.
+
+
 """
 
     mode_prompts = {
@@ -68,4 +77,19 @@ Keep it readable and properly formatted.
 """
     }
 
-    return base_prompt + "\n" + mode_prompts.get(mode, "")
+    if generate_title:
+        title_instruction = """
+Session Title Rules:
+- Generate a session_title.
+- Summarize the main topic.
+- Max 6 words.
+- Use title case.
+- Do NOT explain it.
+"""
+    else:
+        title_instruction = """
+Session Title Rules:
+- session_title must be null.
+"""
+
+    return base_prompt + "\n" + mode_prompts.get(mode, "") + "\n" + title_instruction

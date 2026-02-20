@@ -49,11 +49,8 @@ const aiChatSessionSchema = new mongoose.Schema(
         // AI response metadata
         metadata: {
           modelUsed: { type: String, default: "" },
-          promptTokens: { type: Number, default: 0 },
-          completionTokens: { type: Number, default: 0 },
           totalTokens: { type: Number, default: 0 },
           responseTime: { type: Number, default: 0 },
-          confidenceScore: { type: Number, default: 0.9 },
         },
       },
     ],

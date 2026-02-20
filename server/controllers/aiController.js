@@ -4,14 +4,12 @@ import axios from "axios";
 import AIChat from "../models/AIChat.js";
 import User from "../models/User.js";
 
-import {
-  estimateTokens,
-  buildTokenLimitedContext,
-} from "../utils/aiTokenCounter.js";
+import { buildTokenLimitedContext } from "../utils/aiTokenCounter.js";
 
 const MAX_MESSAGE_LENGTH = 10000;
-const MAX_CONTEXT_TOKENS = 60000;
-const MAX_SESSION_TOKENS = 500000;
+const MAX_CONTEXT_TOKENS = 200000;
+const MAX_SESSION_TOKENS = 100000;
+const MAX_MESSAGES_PER_SESSION = 201;
 
 export const getAllChatSessions = async (req, res) => {
   const userId = req.user.id;
@@ -110,7 +108,7 @@ export const aiChatController = async (req, res) => {
   } else {
     chat = await AIChat.create({
       user: userId,
-      title: message.slice(0, 40),
+      title: null,
       sessionType: mode || "general_chat",
       messages: [],
     });
@@ -120,10 +118,10 @@ export const aiChatController = async (req, res) => {
     });
   }
 
-  if (chat.totalTokensUsed > MAX_SESSION_TOKENS) {
+  if (chat.messages.length >= MAX_MESSAGES_PER_SESSION) {
     return res.status(httpStatus.FORBIDDEN).json({
       success: false,
-      message: "Session token limit reached. Please start a new chat.",
+      message: "Session message limit reached. Please start a new chat.",
     });
   }
 
@@ -133,22 +131,23 @@ export const aiChatController = async (req, res) => {
     timestamp: new Date(),
   };
 
-  // const contextMessages = buildTokenLimitedContext(
-  //   chat.messages,
-  //   newUserMessage,
-  //   MAX_CONTEXT_TOKENS,
-  // );
+  const contextMessages = buildTokenLimitedContext(
+    chat.messages,
+    newUserMessage,
+    MAX_CONTEXT_TOKENS,
+  );
 
   let reply;
   let metadata;
   let followUpQuestions;
+  let sessionTitle;
 
   try {
     const response = await axios.post(
       "http://localhost:8000/chat/",
       {
         thread_id: chat._id.toString(),
-        messages: [...chat.messages, newUserMessage],
+        messages: contextMessages,
         mode: mode || "general_chat",
       },
       { timeout: 300000 },
@@ -157,13 +156,33 @@ export const aiChatController = async (req, res) => {
     reply = response.data.reply;
     followUpQuestions = response.data.follow_up_questions;
     metadata = response.data.metadata;
+    sessionTitle = response.data.session_title;
 
     if (!reply) throw new Error("Invalid AI response");
-  } catch {
-    return res.status(httpStatus.SERVICE_UNAVAILABLE).json({
+
+    if (!chat.title && sessionTitle) {
+      chat.title = sessionTitle;
+    }
+  } catch (err) {
+    if (err.response) {
+      return res.status(httpStatus.SERVICE_UNAVAILABLE).json({
+        success: false,
+        message: "AI service is temporarily unavailable. Please try again.",
+      });
+    }
+
+    return res.status(err.response.status).json({
       success: false,
-      message: "AI service is temporarily unavailable. Please try again.",
+      message: err.response.data?.detail || "AI error occurred",
+      errorType: err.response.data?.error_type || null,
     });
+
+    if (err.code === "ECONNABORTED") {
+      return res.status(504).json({
+        success: false,
+        message: "AI request timed out.",
+      });
+    }
   }
 
   const assistantMessage = {
@@ -172,11 +191,8 @@ export const aiChatController = async (req, res) => {
     timestamp: new Date(),
     metadata: {
       modelUsed: metadata?.model_used || "",
-      promptTokens: metadata?.prompt_tokens || 0,
-      completionTokens: metadata?.completion_tokens || 0,
       totalTokens: metadata?.total_tokens || 0,
       responseTime: metadata?.response_time || 0,
-      confidenceScore: metadata?.confidence_score || 0.9,
     },
   };
 
@@ -190,6 +206,7 @@ export const aiChatController = async (req, res) => {
     success: true,
     data: {
       threadId: chat._id,
+      sessionTitle,
       reply,
       followUpQuestions,
       metadata,

@@ -9,7 +9,7 @@ export default function ChatInput() {
     const { threadId } = useParams();
 
     const { isAuthorize } = useContext(UIStateContext);
-    const { userPrompt, setUserPrompt, isAnswerLoading, sendMessage } = useContext(AIChatContext);
+    const { userPrompt, setUserPrompt, isAnswerLoading, sendMessage, remainingMessages } = useContext(AIChatContext);
     const textareaRef = useRef(null);
 
     useEffect(() => {
@@ -22,7 +22,7 @@ export default function ChatInput() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!isAuthorize() || isAnswerLoading) return;
+        if (!isAuthorize() || isAnswerLoading || remainingMessages <= 0) return;
 
         const question = userPrompt.trim();
         if (!question) return;
@@ -50,7 +50,7 @@ export default function ChatInput() {
                         onChange={(e) => setUserPrompt(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={isAnswerLoading ? "Select a chat to continue..." : "Message AI assistant..."}
-                        disabled={isAnswerLoading}
+                        disabled={isAnswerLoading || remainingMessages <= 0}
                         rows={1}
                         className="w-full text-sm px-4 py-3 pr-25 resize-none outline-none ring-0 focus:ring-0 focus:outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 max-h-32 scrollbar-hide"
                         style={{ minHeight: '48px' }}
@@ -77,7 +77,7 @@ export default function ChatInput() {
                                 ? <button title='Stop' className='p-1.5 hover:bg-gray-200 dark:hover:bg-[#212121] rounded-full'><StopCircle className="w-4 h-4" /></button>
                                 : <button
                                     type="submit"
-                                    disabled={!userPrompt.trim() || isAnswerLoading}
+                                    disabled={!userPrompt.trim() || isAnswerLoading || remainingMessages <= 0}
                                     className="p-1.5 disabled:text-gray-600 text-white bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 disabled:bg-gray-200/50 dark:disabled:dark:bg-[#212121] disabled:cursor-not-allowed rounded-lg transition-colors"
                                     title="Send message"
                                 >
@@ -88,8 +88,11 @@ export default function ChatInput() {
                 </div>
             </form>
 
-            <div className="flex items-center justify-center mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
-                Press Enter to send, <span className='hidden md:block px-1'>Shift+Enter for new line,</span> SynthoraChat AI can make mistakes
+            <div className="flex items-center justify-center flex-wrap mt-2 text-xs text-gray-500 dark:text-gray-400 text-center gap-1">
+                <span>SynthoraChat AI can make mistakes.</span>
+                <span className={`hidden sm:flex ${remainingMessages <= 0 && ""}`}>
+                    {remainingMessages > 0 ? `${remainingMessages} messages remaining` : "Session limit reached"}
+                </span>
             </div>
         </div>
     );
