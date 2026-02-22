@@ -4,7 +4,7 @@ from app.llm.chat_llm import generate_chat_response
 
 async def handle_chat(thread_id: str, messages: list, mode: str):
     if not messages:
-        raise ValueError("Messages cannot be empty")
+        raise HTTPException(status_code=400, detail="Messages cannot be empty")
     
     start_time = time.time()
 

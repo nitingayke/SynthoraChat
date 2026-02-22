@@ -2,9 +2,9 @@ from fastapi import HTTPException
 from google.api_core.exceptions import ResourceExhausted, GoogleAPIError
 from asyncio import TimeoutError
 from langchain_core.messages import HumanMessage, AIMessage
-from app.models.chat_model import AIResponseModel
 from app.agents.chat_agent import create_chat_agent
 from app.llm.factory import get_base_llm
+from app.models.chat_model import AIResponseModel
 
 async def generate_chat_response(messages: list, mode: str, generate_title: bool = False):
     try:
@@ -19,6 +19,7 @@ async def generate_chat_response(messages: list, mode: str, generate_title: bool
             elif msg["role"] == "assistant":
                 chat_history.append(AIMessage(content=msg["content"]))
 
+        # STEP 1: TOOL AGENT EXECUTION
         agent_result = await agent_executor.ainvoke({
             "input": user_input,
             "chat_history": chat_history
@@ -26,6 +27,7 @@ async def generate_chat_response(messages: list, mode: str, generate_title: bool
 
         raw_output = agent_result["output"]
 
+        # STEP 2: STRUCTURED FORMATTER
         formatter_llm = get_base_llm(temperature=0)
 
         structured_llm = formatter_llm.with_structured_output(AIResponseModel)
@@ -33,7 +35,7 @@ async def generate_chat_response(messages: list, mode: str, generate_title: bool
         structured_response = await structured_llm.ainvoke([
             {
                 "role": "system",
-                "content": "Convert the following response into structured format."
+                "content": "Convert the following assistant response into the required structured format."
             },
             {
                 "role": "user",

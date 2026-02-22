@@ -165,24 +165,37 @@ export const aiChatController = async (req, res) => {
     }
   } catch (err) {
     if (err.response) {
-      return res.status(httpStatus.SERVICE_UNAVAILABLE).json({
+      return res.status(err.response.status || 500).json({
         success: false,
-        message: "AI service is temporarily unavailable. Please try again.",
+        message:
+          err.response.data?.detail ||
+          err.response.data?.message ||
+          "AI server returned an error.",
+        errorType: err.response.data?.error_type || "AI_SERVER_ERROR",
       });
     }
-
-    return res.status(err.response.status).json({
-      success: false,
-      message: err.response.data?.detail || "AI error occurred",
-      errorType: err.response.data?.error_type || null,
-    });
 
     if (err.code === "ECONNABORTED") {
       return res.status(504).json({
         success: false,
         message: "AI request timed out.",
+        errorType: "TIMEOUT",
       });
     }
+
+    if (err.code === "ECONNREFUSED") {
+      return res.status(503).json({
+        success: false,
+        message: "AI service is not running or unreachable.",
+        errorType: "CONNECTION_REFUSED",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: "Unexpected server error occurred.",
+      errorType: "UNKNOWN_ERROR",
+    });
   }
 
   const assistantMessage = {

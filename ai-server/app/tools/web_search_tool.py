@@ -1,7 +1,6 @@
 import requests
-from langchain.tools import tool
 from ddgs import DDGS
-from app.core.config import settings
+from langchain.tools import tool
 
 @tool
 def web_search_duckduckgo(query: str) -> str:
@@ -26,7 +25,7 @@ def web_search_duckduckgo(query: str) -> str:
 
             for idx, result in enumerate(results, 1):
                 results_list.append(
-                    f"{idx}. {result.get("title")}\n"
+                    f"{idx}. {result.get('title')}\n"
                     f"  {result.get('body')}\n"
                     f"  Source: {result.get('href')}\n"
                 )

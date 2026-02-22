@@ -3,7 +3,7 @@ from typing import List
 
 class Settings(BaseSettings): 
     GEMINI_API_KEY: str
-    GEMINI_MODEL_NAME: str = "gemini-2.5-flash"
+    GEMINI_MODEL_NAME: str = "gemini-1.5-flash"
     WEATHERSTACK_API_KEY: str
     TAVILY_API_KEY: str
 
