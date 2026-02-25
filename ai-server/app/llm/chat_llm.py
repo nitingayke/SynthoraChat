@@ -3,47 +3,31 @@ from google.api_core.exceptions import ResourceExhausted, GoogleAPIError
 from asyncio import TimeoutError
 from langchain_core.messages import HumanMessage, AIMessage
 from app.agents.chat_agent import create_chat_agent
-from app.llm.factory import get_base_llm
-from app.models.chat_model import AIResponseModel
 
 async def generate_chat_response(messages: list, mode: str, generate_title: bool = False):
     try:
         agent_executor = create_chat_agent(mode, generate_title)
 
-        user_input = messages[-1]["content"]
-
         chat_history = []
-        for msg in messages[:-1]:
+        for msg in messages:
             if msg["role"] == "user":
                 chat_history.append(HumanMessage(content=msg["content"]))
             elif msg["role"] == "assistant":
                 chat_history.append(AIMessage(content=msg["content"]))
 
-        # STEP 1: TOOL AGENT EXECUTION
-        agent_result = await agent_executor.ainvoke({
-            "input": user_input,
-            "chat_history": chat_history
+        result = await agent_executor.ainvoke({
+            "messages": chat_history,
         })
 
-        raw_output = agent_result["output"]
+        structured = result["structured_response"]
+        usage = None
 
-        # STEP 2: STRUCTURED FORMATTER
-        formatter_llm = get_base_llm(temperature=0)
+        for msg in reversed(result["messages"]):
+            if hasattr(msg, "usage_metadata") and msg.usage_metadata:
+                usage = msg.usage_metadata
+                break
 
-        structured_llm = formatter_llm.with_structured_output(AIResponseModel)
-
-        structured_response = await structured_llm.ainvoke([
-            {
-                "role": "system",
-                "content": "Convert the following assistant response into the required structured format."
-            },
-            {
-                "role": "user",
-                "content": raw_output
-            }
-        ])
-
-        return structured_response
+        return structured, usage or {}
     
     except ResourceExhausted:
         raise HTTPException(

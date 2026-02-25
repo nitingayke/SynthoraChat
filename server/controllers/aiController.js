@@ -144,7 +144,7 @@ export const aiChatController = async (req, res) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8000/chat/",
+      "http://localhost:8000/chat/stream",
       {
         thread_id: chat._id.toString(),
         messages: contextMessages,

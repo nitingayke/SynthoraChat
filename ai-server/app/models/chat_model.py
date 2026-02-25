@@ -8,7 +8,7 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     reply: str
-    follow_up_questions: list[str]
+    follow_up_questions: List[str]
     session_title: Optional[str] = None
     metadata: Dict
 

@@ -36,7 +36,7 @@ export default function ChatWindow({ loading }) {
     }
 
     const handleFollowUpClick = (q) => {
-        const transformedMessage = `User selected follow-up: ${q}. Please respond accordingly.`;
+        const transformedMessage = `User selected follow-up: ${q}.\nPlease respond accordingly.`;
 
         sendMessage(transformedMessage, selectedChat?._id);
     }

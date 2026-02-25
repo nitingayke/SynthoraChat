@@ -9,9 +9,10 @@ async def handle_chat(thread_id: str, messages: list, mode: str):
     start_time = time.time()
 
     is_first_message = len(messages) == 1
-    structured_response = await generate_chat_response(messages, mode, generate_title=is_first_message)
 
-    if not structured_response or not hasattr(structured_response, "reply"):
+    structured_response, usage = await generate_chat_response(messages, mode, generate_title=is_first_message)
+
+    if not structured_response or not structured_response.reply:
         raise HTTPException(
             status_code=500,
             detail="Invalid LLM structured output"
@@ -23,14 +24,11 @@ async def handle_chat(thread_id: str, messages: list, mode: str):
 
     end_time = time.time()
 
-    usage = getattr(structured_response, "usage_metadata", {})
-    response_meta = getattr(structured_response, "response_metadata", {})
-
     metadata = {
         "thread_id": thread_id,
-        "model_used": response_meta.get("model_name"),
+        "model_used": "gemini-2.5-flash",
         "total_tokens": usage.get("total_tokens"),
-        "response_time": round(end_time - start_time, 3),
+        "response_time": round(end_time - start_time),
     }
 
     return {

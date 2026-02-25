@@ -4,7 +4,7 @@ from app.services.chat_service import handle_chat
 
 router = APIRouter()
 
-@router.post("/", response_model=ChatResponse)
+@router.post("/stream", response_model=ChatResponse)
 async def chat(data: ChatRequest):
     result, metadata = await handle_chat(
         thread_id=data.thread_id,
