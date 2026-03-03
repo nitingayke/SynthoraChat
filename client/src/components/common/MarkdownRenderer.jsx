@@ -49,13 +49,13 @@ export default function MarkdownRenderer({ content }) {
                 ),
 
                 p: ({ children }) => (
-                    <p className="mb-1 leading-relaxed text-[#161616] dark:text-gray-100">
+                    <p className="mb-1 leading-relaxed text-[#161616] dark:text-gray-200">
                         {children}
                     </p>
                 ),
 
                 ul: ({ children }) => (
-                    <ul className="list-disc pl-6 mb-3 text-[#161616] dark:text-gray-100">
+                    <ul className="list-disc pl-6 mb-3 text-[#161616] dark:text-gray-200">
                         {children}
                     </ul>
                 ),

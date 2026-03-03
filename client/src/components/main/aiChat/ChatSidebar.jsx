@@ -9,7 +9,7 @@ export default function ChatSidebar() {
     const navigate = useNavigate();
     const { threadId } = useParams();
 
-    const { sessions, sessionLoading } = useContext(AIChatContext);
+    const { sessions, sessionLoading, isAnswerLoading } = useContext(AIChatContext);
 
     const handleNewChat = () => {
         navigate("/main/ai-chat");
@@ -41,7 +41,7 @@ export default function ChatSidebar() {
                 {!sessionLoading && sortedSessions?.map((session) => (
                     <Link
                         key={session._id}
-                        to={`/main/ai-chat/${session._id}`}
+                        to={isAnswerLoading ? "#" : `/main/ai-chat/${session._id}`}
                     >
                         <div className={`px-2 py-1.5 rounded-lg cursor-pointer ${threadId === String(session._id) ? "hover:bg-orange-100 dark:hover:bg-[#07C5B9]/10 bg-gray-100 dark:bg-[#1f1f1f]" : "hover:bg-gray-100 dark:hover:bg-[#1f1f1f]"}`}>
                             <p className={`font-medium text-sm gap-2 line-clamp-1 ${threadId === String(session._id) ? "text-orange-500 dark:text-[#07C5B9]" : "text-gray-900 dark:text-gray-100"}`}>

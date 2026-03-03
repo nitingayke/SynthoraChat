@@ -59,6 +59,8 @@ export const AIChatProvider = ({ children }) => {
 
         setIsAnswerLoading(true);
 
+        const activeThreadId = threadId || selectedChat?._id;
+
         try {
             const res = await sendMessageToAI({
                 threadId: threadId || null,
@@ -95,11 +97,17 @@ export const AIChatProvider = ({ children }) => {
                 followUpQuestions
             };
 
-            setSelectedChat(prev => ({
-                ...prev,
-                messages: [...(prev?.messages || []), assistantMessage],
-                updatedAt: new Date().toISOString(),
-            }));
+            setSelectedChat(prev => {
+                if (prev?._id !== activeThreadId) {
+                    return prev;
+                }
+
+                return {
+                    ...prev,
+                    messages: [...(prev?.messages || []), assistantMessage],
+                    updatedAt: new Date().toISOString(),
+                }
+            });
         } catch (error) {
             const message =
                 error?.response?.data?.message ||
@@ -119,7 +127,7 @@ export const AIChatProvider = ({ children }) => {
         } finally {
             setIsAnswerLoading(false);
         }
-    }, [navigate, remainingMessages]);
+    }, [navigate, remainingMessages, selectedChat]);
 
     const values = useMemo(() => ({
         userPrompt,

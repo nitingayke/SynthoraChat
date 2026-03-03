@@ -6,6 +6,7 @@ import { cleanupCloudinaryFiles } from "../services/cleanupCloudinary.js";
 import { mapMediaType } from "../utils/mediaTypeMapper.js";
 import { addUserActivity } from "../services/activity.service.js";
 import { addNotification } from "../services/notification.service.js";
+import { evaluateAnswerAccuracy } from "../services/aiService.js";
 
 export const createAnswer = async (req, res) => {
   const { questionId, content } = req.body;
@@ -45,11 +46,24 @@ export const createAnswer = async (req, res) => {
   }));
 
   try {
+    const aiResult = await evaluateAnswerAccuracy({
+      title: question?.title,
+      description: question?.content,
+      topics: question?.topics || [],
+      answer: content.trim(),
+    });
+
+    const aiAccuracy =
+      aiResult.success && typeof aiResult.data?.accuracy === "number"
+        ? aiResult.data.accuracy
+        : 0;
+
     const answer = await Answer.create({
       questionId,
       author: userId,
       content: content.trim(),
       media,
+      aiAccuracy,
     });
 
     await Question.updateOne(
@@ -80,11 +94,11 @@ export const createAnswer = async (req, res) => {
         select:
           "_id username profile.firstName profile.lastName profile.profilePicture",
       })
-      .populate({
-        path: "comments.author",
-        select:
-          "_id username profile.firstName profile.lastName profile.profilePicture",
-      })
+      // .populate({
+      //   path: "comments.author",
+      //   select:
+      //     "_id username profile.firstName profile.lastName profile.profilePicture",
+      // })
       .lean();
 
     req.io.to(`question:${questionId}`).emit("answer:new", {
@@ -285,7 +299,7 @@ export const toggleUpvoteAnswer = async (req, res) => {
   const answer = await Answer.findById(answerId).select(
     "questionId upvotes author",
   );
-  
+
   if (!answer) {
     return res.status(httpStatus.NOT_FOUND).json({
       success: false,
@@ -357,7 +371,9 @@ export const addAnswerComment = async (req, res) => {
     });
   }
 
-  const answer = await Answer.findById(answerId).select("author comments questionId");
+  const answer = await Answer.findById(answerId).select(
+    "author comments questionId",
+  );
 
   if (!answer) {
     return res.status(httpStatus.NOT_FOUND).json({

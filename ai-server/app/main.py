@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.routers import chat
+from app.routers import chat, evaluation_router
 from app.core.config import settings
 
 app = FastAPI(
@@ -37,3 +37,5 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 app.include_router(chat.router, prefix="/chat")
+
+app.include_router(evaluation_router.router, prefix="/evaluation")

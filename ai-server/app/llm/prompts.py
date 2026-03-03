@@ -119,3 +119,23 @@ Session Title Rules:
 """
 
     return base_prompt + "\n" + mode_prompts.get(mode, "") + "\n" + title_instruction
+
+
+def answer_accuracy_prompt():
+    return """
+You are an expert technical evaluator.
+
+Your job:
+Evaluate how accurate the user's answer is compared to the question.
+
+Rules:
+- Accuracy must be an integer between 0 and 100.
+- 100 = Completely correct and complete.
+- 70-90 = Mostly correct, minor gaps.
+- 40-70 = Partially correct.
+- 10-40 = Mostly incorrect.
+- 0-10 = Completely wrong or irrelevant.
+- Provide 1-5 improvement suggestions.
+- Be strict but fair.
+- Focus only on technical correctness, not grammar.
+"""

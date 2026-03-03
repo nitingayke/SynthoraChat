@@ -43,7 +43,7 @@ export default function ChatInput() {
         <div className="bg-white dark:bg-[#191919] px-3 pt-3 pb-2 rounded-t-lg">
 
             <form onSubmit={handleSubmit} className="relative">
-                <div className={`relative border border-gray-500/50 rounded-lg transition-all duration-200`}>
+                <div className={`flex relative border border-gray-500/50 rounded-lg transition-all duration-200`}>
                     <textarea
                         ref={textareaRef}
                         value={userPrompt}
@@ -52,18 +52,10 @@ export default function ChatInput() {
                         placeholder={isAnswerLoading ? "Select a chat to continue..." : "Message AI assistant..."}
                         disabled={isAnswerLoading || remainingMessages <= 0}
                         rows={1}
-                        className="w-full text-sm px-4 py-3 pr-25 resize-none outline-none ring-0 focus:ring-0 focus:outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 max-h-32 scrollbar-hide"
+                        className="w-full text-sm px-4 py-3 pr-18 resize-none outline-none ring-0 focus:ring-0 focus:outline-none bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 max-h-32 scrollbar-hide"
                         style={{ minHeight: '48px' }}
                     />
                     <div className="absolute right-2 bottom-2 flex items-center gap-1">
-                        <button
-                            type="button"
-                            className="p-1.5 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#212121] rounded-full transition-colors disabled:cursor-not-allowed"
-                            title="Attach file"
-                            disabled={isAnswerLoading}
-                        >
-                            <Paperclip className="w-4 h-4" />
-                        </button>
                         <button
                             type="button"
                             className="p-1.5 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#212121] rounded-full transition-colors disabled:cursor-not-allowed"
