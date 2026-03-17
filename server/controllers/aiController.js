@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import axios from "axios";
 import AIChat from "../models/AIChat.js";
 import User from "../models/User.js";
+import { generateAIChatReply } from "../services/aiService.js";
 
 import { buildTokenLimitedContext } from "../utils/aiTokenCounter.js";
 
@@ -127,7 +128,7 @@ export const aiChatController = async (req, res) => {
 
   const newUserMessage = {
     role: "user",
-    content: message,
+    content: message.trim(),
     timestamp: new Date(),
   };
 
@@ -137,65 +138,32 @@ export const aiChatController = async (req, res) => {
     MAX_CONTEXT_TOKENS,
   );
 
-  let reply;
-  let metadata;
-  let followUpQuestions;
-  let sessionTitle;
+  const aiResult = await generateAIChatReply({
+    threadId: chat._id.toString(),
+    messages: contextMessages,
+    mode,
+  });
 
-  try {
-    const response = await axios.post(
-      "http://localhost:8000/chat/stream",
-      {
-        thread_id: chat._id.toString(),
-        messages: contextMessages,
-        mode: mode || "general_chat",
-      },
-      { timeout: 300000 },
-    );
+  if (!aiResult.success) {
+    let status = 500;
 
-    reply = response.data.reply;
-    followUpQuestions = response.data.follow_up_questions;
-    metadata = response.data.metadata;
-    sessionTitle = response.data.session_title;
-
-    if (!reply) throw new Error("Invalid AI response");
-
-    if (!chat.title && sessionTitle) {
-      chat.title = sessionTitle;
-    }
-  } catch (err) {
-    if (err.response) {
-      return res.status(err.response.status || 500).json({
-        success: false,
-        message:
-          err.response.data?.detail ||
-          err.response.data?.message ||
-          "AI server returned an error.",
-        errorType: err.response.data?.error_type || "AI_SERVER_ERROR",
-      });
+    if (aiResult.errorType === "TIMEOUT") {
+      status = 504;
+    } else if (aiResult.errorType === "CONNECTION_REFUSED") {
+      status = 503;
     }
 
-    if (err.code === "ECONNABORTED") {
-      return res.status(504).json({
-        success: false,
-        message: "AI request timed out.",
-        errorType: "TIMEOUT",
-      });
-    }
-
-    if (err.code === "ECONNREFUSED") {
-      return res.status(503).json({
-        success: false,
-        message: "AI service is not running or unreachable.",
-        errorType: "CONNECTION_REFUSED",
-      });
-    }
-
-    return res.status(500).json({
+    return res.status(status).json({
       success: false,
-      message: "Unexpected server error occurred.",
-      errorType: "UNKNOWN_ERROR",
+      message: aiResult.message || "AI service failed",
+      errorType: aiResult.errorType,
     });
+  }
+
+  const { reply, followUpQuestions, metadata, sessionTitle } = aiResult.data;
+
+  if (!chat.title && sessionTitle) {
+    chat.title = sessionTitle;
   }
 
   const assistantMessage = {

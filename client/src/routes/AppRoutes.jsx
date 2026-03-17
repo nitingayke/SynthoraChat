@@ -8,7 +8,6 @@ import Home from "../pages/home";
 import Features from "../pages/Features";
 import Community from "../pages/Community";
 import GlobalOverlay from "../components/global/GlobalOverlay";
-import Leaderboard from "../pages/Leaderboard";
 import Contact from "../pages/Contact";
 import MainLayout from "../layouts/MainLayout";
 import NotFound from "../components/common/NotFound";
@@ -44,7 +43,6 @@ export default function AppRoutes() {
                 <Route path="/home" element={<Layout><Home /></Layout>} />
                 <Route path="/features" element={<Layout><Features /></Layout>} />
                 <Route path="/community" element={<Layout><Community /></Layout>} />
-                <Route path="/leaderboard" element={<Layout><Leaderboard /></Layout>} />
                 <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
                 <Route path="/main" element={<MainLayout />} >

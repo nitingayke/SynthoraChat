@@ -114,7 +114,7 @@ export default function MarkdownRenderer({ content }) {
                 ),
 
                 thead: ({ children }) => (
-                    <thead className="bg-gray-100 dark:bg-[#2a2a2a]">
+                    <thead className="bg-white dark:bg-[#2a2a2a]">
                         {children}
                     </thead>
                 ),
@@ -126,7 +126,7 @@ export default function MarkdownRenderer({ content }) {
                 ),
 
                 tr: ({ children }) => (
-                    <tr className="hover:bg-gray-50 dark:hover:bg-[#2a2a2a]">
+                    <tr className="hover:bg-white/30 dark:hover:bg-[#2a2a2a]/30">
                         {children}
                     </tr>
                 ),

@@ -12,7 +12,6 @@ const navLinks = [
   { name: "Main", path: "/main" },
   { name: "Features", path: "/features" },
   { name: "Community", path: "/community" },
-  { name: "Leaderboard", path: "/leaderboard" },
   { name: "Contact", path: "/contact" },
   // { name: "Notifications", path: "/notifications"},
   // { name: "Settings", path: "/settings"},
