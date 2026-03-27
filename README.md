@@ -27,5 +27,5 @@
 ### 🖼️ UI Preview
 
 | Answers Page | Profile Settings |
-|--------------|--------------|
-| ![Homepage](./assets/homepage.png) | ![Product](./assets/productpage.png) | ![Dashboard](./assets/dashboard.png) |
+|--------------|------------------|
+| ![Homepage](./assets/homepage.png) | ![Product](./assets/productpage.png) |
