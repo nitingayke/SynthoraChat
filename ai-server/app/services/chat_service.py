@@ -1,6 +1,6 @@
 import time
 from fastapi import HTTPException
-from app.llm.chat_llm import generate_chat_response
+from app.llm.chat_llm import generate_chat_response, generate_chat_response_stream
 
 async def handle_chat(thread_id: str, messages: list, mode: str):
     if not messages:
@@ -36,3 +36,23 @@ async def handle_chat(thread_id: str, messages: list, mode: str):
         "follow_up_questions": follow_ups,
         "session_title": session_title
     }, metadata
+
+
+async def handle_chat_stream(thread_id: str, messages: list, mode: str):
+    
+    start_time = time.time()
+    is_first_message = len(messages) == 1
+
+    async for event in generate_chat_response_stream(messages, mode, is_first_message):
+        
+        yield event
+
+    end_time = time.time()
+
+    yield {
+        "type": "metadata",
+        "data": {
+            "thread_id": thread_id,
+            "response_time": round(end_time - start_time)
+        }
+    }

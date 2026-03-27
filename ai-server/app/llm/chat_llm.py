@@ -52,3 +52,34 @@ async def generate_chat_response(messages: list, mode: str, generate_title: bool
             status_code=500,
             detail=f"Unexpected AI error: {str(e)}"
         )
+    
+
+async def generate_chat_response_stream(messages, mode, generate_title):
+
+    agent_executor = create_chat_agent(mode, generate_title)
+
+    chat_history = []
+    for msg in messages:
+        if msg["role"] == "user":
+            chat_history.append(HumanMessage(content=msg["content"]))
+        else:
+            chat_history.append(AIMessage(content=msg["content"]))
+
+    full_text = ""
+
+    async for step in agent_executor.astream({
+        "messages": chat_history
+    }):
+        if "output" in step:
+            token = step["output"]
+            full_text += token
+
+            yield {
+                "type": "token",
+                "content": token
+            }
+    
+    yield {
+        "type": "done",
+        "full_text": full_text
+    }
