@@ -220,7 +220,7 @@ export default function UpdatePasswordDialog() {
                   onKeyDown={(e) => handleOtpKeyDown(e, i)}
                   disabled={loading}
                   maxLength={1}
-                  className="w-10 h-10 text-center text-lg font-bold rounded-lg bg-gray-100 dark:bg-[#191919] focus:ring-2 outline-none focus:ring-orange-500 dark:focus:ring-[#07C5B9] dark:text-white"
+                  className="w-10 h-10 text-center text-lg font-bold rounded-lg bg-gray-100 dark:bg-[#191919] border border-gray-300 dark:border-gray-300/20 focus:ring-2 outline-none focus:ring-orange-500 dark:focus:ring-[#07C5B9] dark:text-white"
                 />
               ))}
             </div>
