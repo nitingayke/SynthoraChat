@@ -101,6 +101,7 @@ function ChipInput({ label, values, setValues, placeholder }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={placeholder}
+          maxLength={70}
           className="w-full min-w-0 px-3 py-2 rounded-lg border border-gray-300 dark:border-[#2a2a2a] bg-white dark:bg-[#111] focus:outline-none focus:ring-2 focus:ring-orange-400 dark:focus:ring-[#07C5B9]"
         />
 
@@ -242,6 +243,7 @@ export default function ProfileSettings({ user }) {
           <Textarea
             label="Bio"
             value={form.bio}
+            maxLength={500}
             onChange={(e) => setForm({ ...form, bio: e.target.value })}
           />
 
@@ -263,12 +265,13 @@ export default function ProfileSettings({ user }) {
           <ChipInput
             label="Credentials"
             values={form.credentials}
+            
             setValues={(v) => setForm({ ...form, credentials: v })}
             placeholder="e.g. MERN Developer"
           />
 
           <ChipInput
-            label="Knows About"
+            label="Knows About (expertise)"
             values={form.knowsAbout}
             setValues={(v) => setForm({ ...form, knowsAbout: v })}
             placeholder="e.g. JavaScript"
