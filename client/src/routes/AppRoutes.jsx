@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useContext } from "react";
 
 import Layout from "../layouts/layout";
 import Landing from "../pages/Landing";
@@ -17,7 +18,6 @@ import CreatePostPage from "../pages/chatPages/CreatePostPage";
 import ProfilePage from "../pages/chatPages/ProfilePage";
 import AIChat from "../pages/chatPages/AIChat";
 import QuestionInteract from "../pages/chatPages/QuestionInteract";
-import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
 import ScreenLoader from "../components/loader/ScreenLoader";
 import UserVerification from "../pages/UserVerification";

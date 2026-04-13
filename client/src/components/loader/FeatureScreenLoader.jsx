@@ -31,7 +31,9 @@ export default function FeatureScreenLoader() {
     }, []);
 
     return (
-        <div className="w-fit h-fit flex items-center justify-center p-6">
+        <div className="w-fit h-fit flex flex-col items-center justify-center p-6 space-y-2">
+            <div className="animate-spin rounded-full h-8 w-8 border-3 border-x-0" />
+            
             <p
                 className={`text-center text-lg font-light max-w-2xl text-gray-800 dark:text-gray-200 transition-all duration-300 ease-in-out ${visible ? "opacity-90 translate-y-0" : "opacity-0 translate-y-2"}`}
             >
