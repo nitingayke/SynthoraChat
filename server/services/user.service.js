@@ -21,6 +21,12 @@ export const findUserWithProfile = async (query) => {
       select:
         "username profile credentials topicsOfInterest followers following createdAt isVerified",
       model: "User",
+    })
+    .populate({
+      path: "aiChatSessions",
+      select: "title sessionType createdAt updatedAt messages",
+      model: "AIChat",
+      options: { sort: { updatedAt: -1 } },
     });
 };
 
@@ -40,7 +46,7 @@ export const updateUserProfile = async (userId, updateData) => {
   return await User.findByIdAndUpdate(
     userId,
     { $set: updateData },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   );
 };
 
@@ -51,7 +57,7 @@ export const updateUserEmail = async (userId, newEmail) => {
   return await User.findByIdAndUpdate(
     userId,
     { email: newEmail, isVerified: false },
-    { new: true }
+    { new: true },
   );
 };
 
@@ -63,6 +69,6 @@ export const updateUserPassword = async (userId, newPassword) => {
   return await User.findByIdAndUpdate(
     userId,
     { password: hashed },
-    { new: true }
+    { new: true },
   );
 };

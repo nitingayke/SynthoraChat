@@ -13,7 +13,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Line } from "react-chartjs-2";
-import { buildLast30DaysSeries } from "../../../utils/analytics";
+import { buildLast30DaysSeries, buildAIChatSeries } from "../../../utils/analytics";
 import { timeAgo } from "../../../utils/date";
 import { formatCount } from "../../../utils/formatCount";
 import AuthContext from "../../../context/AuthContext";
@@ -51,12 +51,6 @@ export default function UserInsights({ user }) {
 
   const getChartData = useCallback((selectedTab) => {
     switch (selectedTab) {
-      case "followers":
-        return {
-          title: "Followers (Last 30 Days)",
-          ...buildLast30DaysSeries("followedAt", user?.followers || []),
-        };
-
       case "following":
         return {
           title: "Following (Last 30 Days)",
@@ -72,7 +66,7 @@ export default function UserInsights({ user }) {
       case "AI Chats":
         return {
           title: "AI Chats (Last 30 Days)",
-          ...buildLast30DaysSeries("timestamp", user?.aiChatSessions || []),
+          ...buildAIChatSeries(user?.aiChatSessions || []),
         };
 
       default:

@@ -162,7 +162,7 @@ export const aiChatController = async (req, res) => {
 
   const { reply, followUpQuestions, metadata, sessionTitle } = aiResult.data;
 
-  if (!chat.title && sessionTitle) {
+  if ((!chat.title || chat?.messages == 0) && sessionTitle) {
     chat.title = sessionTitle;
   }
 

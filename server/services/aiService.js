@@ -39,7 +39,7 @@ export const evaluateAnswerAccuracy = async ({
 export const generateAIChatReply = async ({ threadId, messages, mode }) => {
   try {
     const response = await axios.post(
-      `${AI_SERVER_URL}/chat/stream`,
+      `${AI_SERVER_URL}/chat/user-message`,
       {
         thread_id: threadId,
         messages,

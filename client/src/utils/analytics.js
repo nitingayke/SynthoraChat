@@ -7,7 +7,7 @@ export const DAY = 24 * 60 * 60 * 1000;
  * @param {Array} items - data array
  * @param {string} dateKey - date field name
  */
-export function buildLast30DaysSeries(dateKey, items = []) {
+export const buildLast30DaysSeries = (dateKey, items = []) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -37,4 +37,50 @@ export function buildLast30DaysSeries(dateKey, items = []) {
     labels,
     data: labels.map((d) => map[d]),
   };
-}
+};
+
+export const buildAIChatSeries = (sessions = []) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const map = {};
+  const labels = [];
+
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(today.getTime() - i * DAY);
+    const key = d.toISOString().slice(0, 10);
+    map[key] = 0;
+    labels.push(key);
+  }
+
+  sessions.forEach((session) => {
+    
+    if (session?.messages?.length) {
+      session.messages.forEach((msg) => {
+        if (!msg?.timestamp) return;
+
+        const date = new Date(msg.timestamp);
+        date.setHours(0, 0, 0, 0);
+
+        const key = date.toISOString().slice(0, 10);
+        if (map[key] !== undefined) {
+          map[key]++;
+        }
+      });
+    }
+    else if (session?.createdAt) {
+      const date = new Date(session.createdAt);
+      date.setHours(0, 0, 0, 0);
+
+      const key = date.toISOString().slice(0, 10);
+      if (map[key] !== undefined) {
+        map[key]++;
+      }
+    }
+  });
+
+  return {
+    labels,
+    data: labels.map((d) => map[d]),
+  };
+};

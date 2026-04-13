@@ -2,6 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "https://synthorachat.onrender.com",
+  // baseURL: "http://localhost:9090",
 });
 
 api.interceptors.request.use(

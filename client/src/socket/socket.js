@@ -1,6 +1,7 @@
 import { io } from "socket.io-client";
 
 const SOCKET_URL = "https://synthorachat.onrender.com";
+// const SOCKET_URL = "http://localhost:9090";
 
 let socket = null;
 
