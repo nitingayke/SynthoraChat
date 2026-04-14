@@ -9,3 +9,5 @@ tavily-python
 duckduckgo-search
 youtube_transcript_api
 ddgs
+langchain-community
+python-dotenv
