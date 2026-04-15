@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import {
   Bookmark,
   Share2,
-  Eye,
   Loader2,
   ThumbsUp,
   ArrowBigUp,
@@ -32,6 +31,8 @@ import UIStateContext from "../../../context/UIStateContext";
 import EditQuestionDialog from "./EditQuestionDialog";
 import FollowActionButton from "../common/FollowActionButton";
 import ExpandableText from "../common/ExpandableText";
+import AIChatContext from "../../../context/AIChatContext";
+import MarkdownRenderer from "../../common/MarkdownRenderer";
 
 export default function QuestionDetail({ question }) {
 
@@ -41,6 +42,7 @@ export default function QuestionDetail({ question }) {
   const { loginUser } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
   const { isAuthorize } = useContext(UIStateContext);
+  const { setUserPrompt } = useContext(AIChatContext);
 
   const [likesArr, setLikesArr] = useState([]);
   const [upvotesArr, setUpvotesArr] = useState([]);
@@ -61,8 +63,6 @@ export default function QuestionDetail({ question }) {
     title,
     content,
     topics = [],
-    views = 0,
-    answers = [],
     shares = 0,
     media = [],
   } = question ?? {};
@@ -214,6 +214,15 @@ export default function QuestionDetail({ question }) {
     }
   }
 
+  const handleAIAnswer = () => {
+
+    if (!isAuthorize()) return;
+
+    setUserPrompt(`${title}. \n${content}`);
+
+    navigate(`/main/ai-chat`);
+  }
+
   if (!question) return null;
 
   const isLiked = likesArr.includes(userId);
@@ -224,7 +233,7 @@ export default function QuestionDetail({ question }) {
 
   return (
     <>
-      <article>
+      <article className="p-3 sm:p-0">
 
         {/* HEADER */}
         <header className="relative">
@@ -312,13 +321,12 @@ export default function QuestionDetail({ question }) {
 
         <footer className="mt-4">
           <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-            <div className="flex items-center gap-4">
-              <span className="flex items-center gap-1">
-                <Eye size={14} />
-                {formatCount(views)}
-              </span>
-              <span>{answers.length} Answers</span>
-            </div>
+            <button
+              className="flex items-center justify-center gap-1 px-2 py-1.5 rounded-md text-sm font-medium text-white bg-orange-500 dark:bg-[#07C5B9] hover:opacity-80 transition-all duration-200 cursor-pointer"
+              onClick={handleAIAnswer}
+            >
+              AI Answer
+            </button>
 
             <div className="gap-2 flex items-center">
               <FollowActionButton targetUserId={author?._id} size="xs" />
@@ -339,9 +347,7 @@ export default function QuestionDetail({ question }) {
               <h2 className="font-semibold text-orange-500 dark:text-[#07C5B9] flex items-center gap-2">
                 AI Summary
               </h2>
-              <p className="text-sm pt-1 whitespace-pre-wrap">
-                {answerSummary}
-              </p>
+              <MarkdownRenderer content={answerSummary} />
             </div>
           }
         </footer>

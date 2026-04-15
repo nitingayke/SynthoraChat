@@ -28,3 +28,26 @@ export const sendMessageToAI = async (payload) => {
     const response = await api.post("/ai/chat", payload);
     return response.data;
 }
+
+/**
+ * @param {string} inputText
+ */
+export const generatePostFormService = async (inputText) => {
+    const response = await api.post("/ai/question-content", {
+        inputText
+    });
+
+    return response.data;
+}
+
+/**
+ * Generate AI Summary for question
+ * @param {string} questionId
+ */
+export const generateSummaryService = async (questionId) => {
+    const response = await api.post("/ai/summary", {
+        questionId
+    });
+
+    return response.data;
+};

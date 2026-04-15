@@ -17,7 +17,7 @@ const answerSchema = new mongoose.Schema(
     content: {
       type: String,
       required: true,
-      maxlength: 10000,
+      maxlength: 5000,
     },
     media: [
       {

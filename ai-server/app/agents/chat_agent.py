@@ -6,7 +6,7 @@ from app.models.chat_model import AIResponseModel
 
 def create_chat_agent(mode: str, generate_title: bool):
     system_prompt = build_system_prompt(mode, generate_title)
-    llm = get_base_llm()
+    llm = get_base_llm(is_streaming=True)
     tools = get_all_tools()
 
     agent = create_agent(

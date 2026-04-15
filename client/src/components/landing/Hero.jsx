@@ -35,10 +35,10 @@ export default function Hero() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring" }}
-            className="flex justify-center mb-8 md:hidden"
+            className="flex justify-center mb-8 md:hidden pt-5"
           >
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur-lg opacity-75 animate-pulse"></div>
+              <div className="absolute inset-0 bg-linear-to-r from-blue-500 to-purple-600 rounded-3xl blur-lg opacity-75 animate-pulse"></div>
               <div className="relative bg-white/10 backdrop-blur-sm p-6 rounded-3xl border border-white/20 shadow-2xl">
                 <Brain className="w-16 h-16 text-white" />
               </div>
@@ -54,11 +54,11 @@ export default function Hero() {
           >
             Ask Smarter.
             <br className="sm:hidden"/>
-            <span className=" bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <span className=" bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               Answer Better.
             </span>
             <span className="text-white">With </span>
-            <span className="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
               AI
             </span>
           </motion.h1>
@@ -81,7 +81,7 @@ export default function Hero() {
             transition={{ delay: 0.8, duration: 0.8 }}
             className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
-            <Link to={loginUser ? "/chat/all" : "/login"} className="group px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 flex items-center gap-3">
+            <Link to={loginUser ? "/chat/all" : "/login"} className="group px-8 py-4 bg-linear-to-r from-blue-500 to-purple-600 text-white font-bold rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 flex items-center gap-3">
               <Rocket className="w-5 h-5 group-hover:rotate-45 transition-transform" />
               Get Started Free
             </Link>

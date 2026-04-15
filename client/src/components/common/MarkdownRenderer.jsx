@@ -15,6 +15,7 @@ export default function MarkdownRenderer({ content }) {
 
     const cleanContent = content
         ?.replaceAll('\\n', "\n")
+        ?.replaceAll('\\t', '\t')
         ?.replaceAll('\\"', '"');
 
     const handleCopyCode = async (code, index) => {
@@ -31,19 +32,19 @@ export default function MarkdownRenderer({ content }) {
             rehypePlugins={[rehypeHighlight]}
             components={{
                 h1: ({ children }) => (
-                    <h1 className="text-2xl font-bold mt-6 mb-3 text-[#161616] dark:text-gray-100">
+                    <h1 className="text-3xl font-bold mt-6 mb-3 text-[#161616] dark:text-gray-100">
                         {children}
                     </h1>
                 ),
 
                 h2: ({ children }) => (
-                    <h2 className="text-xl font-semibold mt-5 mb-2 text-[#161616] dark:text-gray-100">
+                    <h2 className="text-2xl font-bold mt-5 mb-2 text-[#161616] dark:text-gray-100">
                         {children}
                     </h2>
                 ),
 
                 h3: ({ children }) => (
-                    <h3 className="text-lg font-semibold mt-4 mb-2 text-[#161616] dark:text-gray-100">
+                    <h3 className="text-xl font-bold mt-4 mb-2 text-[#161616] dark:text-gray-100">
                         {children}
                     </h3>
                 ),

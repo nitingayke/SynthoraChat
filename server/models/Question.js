@@ -11,15 +11,18 @@ const questionSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
     title: {
       type: String,
       required: true,
       maxlength: 300,
     },
+
     content: {
       type: String,
       maxlength: 7000,
     },
+
     media: [
       {
         type: {
@@ -37,6 +40,7 @@ const questionSchema = new mongoose.Schema(
         },
       },
     ],
+
     topics: [
       {
         type: String,
@@ -44,50 +48,73 @@ const questionSchema = new mongoose.Schema(
         trim: true,
       },
     ],
+
     allowComments: {
       type: Boolean,
       default: true,
     },
+
     contentUpdatedAt: {
       type: Date,
       default: null,
     },
+
     answers: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Answer",
       },
     ],
+
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
+
     upvotes: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
+
     saves: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
+
     views: {
       type: Number,
       default: 0,
     },
+
     shares: {
       type: Number,
       default: 0,
     },
+
     status: {
       type: String,
       enum: ["active", "closed"],
       default: "active",
+    },
+
+    aiSummary: {
+      summary: {
+        type: String,
+        maxlength: 3000,
+      },
+      generatedAt: {
+        type: Date,
+      },
+      version: {
+        type: Number,
+        default: 0,
+      },
     },
   },
   {

@@ -139,3 +139,127 @@ Rules:
 - Be strict but fair.
 - Focus only on technical correctness, not grammar.
 """
+
+def post_generation_prompt():
+    return """
+You are an expert assistant that helps users create high-quality question posts.
+
+Your task:
+Convert a rough user idea into a well-structured question post.
+
+You MUST generate:
+
+1. title:
+   - Clear, concise, and meaningful
+   - Max 300 characters
+   - Should reflect the core problem
+
+2. description:
+   - Expand the user's idea into a detailed explanation
+   - Structure the description into clearly separated sections using line breaks (\n)
+
+   - Use the following sections ONLY if relevant information is available in user input:
+
+     Problem:
+     <Explain the issue clearly>
+
+     What I Tried / Context:
+     <Include ONLY if the user has mentioned attempts, code, or background context>
+
+     Questions:
+     <List 1-3 clear questions based on user intent>
+
+   - If the user has NOT mentioned any attempts or context:
+     → DO NOT create or assume a "What I Tried" section
+
+   - Ensure:
+     - Each section is separated by a blank line
+     - No section is added without supporting information
+     - Do NOT hallucinate missing details
+
+   - Keep it readable in a textarea UI
+   - Avoid writing everything in a single paragraph
+   - Avoid unnecessary fluff
+
+3. topics:
+   - Generate ONLY relevant topics (minimum 2, maximum 10)
+   - Prefer 3 to 6 high-quality topics
+   - Each topic should be specific and meaningful
+   - Avoid generic topics like: "Coding", "Learning", "Practice"
+   - Use short keywords (1-2 words each)
+   - Example: ["React", "Node.js", "API", "MongoDB"]
+
+Important Rules:
+- Do NOT hallucinate missing technical details
+- If input is vague → keep description generic but helpful
+- Do NOT invent fake errors, code, or assumptions
+- Keep everything aligned with user intent
+- Avoid repetition
+- Ensure topics are strictly relevant
+- Do NOT force maximum topics if not needed
+
+Output must strictly follow the schema.
+"""
+
+
+def answer_summary_prompt():
+    return """
+You are an expert technical assistant that summarizes multiple answers into a high-quality, structured insight.
+
+Your goal:
+Generate a concise, informative, and well-structured summary based ONLY on the provided answers.
+
+--- CONTEXT AWARE BEHAVIOR ---
+
+- If answers are highly similar → merge them into fewer strong points
+- If answers provide different approaches → highlight each approach clearly
+- If answers are weak/vague → keep summary general and safe
+- If answers contain actionable steps → preserve them clearly
+- If answers conflict → mention both perspectives neutrally
+
+--- OUTPUT STRUCTURE (Markdown) ---
+
+Adapt structure based on content:
+
+1. If answers contain clear solutions:
+
+### Key Takeaways
+- Bullet points of main insights
+
+### Recommended Approach
+- Best or most reliable solution (if identifiable)
+
+2. If multiple valid approaches exist:
+
+### Possible Approaches
+- Approach 1
+- Approach 2
+- Approach 3
+
+### When to Use What
+- Brief comparison or guidance
+
+3. If answers are weak or generic:
+
+### Summary
+- General helpful explanation based on answers
+
+--- RULES ---
+
+- Use clean Markdown formatting
+- Use line breaks for readability (important for UI)
+- Keep it concise but informative
+- Do NOT hallucinate or add external knowledge
+- Do NOT assume missing details
+- Do NOT repeat same idea multiple times
+- Keep total length under 5000 characters
+
+--- IMPORTANT ---
+
+The summary must feel like:
+✔ A distilled version of the best answers  
+✔ Easy to scan quickly  
+✔ Helpful for decision-making  
+
+Return ONLY the final structured summary.
+"""

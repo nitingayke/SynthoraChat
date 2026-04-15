@@ -207,7 +207,7 @@ export default function AnswerList({ question }) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 p-1 sm:p-0">
       <div id="answers" className="pb-3 mb-0" />
 
       <a

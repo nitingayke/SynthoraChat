@@ -7,6 +7,7 @@ import EmojiPickerDialog from "../../common/EmojiPickerDialog";
 import { createQuestionService } from "../../../services/question.service"
 import { getMediaType } from "../../../utils/helper";
 import { getVideoDuration } from "../../../utils/videoDuration";
+import { generatePostFormService } from "../../../services/ai.service";
 
 export default function CreateQuestionForm() {
 
@@ -87,15 +88,38 @@ export default function CreateQuestionForm() {
     };
 
     const generateTopicsFromAI = async () => {
-        if (!title && !content) return;
 
-        setTopicLoading(true);
+        if (!title.trim() && !content.trim()) {
+            enqueueSnackbar("Write something to generate content", { variant: "warning" });
+            return;
+        }
 
-        setTimeout(() => {
-            const generated = ["AI", "JavaScript", "Web", "React Native"];
-            setTopics(generated);
+        try {
+            setTopicLoading(true);
+
+            const inputText = `${title} ${content}`.trim();
+
+            const res = await generatePostFormService(inputText);
+
+            if (res?.success && res?.data) {
+                const { title: aiTitle, description, topics: aiTopics } = res.data;
+
+                if (aiTitle) setTitle(aiTitle);
+                if (description) setContent(description);
+                if (Array.isArray(aiTopics)) setTopics(aiTopics);
+
+                enqueueSnackbar("AI content generated successfully", {
+                    variant: "success",
+                });
+            }
+        } catch (error) {
+            enqueueSnackbar(
+                error?.response?.data?.message || "AI generation failed",
+                { variant: "error" }
+            );
+        } finally {
             setTopicLoading(false);
-        }, 5000);
+        }
     };
 
     const handleSubmit = async () => {
@@ -236,8 +260,8 @@ export default function CreateQuestionForm() {
 
                     <button
                         onClick={generateTopicsFromAI}
-                        disabled={title?.trim()?.length === 0 || content?.trim()?.length === 0 || topicLoading || submitting}
-                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold bg-orange-500 dark:bg-[#07C5B9] text-white dark:text-black w-full md:w-fit whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={(title?.trim()?.length === 0 && content?.trim()?.length === 0) || topicLoading || submitting}
+                        className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold bg-orange-500 dark:bg-[#07C5B9] text-white dark:text-black w-full md:w-fit whitespace-nowrap disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                     >
                         {topicLoading ? (
                             <Loader2 className="animate-spin" size={18} />

@@ -6,12 +6,16 @@ import UIStateContext from "../../../context/UIStateContext";
 import Dialog from "@mui/material/Dialog";
 import Slide from "@mui/material/Slide";
 import QuestionAnswerForm from "./QuestionAnswerForm";
+import { generateSummaryService } from "../../../services/ai.service";
+import { useSnackbar } from "notistack";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function CommentActions({ question, setAnswerSummary }) {
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const { loginUser } = useContext(AuthContext);
     const { setOpenLoginDialog } = useContext(UIStateContext);
@@ -22,18 +26,23 @@ export default function CommentActions({ question, setAnswerSummary }) {
 
 
     const handleGenerateSummary = async () => {
+
+        if (!question?._id) return;
+
         setAnswerSummary(null);
         setIsSummarizing(true);
 
         try {
-            if (question?.aiSummary?.summary) {
-                setAnswerSummary(question.aiSummary.summary)
-            } else {
-                await new Promise(resolve => setTimeout(resolve, 3000));
-                setAnswerSummary("Working on server. try this feature latter!");
+            const res = await generateSummaryService(question._id);
+
+            if (res?.success) {
+                setAnswerSummary(res.data.summary);
             }
         } catch (error) {
-            console.error("Error generating summary:", error);
+            enqueueSnackbar(
+                error?.response?.data?.message || "Failed to generate summary",
+                { variant: "error" }
+            );
         } finally {
             setIsSummarizing(false);
         }

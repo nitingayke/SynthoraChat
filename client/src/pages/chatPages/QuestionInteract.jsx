@@ -122,7 +122,7 @@ export default function QuestionInteract() {
 
                     <FilterQuestionList />
                 </div>
-                <div className="flex-1 space-y-3 rounded-lg border p-3 sm:p-4 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition h-fit">
+                <div className="flex-1 space-y-3 rounded-lg border p-0 sm:p-4 bg-white dark:bg-[#161616] border-gray-300 dark:border-[#2a2a2a] transition h-fit">
 
                     {loading && (
                         <div className="flex flex-1 items-center justify-center">

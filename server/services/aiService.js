@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const AI_SERVER_URL = "http://localhost:8000";
-const AI_SERVER_URL = "https://synthora-ai-server.onrender.com";
+const AI_SERVER_URL = "http://localhost:8000";
+// const AI_SERVER_URL = "https://synthora-ai-server.onrender.com";
 
 export const evaluateAnswerAccuracy = async ({
   title,
@@ -11,7 +11,7 @@ export const evaluateAnswerAccuracy = async ({
 }) => {
   try {
     const response = await axios.post(
-      `${AI_SERVER_URL}/evaluation/`,
+      `${AI_SERVER_URL}/evaluation`,
       {
         title,
         description,
@@ -100,5 +100,75 @@ export const generateAIChatReply = async ({ threadId, messages, mode }) => {
       errorType: "UNKNOWN_ERROR",
       message: "Unexpected AI error occurred",
     };
+  }
+};
+
+export const generateQuestionContent = async ({ inputText }) => {
+  try {
+    const response = await axios.post(
+      `${AI_SERVER_URL}/post/generate`,
+      { input_text: inputText },
+      { timeout: 120000 },
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.code === "ECONNABORTED") {
+      throw new Error("AI request timeout");
+    }
+
+    if (error.code === "ECONNREFUSED") {
+      throw new Error("AI server unavailable");
+    }
+
+    if (error.response) {
+      throw new Error(
+        error.response.data?.detail ||
+          error.response.data?.message ||
+          "AI server error",
+      );
+    }
+
+    throw new Error("Unknown AI error");
+  }
+};
+
+export const generateAnswerSummaryService = async ({
+  title,
+  description,
+  answers,
+}) => {
+  try {
+    const response = await axios.post(
+      `${AI_SERVER_URL}/summary/generate`,
+      {
+        title,
+        description,
+        answers,
+      },
+      {
+        timeout: 120000,
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.code === "ECONNABORTED") {
+      throw new Error("AI_REQUEST_TIMEOUT");
+    }
+
+    if (error.code === "ECONNREFUSED") {
+      throw new Error("AI_SERVER_UNAVAILABLE");
+    }
+
+    if (error.response) {
+      throw new Error(
+        error.response.data?.detail ||
+          error.response.data?.message ||
+          "AI_SERVER_ERROR",
+      );
+    }
+
+    throw new Error("UNKNOWN_AI_ERROR");
   }
 };
