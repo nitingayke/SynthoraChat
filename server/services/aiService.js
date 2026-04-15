@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const AI_SERVER_URL = "http://localhost:8000";
-// const AI_SERVER_URL = "https://synthora-ai-server.onrender.com";
+// const AI_SERVER_URL = "http://localhost:8000";
+const AI_SERVER_URL = "https://synthora-ai-server.onrender.com";
 
 export const evaluateAnswerAccuracy = async ({
   title,
