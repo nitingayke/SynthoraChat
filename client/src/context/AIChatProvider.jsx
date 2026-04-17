@@ -1,11 +1,14 @@
-import { useEffect, useMemo, useState, useCallback } from "react"
+import { useEffect, useMemo, useState, useCallback, useContext } from "react"
 import AIChatContext from "./AIChatContext"
 import { fetchChatSessions, sendMessageToAI } from "../services/ai.service";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "./AuthContext";
 
 export const AIChatProvider = ({ children }) => {
 
     const navigate = useNavigate();
+
+    const { loginUser } = useContext(AuthContext);
 
     const [userPrompt, setUserPrompt] = useState("");
     const [selectedChat, setSelectedChat] = useState(null);
@@ -15,6 +18,12 @@ export const AIChatProvider = ({ children }) => {
 
     useEffect(() => {
         const loadSessions = async () => {
+
+            if (!loginUser?._id) {
+                setSessions([]);
+                return;
+            }
+
             try {
                 setSessionLoading(true);
                 const res = await fetchChatSessions();
@@ -27,7 +36,7 @@ export const AIChatProvider = ({ children }) => {
         }
 
         loadSessions();
-    }, []);
+    }, [loginUser?._id]);
 
     const MAX_MESSAGES_PER_SESSION = 200;
 
