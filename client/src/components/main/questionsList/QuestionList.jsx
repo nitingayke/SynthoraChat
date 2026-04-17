@@ -93,8 +93,8 @@ export default function QuestionList() {
                     <div className="flex justify-center mt-6">
                         <button
                             onClick={handleLoadMore}
-                            disabled={loadingMore}
-                            className="px-5 py-2 flex items-center gap-1 bg-orange-500 dark:bg-[#07C5B9] text-white rounded-lg"
+                            disabled={loadingMore || loadingQuestions}
+                            className="px-5 py-2 flex items-center gap-1 bg-orange-500 dark:bg-[#07C5B9] text-white rounded-lg cursor-pointer"
                         >
                             {loadingMore ? (
                                 <>

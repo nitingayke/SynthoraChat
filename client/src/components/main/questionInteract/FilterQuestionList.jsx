@@ -15,7 +15,8 @@ export default function FilterQuestionList() {
     const { questions,
         loadingMore,
         hasMore,
-        loadQuestions
+        loadQuestions,
+        loadingQuestions
     } = useContext(QuestionContext);
     const { loginUser } = useContext(AuthContext);
 
@@ -35,6 +36,14 @@ export default function FilterQuestionList() {
 
     const handleLoadMore = () => {
         loadQuestions(filter, topic, false, loginUser?._id);
+    }
+
+    if(loadingQuestions) {
+        return (
+            <div className="rounded-lg bg-white dark:bg-[#191919] p-6 border border-gray-200 dark:border-[#222222] flex items-center justify-center">
+                <span className="animate-pulse">Loading...</span>
+            </div>
+        )
     }
 
     return (
@@ -116,8 +125,8 @@ export default function FilterQuestionList() {
                     <div className="flex justify-center mt-6">
                         <button
                             onClick={handleLoadMore}
-                            disabled={loadingMore}
-                            className="px-5 py-2 flex items-center gap-1 bg-orange-500 dark:bg-[#07C5B9] text-white rounded-lg"
+                            disabled={loadingMore || loadingQuestions}
+                            className="px-5 py-2 flex items-center gap-1 bg-orange-500 dark:bg-[#07C5B9] text-white rounded-lg cursor-pointer"
                         >
                             {loadingMore ? (
                                 <>
