@@ -98,7 +98,7 @@ export default function SignUp() {
             {/* Back Button */}
             <button
                 onClick={() => navigate(-1)}
-                className="absolute top-5 left-5 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition"
+                className="absolute top-5 left-5 px-2 py-2 rounded-full hover:bg-gray-100 dark:hover:bg-[#222] transition"
             >
                 <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-white" />
             </button>
