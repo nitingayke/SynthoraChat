@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
         return value.replaceAll(/\s+/g, " ").trim();
       },
     },
+
     email: {
       type: String,
       required: [true, "Email is required"],
@@ -92,13 +93,7 @@ const userSchema = new mongoose.Schema(
       type: [String], // e.g., ["Software Engineer", "PhD in Computer Science"]
       default: [],
     },
-    topicsOfInterest: [
-      // Topics user follows (like "Technology", "Science")
-      {
-        type: String,
-        trim: true,
-      },
-    ],
+
     knowsAbout: [
       // Topics user claims expertise in like [javascript, js, problem solving, etc]
       {
@@ -145,18 +140,21 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+
     answers: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Answer",
       },
     ],
+
     questions: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Question",
       },
     ],
+    
     savedQuestions: [
       {
         question: {

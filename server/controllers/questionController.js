@@ -9,33 +9,178 @@ import { addUserActivity } from "../services/activity.service.js";
 import { addNotification } from "../services/notification.service.js";
 
 export const getQuestions = async (req, res) => {
-  const page = Number.parseInt(req.query.page) || 1;
-  const limit = Number.parseInt(req.query.limit) || 20;
-  const skip = (page - 1) * limit;
+  const limit = Number(req.query.limit) || 10;
+  const filter = req.query.filter || "latest";
+  const topic = req.query.topic;
+  const cursor = req.query.cursor;
+  const userId = req.query.userId;
 
-  const questions = await Question.find({ status: "active" })
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .populate({
-      path: "author",
-      select: "username email profile isVerified",
-    })
-    .lean();
+  if (limit < 1 || limit > 20) {
+    return res.status(httpStatus.BAD_REQUEST).json({
+      success: false,
+      message: "Invalid pagination parameters",
+    });
+  }
 
-  const totalQuestions = await Question.countDocuments({ status: "active" });
+  let matchStage = { status: "active" };
+
+  if (filter === "trending") {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    matchStage.createdAt = {
+      ...(matchStage.createdAt || {}),
+      $gte: thirtyDaysAgo,
+    };
+  }
+
+  if (cursor) {
+    matchStage.createdAt = {
+      ...(matchStage.createdAt || {}),
+      $lt: new Date(cursor),
+    };
+  }
+
+  if (topic) {
+    const formatted = topic.replace(/-/g, " ").toLowerCase();
+
+    matchStage = {
+      ...matchStage,
+      $or: [
+        {
+          topics: {
+            $elemMatch: {
+              $regex: new RegExp(`^${formatted}$`, "i"),
+            },
+          },
+        },
+        {
+          title: {
+            $regex: formatted,
+            $options: "i",
+          },
+        },
+      ],
+    };
+  }
+
+  let pipeline = [
+    { $match: matchStage },
+
+    // counts
+    {
+      $addFields: {
+        upvotesCount: { $size: "$upvotes" },
+        likesCount: { $size: "$likes" },
+        answersCount: { $size: "$answers" },
+      },
+    },
+  ];
+
+  if (filter === "trending") {
+    pipeline.push(
+      {
+        $addFields: {
+          score: {
+            $add: [
+              { $multiply: ["$upvotesCount", 5] },
+              { $multiply: ["$likesCount", 3] },
+              { $multiply: ["$answersCount", 4] },
+              { $multiply: ["$views", 0.1] },
+              { $multiply: ["$shares", 2] },
+            ],
+          },
+        },
+      },
+      { $sort: { score: -1, createdAt: -1 } },
+    );
+  } else if (filter === "recommended") {
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      pipeline.push({ $sort: { createdAt: -1 } });
+    } else {
+      const user = await User.findById(userId).lean();
+
+      if (user) {
+        const interests = [
+          ...(user.knowsAbout || []),
+          ...(user.credentials || []),
+        ].map((t) => t.toLowerCase());
+
+        pipeline.push(
+          {
+            $addFields: {
+              matchScore: {
+                $size: {
+                  $filter: {
+                    input: "$topics",
+                    as: "topic",
+                    cond: {
+                      $in: [{ $toLower: "$$topic" }, interests],
+                    },
+                  },
+                },
+              },
+            },
+          },
+          { $sort: { matchScore: -1, createdAt: -1 } },
+        );
+      } else {
+        pipeline.push({ $sort: { createdAt: -1 } });
+      }
+    }
+  } else {
+    // latest
+    pipeline.push({ $sort: { createdAt: -1 } });
+  }
+
+  pipeline = [
+    ...pipeline,
+    { $limit: limit + 1 },
+
+    // populate author (optimized)
+    {
+      $lookup: {
+        from: "users",
+        let: { authorId: "$author" },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ["$_id", "$$authorId"] },
+            },
+          },
+          {
+            $project: {
+              username: 1,
+              email: 1,
+              profile: 1,
+              isVerified: 1,
+            },
+          },
+        ],
+        as: "author",
+      },
+    },
+    { $unwind: "$author" },
+  ];
+
+  const results = await Question.aggregate(pipeline);
+
+  let hasNextPage = false;
+  let nextCursor = null;
+
+  if (results.length > limit) {
+    hasNextPage = true;
+    const lastItem = results.at(-1);
+    nextCursor = lastItem.createdAt;
+    results.pop(); // remove extra
+  }
 
   return res.status(httpStatus.OK).json({
     success: true,
-    message: "Questions retrieved successfully",
     data: {
-      questions,
-      pagination: {
-        page,
-        limit,
-        totalPages: Math.ceil(totalQuestions / limit),
-        totalQuestions,
-      },
+      questions: results,
+      nextCursor,
+      hasNextPage,
     },
   });
 };
@@ -527,7 +672,7 @@ export const deleteQuestion = async (req, res) => {
   const userId = req.user?.id;
   const { questionId } = req.params;
 
-  if(!questionId) {
+  if (!questionId) {
     return res.status(httpStatus.BAD_REQUEST).json({
       success: false,
       message: "QuestionId not found!",

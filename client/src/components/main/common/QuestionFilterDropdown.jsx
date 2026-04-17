@@ -3,10 +3,12 @@ import QuestionContext from "../../../context/QuestionContext";
 import Drawer from "@mui/material/Drawer";
 import { Link, useLocation } from "react-router-dom";
 import { BrushCleaning, Check, SlidersHorizontal, Tags, X } from "lucide-react";
+import UIStateContext from "../../../context/UIStateContext";
 
 export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
 
     const { loadingTopics, filterOptions } = useContext(QuestionContext);
+    const { isAuthorize } = useContext(UIStateContext);
 
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
@@ -47,7 +49,7 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
                 {/* FILTER LIST */}
                 <div className="space-y-2 p-4">
 
-                    <Link to={location.pathname} className={`flex items-center gap-2 p-2 px-3 text-sm rounded-lg transition-all hover:bg-gray-100 dark:hover:bg-[#212121] dark:text-white`} >
+                    <Link to={location.pathname} onClick={() => setIsOpen(false)} className={`flex items-center gap-2 p-2 px-3 text-sm rounded-lg transition-all hover:bg-gray-100 dark:hover:bg-[#212121] dark:text-white`} >
                         <BrushCleaning size={18} />
                         Clear Filter
                     </Link>
@@ -58,25 +60,31 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
                         </p>
                     ) : (
                         filterOptions.map((item) => {
-                            const isActive =
-                                (activeFilter && item.link === `filter=${activeFilter}`) ||
-                                (activeTopic && item.link === `topic=${activeTopic}`);
+
+                            const [key, value] = item.link.split("=");
+
+                            const isActive = (key === "filter" && value === activeFilter) || (key === "topic" && value === activeTopic);
 
                             const params = new URLSearchParams(location.search);
+                            params.set(key, value);
 
-                            if (item.link.startsWith("filter")) {
-                                params.set("filter", item.link.split("=")[1]);
-                            }
+                            const handleClick = (e) => {
+                                if (value === "recommended") {
+                                    const allowed = isAuthorize();
+                                    if (!allowed) {
+                                        e.preventDefault(); 
+                                        return;
+                                    }
+                                }
 
-                            if (item.link.startsWith("topic")) {
-                                params.set("topic", item.link.split("=")[1]);
-                            }
+                                setIsOpen(false);
+                            };
 
                             return (
                                 <Link
                                     key={item.link}
-                                    to={`${location.pathname}?${params.toString()}`}
-                                    onClick={() => setIsOpen(false)}
+                                    to={`/main?${params.toString()}`}
+                                    onClick={handleClick}
                                     className={`flex items-center justify-between p-2 px-3 text-sm rounded-lg transition-all
                                         ${isActive
                                             ? "bg-orange-100 text-orange-500 dark:bg-[#07C5B9]/20 dark:text-[#07C5B9] font-semibold"
@@ -94,7 +102,6 @@ export default function QuestionFilterDropdown({ isOpen, setIsOpen }) {
                             );
                         })
                     )}
-
                 </div>
             </div>
         </Drawer>

@@ -237,7 +237,7 @@ export default function QuestionDetail({ question }) {
 
         {/* HEADER */}
         <header className="relative">
-          <h1 className="text-lg sm:text-xl font-semibold text-black dark:text-white">
+          <h1 className="text-lg sm:text-xl font-bold text-black dark:text-white mb-2">
             {title}
           </h1>
 

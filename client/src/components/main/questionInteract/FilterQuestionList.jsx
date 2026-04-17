@@ -1,18 +1,31 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import QuestionContext from "../../../context/QuestionContext";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { ArrowUp, Bookmark, Eye, Share2, ThumbsUp } from "lucide-react";
+import AuthContext from "../../../context/AuthContext";
 
 export default function FilterQuestionList() {
 
-    const { questionId } = useParams();
-    const { questions } = useContext(QuestionContext);
+    const [searchParams] = useSearchParams();
+    const filter = searchParams.get("filter");
+    const topic = searchParams.get("topic");
 
-    const [visibleCount, setVisibleCount] = useState(15);
+
+    const { questionId } = useParams();
+    const { questions,
+        loadingMore,
+        hasMore,
+        loadQuestions
+    } = useContext(QuestionContext);
+    const { loginUser } = useContext(AuthContext);
+
+    const handleLoadMore = () => {
+        loadQuestions(filter, topic, false, loginUser?._id);
+    }
 
     return (
         <div className="w-full space-y-4">
-            {questions?.slice(0, visibleCount).map((q) => {
+            {questions?.map((q) => {
                 const isActive = q?._id === questionId;
 
                 return (
@@ -84,16 +97,26 @@ export default function FilterQuestionList() {
                 );
             })}
 
-            {(visibleCount < questions.length) && (
-                <div className="flex justify-center mt-4">
-                    <button
-                        onClick={() => setVisibleCount(prev => prev + 15)}
-                        className="px-4 py-2 rounded-lg text-sm font-medium transition-all text-[#07c5b8b9] hover:text-[#09dfd1] cursor-pointer"
-                    >
-                        Load More Questions
-                    </button>
-                </div>
-            )}
+            {
+                hasMore && (
+                    <div className="flex justify-center mt-6">
+                        <button
+                            onClick={handleLoadMore}
+                            disabled={loadingMore}
+                            className="px-5 py-2 flex items-center gap-1 bg-orange-500 dark:bg-[#07C5B9] text-white rounded-lg"
+                        >
+                            {loadingMore ? (
+                                <>
+                                    <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
+                                    <span>Loading...</span>
+                                </>
+                            ) : (
+                                "Load More"
+                            )}
+                        </button>
+                    </div>
+                )
+            }
 
         </div>
     );

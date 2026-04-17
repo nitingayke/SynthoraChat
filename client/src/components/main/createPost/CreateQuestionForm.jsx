@@ -268,7 +268,7 @@ export default function CreateQuestionForm() {
                         ) : (
                             <Sparkles size={16} />
                         )}
-                        {topicLoading ? "Generating..." : "Generate Topics"}
+                        {topicLoading ? "Generating..." : "Generate Post"}
                     </button>
 
                 </div>

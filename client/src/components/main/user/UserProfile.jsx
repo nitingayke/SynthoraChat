@@ -201,31 +201,6 @@ export default function UserProfile() {
                         </div>
                     )}
 
-                    {/* Interests */}
-                    {userData?.topicsOfInterest?.length > 0 && (
-                        <div>
-                            <div className="flex items-center gap-2 mb-2">
-                                <BookOpen className="w-4 h-4 text-purple-500 dark:text-purple-400" />
-                                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Interests</h3>
-                            </div>
-                            <div className="flex flex-wrap gap-1">
-                                {userData.topicsOfInterest.slice(0, 10).map((topic, index) => (
-                                    <span
-                                        key={index * 0.2568}
-                                        className="px-2 py-1 bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 text-xs rounded-full border border-purple-200 dark:border-purple-500/30 hover:scale-105 transition-transform"
-                                    >
-                                        {topic}
-                                    </span>
-                                ))}
-                                {userData.topicsOfInterest.length > 10 && (
-                                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs rounded-full">
-                                        +{userData.topicsOfInterest.length - 10}
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
                     {/* Credentials Preview */}
                     {userData?.credentials?.length > 0 && (
                         <div>
@@ -239,7 +214,9 @@ export default function UserProfile() {
                                         key={index * 0.2568}
                                         className="text-xs text-gray-700 dark:text-gray-300 p-2 bg-gray-100 dark:bg-[#202020] rounded-lg border-l-2 border-green-500 dark:border-green-400"
                                     >
-                                        {credential}
+                                        <Link to={`/main?topic=${slugify(credential)}`}>
+                                            {credential}
+                                        </Link>
                                     </div>
                                 ))}
                                 {userData.credentials.length > 7 && (

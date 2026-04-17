@@ -4,10 +4,19 @@ import api from "../api/api";
  * Get all questions (paginated)
  * @param {number} page - current page
  * @param {number} limit - number of questions per page
+ * @param {string} topic
+ * @param {Date} cursor
+ * @param {string} userId
  */
-export const getAllQuestionsService = async (page = 1, limit = 20) => {
+export const getAllQuestionsService = async ({
+  limit = 20,
+  filter,
+  topic,
+  cursor,
+  userId
+}) => {
   const response = await api.get("/q", {
-    params: { page, limit },
+    params: { limit, filter, topic, cursor, userId },
   });
   return response.data;
 };

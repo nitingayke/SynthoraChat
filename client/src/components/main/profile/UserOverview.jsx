@@ -17,7 +17,6 @@ import {
     BarChart3,
     UserCheck,
     FileText,
-    Heart,
     Sparkles,
     Activity,
     ExternalLink,
@@ -40,7 +39,6 @@ export default function UserOverview({ user }) {
     const {
         profile = {},
         credentials = [],
-        topicsOfInterest = [],
         knowsAbout = [],
         followers = [],
         following = [],
@@ -247,7 +245,7 @@ export default function UserOverview({ user }) {
                                             <div className="flex justify-center pt-2">
                                                 <button
                                                     onClick={() => setVisibleCount(v => v + ACTIVITIES_PER_PAGE)}
-                                                    className="text-sm px-4 py-1.5 rounded-lg border border-gray-300 dark:border-[#2a2a2a] hover:border-orange-400 dark:hover:border-[#07C5B9] transition"
+                                                    className="text-sm px-4 py-1.5 rounded-lg bg-orange-400 dark:bg-[#07C5B9] transition hover:opacity-80"
                                                 >
                                                     Load more
                                                 </button>
@@ -277,30 +275,6 @@ export default function UserOverview({ user }) {
                                     {knowsAbout.map((i, idx) => (
                                         <span
                                             key={idx * 0.2548}
-                                            className="px-3 py-1 text-sm rounded-lg bg-gray-100 dark:bg-[#2a2a2a] text-gray-700 dark:text-gray-300"
-                                        >
-                                            {i}
-                                        </span>
-                                    ))}
-                                </div>
-                            ) : (
-                                <span className="text-gray-500 dark:text-gray-400 w-full flex justify-center">None</span>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* REFACTORED: Card 2 (Topics of Interest) */}
-                    <div className="rounded-lg border border-gray-200 dark:border-[#2a2a2a] bg-white dark:bg-[#191919]">
-                        <div className="p-4 border-b border-gray-200 dark:border-[#2a2a2a] flex items-center gap-2">
-                            <Heart size={18} className="text-orange-500 dark:text-[#07C5B9]" />
-                            <h3 className="font-semibold">Topics of Interest</h3>
-                        </div>
-                        <div className="p-4">
-                            {topicsOfInterest?.length > 0 ? (
-                                <div className="flex flex-wrap gap-2">
-                                    {topicsOfInterest.map((i, idx) => (
-                                        <span
-                                            key={idx * 0.2458}
                                             className="px-3 py-1 text-sm rounded-lg bg-gray-100 dark:bg-[#2a2a2a] text-gray-700 dark:text-gray-300"
                                         >
                                             {i}

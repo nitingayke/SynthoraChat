@@ -6,15 +6,16 @@ import ExpandableText from '../common/ExpandableText';
 export default function QuestionContent({ question }) {
 
     const [searchParams] = useSearchParams();
+
     const filter = searchParams.get("filter");
     const topic = searchParams.get("topic");
-    let query = "";
 
-    if (filter) {
-        query = `?filter=${filter}`;
-    } else if (topic) {
-        query = `?topic=${topic}`;
-    }
+    const params = new URLSearchParams();
+
+    if (filter) params.set("filter", filter);
+    if (topic) params.set("topic", topic);
+
+    const query = params.toString() ? `?${params.toString()}` : "";
 
     return (
         <div className="mb-3">
@@ -25,7 +26,7 @@ export default function QuestionContent({ question }) {
             </Link>
 
             {question?.content && (
-                <ExpandableText text={question.content} lines={8}  />
+                <ExpandableText text={question.content} lines={8} />
             )}
         </div>
     );

@@ -1,10 +1,10 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useContext, useEffect, useMemo, useState } from "react"
 import QuestionContext from "./QuestionContext"
 import SocketContext from "./SocketContext";
 import { getAllQuestionsService, getAllTopics } from "../services/question.service";
 import { slugify } from "../utils/helper";
 
-const QUESTION_PAGE_LIMIT = 20;
+const QUESTION_PAGE_LIMIT = 10;
 
 export const QuestionProvider = ({ children }) => {
 
@@ -12,10 +12,12 @@ export const QuestionProvider = ({ children }) => {
 
     const [questions, setQuestions] = useState([]);
     const [loadingQuestions, setLoadingQuestions] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
+
     const [newQuestions, setNewQuestions] = useState([]);
-    const [page, setPage] = useState(1);
+
     const [hasMore, setHasMore] = useState(true);
-    const loadOnce = useRef(false); 
+    const [cursor, setCursor] = useState(null);
 
     const [filterOptions, setFilterOptions] = useState([]);
     const [loadingTopics, setLoadingTopics] = useState(false);
@@ -35,31 +37,52 @@ export const QuestionProvider = ({ children }) => {
         },
     ], []);
 
-    const loadQuestions = useCallback(async(nextPage = 1) => {
-        if(loadingQuestions || !hasMore) return;
+    const loadQuestions = useCallback(async (userFilter, topic, reset = false, userId = null) => {
+        if (loadingQuestions || (!hasMore && !reset)) return;
 
-        setLoadingQuestions(true);
+        if (reset) {
+            setCursor(null); 
+            setHasMore(true);
+            setQuestions([]);
+            setLoadingQuestions(true);
+        } else {
+            setLoadingMore(true);
+        }
 
         try {
-            const res = await getAllQuestionsService(nextPage, QUESTION_PAGE_LIMIT);
+            const res = await getAllQuestionsService({
+                limit: QUESTION_PAGE_LIMIT,
+                filter: userFilter || "latest",
+                topic,
+                cursor: reset ? null : cursor,
+                userId
+            });
+
             const fetchedQuestions = res.data.questions;
-           
-            setQuestions((prev) => [...prev, ...fetchedQuestions]);
-            setPage(nextPage);
-            setHasMore(nextPage < res.data.pagination.totalPages);
+
+            if (reset) {
+                setQuestions(fetchedQuestions);
+            } else {
+                setQuestions((prev) => {
+                    const map = new Map();
+
+                    [...prev, ...fetchedQuestions].forEach(q => {
+                        map.set(q._id, q);
+                    });
+
+                    return Array.from(map.values());
+                });
+            }
+
+            setCursor(res.data.nextCursor);
+            setHasMore(res.data.hasNextPage);
         } catch (error) {
             console.error("Failed to load questions:", error);
         } finally {
             setLoadingQuestions(false);
+            setLoadingMore(false);
         }
-    }, [hasMore, loadingQuestions]);
-
-    useEffect(() => {
-        if (!loadOnce.current) {
-            loadQuestions(1);
-            loadOnce.current = true;
-        }
-    }, [loadQuestions]);
+    }, [hasMore, loadingQuestions, cursor]);
 
     const loadTopics = useCallback(async () => {
         try {
@@ -108,13 +131,13 @@ export const QuestionProvider = ({ children }) => {
         loadingTopics,
         filterOptions,
         loadingQuestions,
+        loadingMore,
         newQuestions,
         setNewQuestions,
         hasMore,
-        page,
-        setPage,
-        loadQuestions
-    }), [questions, loadingTopics, filterOptions, loadingQuestions, newQuestions, hasMore, loadQuestions, page]);
+        setCursor,
+        loadQuestions,
+    }), [questions, loadingTopics, filterOptions, loadingQuestions, loadingMore, newQuestions, hasMore, loadQuestions]);
 
     return (
         <QuestionContext.Provider value={values}>
