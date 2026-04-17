@@ -10,6 +10,7 @@ import {
   toggleUpvoteQuestion,
   updateQuestion,
   deleteQuestion,
+  searchQuestions,
 } from "../controllers/questionController.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { validateVideoDuration } from "../middleware/validateVideoDuration.js";
@@ -19,6 +20,8 @@ import { upload } from "../config/cloudinary.js";
 const router = express.Router();
 
 router.get("/", wrapAsync(getQuestions));
+
+router.get("/search", wrapAsync(searchQuestions));
 
 router.get("/topics", wrapAsync(getAllTopics));
 

@@ -185,6 +185,31 @@ export const getQuestions = async (req, res) => {
   });
 };
 
+export const searchQuestions = async (req, res) => {
+  const query = req.query.query?.trim();
+
+  if (!query || query?.length < 2) {
+    return res.status(httpStatus.OK).json({
+      success: true,
+      data: { questions: [] },
+    });
+  }
+
+  const questions = await Question.find({
+    status: "active",
+    title: { $regex: query, $options: "i" },
+  })
+    .select("_id title")
+    .sort({ createdAt: -1 })
+    .limit(10)
+    .lean();
+
+  return res.status(httpStatus.OK).json({
+    success: true,
+    data: { questions },
+  });
+};
+
 export const createQuestion = async (req, res) => {
   const { title, content, allowComments } = req.body;
   const userId = req.user?.id;

@@ -107,3 +107,14 @@ export const deleteQuestion = async (questionId) => {
   const res = await api.delete(`/q/${questionId}`);
   return res.data;
 };
+
+/**
+ * search suggestion
+ * @param {string} query
+ */
+export const searchQuestionsService = async (query) => {
+  const res = await api.get("/q/search", {
+    params: { query },
+  });
+  return res.data;
+};
