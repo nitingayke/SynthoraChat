@@ -1,11 +1,11 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
 
-import Layout from "../layouts/layout";
+import Layout from "../layouts/Layout";
 import Landing from "../pages/Landing";
 import Signup from "../pages/SignUp";
-import Login from "../pages/login";
-import Home from "../pages/home";
+import Login from "../pages/Login";
+import Home from "../pages/Home";
 import Features from "../pages/Features";
 import Community from "../pages/Community";
 import GlobalOverlay from "../components/global/GlobalOverlay";
