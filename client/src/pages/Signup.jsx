@@ -9,7 +9,7 @@ import useDocumentTitle from "../hooks/useDocumentTitle";
 
 export default function SignUp() {
 
-    useDocumentTitle("Signup");
+    useDocumentTitle("SignUp");
 
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();

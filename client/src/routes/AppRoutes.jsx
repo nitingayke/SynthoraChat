@@ -3,7 +3,7 @@ import { useContext } from "react";
 
 import Layout from "../layouts/Layout";
 import Landing from "../pages/Landing";
-import Signup from "../pages/SignUp";
+import SignUp from "../pages/SignUp";
 import Login from "../pages/Login";
 import Home from "../pages/Home";
 import Features from "../pages/Features";
@@ -36,7 +36,7 @@ export default function AppRoutes() {
         <>
             <Routes>
                 <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
+                <Route path="/signup" element={<SignUp />} />
                 <Route path="/user-verification" element={<UserVerification />} />
 
                 <Route path="/" element={<Layout><Landing /></Layout>} />
