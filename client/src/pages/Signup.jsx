@@ -7,7 +7,7 @@ import { signupService } from "../services/auth.service";
 import GoogleLoginButton from "../components/auth/GoogleLoginButton";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 
-export default function Signup() {
+export default function SignUp() {
 
     useDocumentTitle("Signup");
 

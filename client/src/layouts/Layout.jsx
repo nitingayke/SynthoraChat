@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types'
-import Navbar from '../components/common/Navbar';
-import Footer from '../components/common/Footer';
+import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
+import Navbar from '../components/common/Navbar';
+import Footer from '../components/common/Footer';
 
 export default function Layout({ children }) {
 
