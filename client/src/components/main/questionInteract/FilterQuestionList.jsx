@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import QuestionContext from "../../../context/QuestionContext";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { ArrowUp, Bookmark, Eye, Share2, ThumbsUp } from "lucide-react";
@@ -18,6 +18,20 @@ export default function FilterQuestionList() {
         loadQuestions
     } = useContext(QuestionContext);
     const { loginUser } = useContext(AuthContext);
+
+    useEffect(() => {
+
+        if (filter === "recommended" && !loginUser?._id) {
+            return;
+        }
+
+        const fetchData = async () => {
+            await loadQuestions(filter, topic, true, loginUser?._id);
+        };
+
+        fetchData();
+
+    }, [filter, topic, loginUser?._id]);
 
     const handleLoadMore = () => {
         loadQuestions(filter, topic, false, loginUser?._id);
