@@ -5,7 +5,7 @@ export const ACTIVE_USERS = new Map();
 export const initSocket = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: "https://synthora-chat.vercel.app",
       methods: ["GET", "POST", "DELETE", "PUT"],
       credentials: true,
     },
