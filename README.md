@@ -1,131 +1,167 @@
-# Synthora – Generative AI Q&A Platform
+# 🚀 Synthora – Generative AI Q&A Platform
 
 ![Synthora AI Banner](./assets/aiAnswerPoster.png)
 
+---
+
 ## 📌 About the Project
 
-**Synthora** is a next-generation **AI-powered Q&A platform** that blends **community-driven knowledge sharing with Generative AI intelligence**.
+**Synthora** is a next-generation **AI-powered Q&A platform** that combines **community-driven knowledge sharing with Generative AI intelligence**.
 
-### It enables users to ask questions, receive answers from people, and leverage AI to:
+It allows users to ask questions, receive answers from real users, and leverage AI to:
+
 - Evaluate answer quality
 - Generate summaries
 - Provide intelligent suggestions
-- Deliver real-time interactive experiences
+- Enable real-time interactive discussions
 
-
-> 🚀 Designed to simulate a StackOverflow + ChatGPT hybrid system with real-time collaboration, AI evaluation, and personalized recommendations.
+> 💡 Think of it as a **StackOverflow + ChatGPT hybrid** with real-time collaboration and AI-assisted learning.
 
 ---
 
-# 🎯 Project Goal
-### To build a scalable system that:
+## 🎯 Project Goal
+
+To build a scalable platform that:
+
 - Enhances knowledge sharing
 - Improves answer quality using AI
-- Provides summarized and reliable insights
+- Provides reliable summarized insights
 - Enables real-time collaboration
 
-# 🖼️ UI Preview
- AI Chat | User Questions | Admin Dashboard |
-|--------------|----------------|-----------------|
+---
+
+## 🖼️ UI Preview
+
+### AI Chat | User Questions | Admin Dashboard
+| AI Chat | Home | Analytics |
+|--------|------|----------|
 | ![ai chat](./assets/aiChatSection.png) | ![home page](./assets/homePage.png) | ![answer tracking](./assets/answerTracking.png) |
 
-| Question Interface | Create Question | Explore |
-|--------------|-----------------|----------------|
+### Question Interface | Create Question | Explore
+| Question | Create | Explore |
+|----------|--------|--------|
 | ![question interface](./assets/problemSolving.png) | ![new question](./assets/questionCreate.png) | ![about app](./assets/explore.png) |
 
-| Create Answer | Password Update | New Password |
-|--------------|-----------------|----------------|
+### Answer | Password | Security
+| Answer | Password Update | Reset |
+|--------|----------------|-------|
 | ![Create Answer](./assets/createAnswer.png) | ![Password Update](./assets/passwordUpd.png) | ![New Password](./assets/newPassword.png) |
 
+---
 
-> # 🚀 Tech Stack
-## 🖥️ Frontend (React + Vite)
+## 🚀 Tech Stack
+
+### 🖥️ Frontend (React + Vite)
 - React 19 + Vite
 - Tailwind CSS + Material UI
 - Framer Motion (animations)
-- Chart.js / Recharts (analytics)
+- Recharts / Chart.js
 - React Markdown + Highlight.js
-- Socket.IO Client (real-time updates)
+- Socket.IO Client (real-time)
 - Google OAuth
-- EmailJS (OTP / communication)
+- EmailJS (OTP + Contact System)
 
-## ⚙️ Backend (Node.js + Express)
+---
+
+### ⚙️ Backend (Node.js + Express)
 - Node.js + Express 5
 - MongoDB + Mongoose
 - JWT Authentication + bcrypt
 - Socket.IO (real-time system)
 - Cloudinary (media uploads)
-- Modular architecture (MVC + services)
+- MVC + Service-based architecture
 
-## 🤖 AI Server (FastAPI + LangChain)
+---
+
+### 🤖 AI Server (FastAPI + LangChain)
 - FastAPI
 - LangChain Agents
 - Google Gemini API
 - Streaming responses (real-time AI output)
-- Tool integrations (Tavily, Weather API, YoutubeLoader, etc.)
+- Tool integrations (Tavily, Weather API, YouTube Loader, etc.)
 
 ---
 
 ## 🌐 Hosted Links
 
-> 🚧 Deployment in progress — full-stack + AI services will be available soon.
+> 🚧 Deployment in progress
 
-- 🚀 Frontend (React): Coming Soon
-- 🌐 Backend (Node.js): Coming Soon
-- 🤖 AI Server (FastAPI): Coming Soon
-  
+- Frontend: https://synthora-chat.vercel.app
+- Backend: https://synthorachat.onrender.com 
+- AI Server: https://synthora-ai-server.onrender.com
+
 ---
 
-> # 🔥 Core Features
+## 🔥 Core Features
 
-## 💬 1. Community Answers + AI Evaluation
-- Users can answer and discuss
+### 💬 Community + AI Evaluation
+- Users can answer questions
 - AI evaluates answers based on:
-- Accuracy
-- Completeness
-- Relevance
+  - Accuracy
+  - Completeness
+  - Relevance
 
-## 🧠 2. AI Summarization
-### Generates:
+---
+
+### 🧠 AI Summarization
 - Short summaries
 - Detailed explanations
 - Bullet-point insights
-- Creates a consensus answer
+- Consensus answers
 
-## 🤖 3. AI-Generated Responses
-- Instant AI answers
-- Context-aware responses
-- Follow-up question suggestions
+---
 
-## 📊 4. Recommendation System (Partially Pending)
+### 🤖 AI Chat System
+- Real-time AI responses
+- Context-aware answers
+- Follow-up suggestions
+
+---
+
+### 📊 Recommendation System *(In Progress)*
 - Personalized feed
-- Suggested questions & topics (in progress)
+- Suggested topics/questions
 
-## 🔍 5. Filtering & Search
-### Sort by:
-- AI rating
-- Popularity
-- Recency
-- Advanced filtering
+---
+
+### 🔍 Advanced Search & Filters
+- Sort by:
+  - AI rating
+  - Popularity
+  - Recency
 - Natural language search
 
-# 🛡️ 6. Quality & Reliability
+---
+
+### 🛡️ Quality & Reliability
 - AI fact-checking
 - Confidence scoring
-- Highlight conflicting answers
+- Conflict detection
 
-# 💬 7. Real-Time Collaboration
+---
+
+### ⚡ Real-Time Features
 - Live updates via Socket.IO
 - Online/offline user tracking
 
-# 🎨 8. User Experience
-- Dark/Light mode
+---
+
+### 📩 Email System (NEW)
+- OTP verification using EmailJS
+- Contact form integration (user → admin email)
+- Snackbar-based UX notifications
+
+---
+
+### 🎨 User Experience
+- Dark / Light mode
 - Responsive UI
-- AI autocomplete
+- Smooth animations
 - Profile analytics
 
 ![Learning Exp](./assets/learningExp.png)
 
+---
 
 > # ⚙️ Installation Guide (Local Setup)
 
@@ -148,6 +184,7 @@ VITE_EMAILJS_SERVICE_ID=
 VITE_EMAILJS_OTP_TEMPLATE_ID=
 VITE_EMAILJS_CONTACT_TEMPLATE_ID=
 VITE_EMAILJS_PUBLIC_KEY=
+
 VITE_GOOGLE_CLIENT_ID=
 ```
 
