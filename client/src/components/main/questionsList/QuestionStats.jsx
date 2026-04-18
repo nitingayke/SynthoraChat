@@ -22,6 +22,7 @@ import {
     toggleSaveQuestion,
 } from "../../../services/question.service";
 import { shareContent } from "../../../services/share.service"
+import UIStateContext from "../../../context/UIStateContext";
 
 const baseBtn = "flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium border transition-colors duration-200";
 
@@ -30,8 +31,10 @@ const inactiveBtn = "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-300
 const disabledBtn = "opacity-50 cursor-not-allowed";
 
 export default function QuestionStats({ question }) {
+
     const { enqueueSnackbar } = useSnackbar();
     const { loginUser } = useContext(AuthContext);
+    const { isAuthorize } = useContext(UIStateContext);
 
     const [totalLikes, setTotalLikes] = useState([]);
     const [totalSaved, setTotalSaved] = useState([]);
@@ -48,7 +51,8 @@ export default function QuestionStats({ question }) {
     }, [question]);
 
     const handleLike = async () => {
-        if (!loginUser || loading.like) return;
+      
+        if (!isAuthorize() || loading.like) return;
 
         const userId = loginUser._id;
         setLoading(prev => ({ ...prev, like: true }));
@@ -73,7 +77,7 @@ export default function QuestionStats({ question }) {
     };
 
     const handleSave = async () => {
-        if (!loginUser || loading.save) return;
+        if (!isAuthorize() || loading.save) return;
 
         const userId = loginUser._id;
         setLoading(prev => ({ ...prev, save: true }));
@@ -152,7 +156,7 @@ export default function QuestionStats({ question }) {
                 {/* LIKE */}
                 <button
                     onClick={handleLike}
-                    disabled={!loginUser || loading.like}
+                    disabled={loading.like}
                     className={`${baseBtn} ${isUserLiked
                         ? "bg-blue-100 text-blue-600 dark:bg-blue-500/20"
                         : inactiveBtn
@@ -182,7 +186,7 @@ export default function QuestionStats({ question }) {
                 {/* SAVE */}
                 <button
                     onClick={handleSave}
-                    disabled={!loginUser || loading.save}
+                    disabled={loading.save}
                     className={`${baseBtn} ${isQuestionSaved
                         ? "bg-purple-100 text-purple-600 dark:bg-purple-500/20"
                         : inactiveBtn
