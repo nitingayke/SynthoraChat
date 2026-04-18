@@ -11,7 +11,7 @@ export default function ContactInfo() {
             <div className="space-y-4 text-gray-700 dark:text-gray-300">
                 <div className="flex gap-3">
                     <Mail className="text-orange-500 dark:text-[#07C5B9]" />
-                    <span>support@yourplatform.com</span>
+                    <span>support@synthorachat.com</span>
                 </div>
 
                 <div className="flex gap-3">

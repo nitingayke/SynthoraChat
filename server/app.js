@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: "https://synthora-chat.vercel.app",
+    origin: ["https://synthora-chat.vercel.app"],
     methods: "*",
     credentials: true,
   }),

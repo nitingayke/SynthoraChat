@@ -101,7 +101,7 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Link
               to="/signup"
-              className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-2xl shadow-2xl hover:scale-105 transition-all"
+              className="px-8 py-4 bg-linear-to-r from-blue-500 to-purple-600 text-white font-bold rounded-2xl shadow-2xl hover:scale-105 transition-all"
             >
               Start Free
             </Link>

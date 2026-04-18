@@ -86,7 +86,7 @@ export default function Hero() {
               Get Started Free
             </Link>
             
-            <Link to={"/demo"} className="group px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-bold rounded-2xl hover:bg-white/20 transition-all duration-300 hover:scale-105 flex items-center gap-3">
+            <Link to={"/main"} className="group px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white font-bold rounded-2xl hover:bg-white/20 transition-all duration-300 hover:scale-105 flex items-center gap-3">
               <Sparkles className="w-5 h-5" />
               Live Demo
             </Link>

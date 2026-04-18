@@ -2,8 +2,13 @@ import React, { useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { Send, Loader2, CheckCircle, XCircle } from "lucide-react";
+import { sendEmailService } from "../../services/email.service"
+import { useSnackbar } from "notistack";
 
 export default function ContactForm() {
+
+    const { enqueueSnackbar } = useSnackbar();
+
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -19,11 +24,52 @@ export default function ContactForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!form.name || !form.email || !form.subject || !form.message) {
+            enqueueSnackbar("Please fill all fields", { variant: "warning" });
+            return;
+        }
+
         setStatus("loading");
 
-        setTimeout(() => {
-            Math.random() > 0.15 ? setStatus("success") : setStatus("error");
-        }, 1800);
+        try {
+            const templateParams = {
+                name: form.name,
+                user_email: form.email,
+                subject: form.subject,
+                message: form.message,
+            };
+
+            const res = await sendEmailService(
+                import.meta.env.VITE_EMAILJS_CONTACT_TEMPLATE_ID,
+                templateParams
+            );
+
+            if (res.success) {
+                enqueueSnackbar("Message sent successfully", {
+                    variant: "success",
+                });
+
+                setForm({
+                    name: "",
+                    email: "",
+                    subject: "",
+                    message: "",
+                });
+                setStatus("success");
+
+            } else {
+                enqueueSnackbar("Failed to send message", {
+                    variant: "error",
+                });
+                setStatus("idle");
+            }
+        } catch {
+            enqueueSnackbar("Something went wrong. Try again.", {
+                variant: "error",
+            });
+            setStatus("idle");
+        }
     };
 
     return (
@@ -37,18 +83,6 @@ export default function ContactForm() {
                 Send a Message
             </h2>
 
-            {/* Status */}
-            {status === "success" && (
-                <div className="mb-4 flex items-center gap-2 p-3 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
-                    <CheckCircle size={18} /> Message sent successfully!
-                </div>
-            )}
-
-            {status === "error" && (
-                <div className="mb-4 flex items-center gap-2 p-3 rounded-lg bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">
-                    <XCircle size={18} /> Something went wrong. Try again.
-                </div>
-            )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
                 {/* Name */}

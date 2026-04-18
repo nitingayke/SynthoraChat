@@ -17,10 +17,6 @@ export const sendEmailService = async (templateId, templateParams) => {
     throw new Error("Missing EmailJS configuration");
   }
 
-  if (!templateParams.email) {
-    throw new Error("Recipient email is required");
-  }
-
   const response = await emailjs.send(
     serviceId,
     templateId,

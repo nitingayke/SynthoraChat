@@ -55,11 +55,11 @@ export default function UserVerification() {
       };
 
       const res = await sendEmailService(
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        import.meta.env.VITE_EMAILJS_OTP_TEMPLATE_ID,
         templateParams
       );
 
-      if (res.status) {
+      if (res.success) {
         enqueueSnackbar("OTP sent to your registered email", {
           variant: "success",
         });
