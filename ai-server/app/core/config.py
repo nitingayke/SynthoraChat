@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     TAVILY_API_KEY: str
 
     ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:5173",
+        # "http://localhost:3000",
+        # "http://localhost:5173",
         "https://synthorachat.onrender.com"
     ]
 

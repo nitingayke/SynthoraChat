@@ -1,7 +1,18 @@
 import axios from "axios";
+import cron from "node-cron";
 
 // const AI_SERVER_URL = "http://localhost:8000";
 const AI_SERVER_URL = "https://synthora-ai-server.onrender.com";
+
+// run every 14 minutes
+cron.schedule("*/14 * * * *", async () => {
+  try {
+    await axios.get(AI_SERVER_URL);
+    console.log("✅ AI server kept alive");
+  } catch {
+    console.log("❌ AI keep-alive failed");
+  }
+});
 
 export const evaluateAnswerAccuracy = async ({
   title,
