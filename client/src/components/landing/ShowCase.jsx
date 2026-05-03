@@ -3,6 +3,11 @@ import { motion } from "framer-motion";
 import { Users, Brain, Zap, Star, Target } from "lucide-react";
 import MediaDisplay from "../common/MediaDisplay";
 
+import AIAnswer from "../../assets/SynthoraChatAIAns.png";
+import synthoraCommunity from "../../assets/SynthoraChatCommunity.png";
+import collaboration from "../../assets/SynthoraChatCollab.png";
+import recommendation from "../../assets/SynthoraChatRecommend.png"
+
 export default function ShowCase() {
   const features = [
     {
@@ -10,9 +15,8 @@ export default function ShowCase() {
       title: "AI-Powered Answers",
       description:
         "Get instant, accurate answers powered by advanced AI that learns from community discussions.",
-      media:
-        "https://res.cloudinary.com/videoapi-demo/video/upload/e_preview:duration_10.0/c_scale,w_600,f_auto,q_auto/v1/samples/mountain_adventure_preview_wa1vsg.webm?_a=DATAdtAAZAA0",
-      mediaType: "video",
+      media: AIAnswer,
+      mediaType: "image",
       reverse: false,
     },
     {
@@ -20,8 +24,7 @@ export default function ShowCase() {
       title: "Community Wisdom",
       description:
         "Connect with experts and enthusiasts. Share knowledge and learn from real human experiences.",
-      media:
-        "https://st5.depositphotos.com/9335968/80464/i/450/depositphotos_804644562-stock-photo-concept-recommendation-business-technology-internet.jpg",
+      media: synthoraCommunity,
       mediaType: "image",
       reverse: true,
     },
@@ -30,9 +33,8 @@ export default function ShowCase() {
       title: "Real-time Collaboration",
       description:
         "Instant messaging and live discussions. Get answers while you chat with the community.",
-      media:
-        "https://cloudinary-marketing-res.cloudinary.com/video/upload/f_auto,q_auto/v1701983730/videoAPI_prebuilt-video-player.mp4",
-      mediaType: "video",
+      media: collaboration,
+      mediaType: "image",
       reverse: false,
     },
     {
@@ -40,8 +42,7 @@ export default function ShowCase() {
       title: "Personalized Recommendations",
       description:
         "Smart suggestions based on your interests and past interactions. Never miss relevant content.",
-      media:
-        "https://st5.depositphotos.com/9335968/80464/i/450/depositphotos_804644562-stock-photo-concept-recommendation-business-technology-internet.jpg",
+      media: recommendation,
       mediaType: "image",
       reverse: true,
     },

@@ -39,7 +39,7 @@ To build a scalable platform that:
 
 ### Question Interface | Create Question | Explore
 | Question | Create | Explore |
-|----------|--------|--------|
+|----------|--------|----------|
 | ![question interface](./assets/problemSolving.png) | ![new question](./assets/questionCreate.png) | ![about app](./assets/explore.png) |
 
 ### Answer | Password | Security
@@ -80,6 +80,16 @@ To build a scalable platform that:
 - Streaming responses (real-time AI output)
 - Tool integrations (Tavily, Weather API, YouTube Loader, etc.)
 
+#### AI Server Routes:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/chat/user-message` | Send chat message, get AI response with follow-up questions |
+| `POST` | `/chat/stream` | Streaming chat response (real-time token-by-token, *Remaining*) |
+| `POST` | `/evaluation/` | Evaluate answer quality (accuracy, completeness, relevance) |
+| `POST` | `/post/generate` | Generate structured question post from user input |
+| `POST` | `/summary/generate` | Generate AI summary from multiple answers |
+
 ---
 
 ## 🌐 Hosted Links
@@ -115,6 +125,14 @@ To build a scalable platform that:
 - Real-time AI responses
 - Context-aware answers
 - Follow-up suggestions
+- Streaming support for better UX
+
+---
+
+### 📝 AI-Powered Post Generation
+- Transform rough ideas into well-structured questions
+- Auto-generate titles, descriptions, and relevant topics
+- Input validation and intelligent expansion
 
 ---
 
